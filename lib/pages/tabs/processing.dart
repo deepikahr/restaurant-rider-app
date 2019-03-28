@@ -2,17 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:intl/intl.dart';
+import './tabs-heading.dart';
 
 import '../../services/orders-service.dart';
 
-class Processing extends StatelessWidget {
+class Processing extends StatefulWidget {
+   @override
+  _ProcessingState createState() => new _ProcessingState();
+}
+
+class _ProcessingState extends State<Processing> {
   int dollars = 114;
   dynamic onTheWayordersList;
 
   final GlobalKey<AsyncLoaderState> _asyncLoaderState = GlobalKey<AsyncLoaderState>();
 
+ 
   getOnTheWayOrdersList() async {
-    return await OrdersService.getAssignedOrdersListToDeliveryBoy('On the Way');
+
+    return  await OrdersService.getAssignedOrdersListToDeliveryBoy('On the Way');
   }
 
 
@@ -24,8 +32,11 @@ class Processing extends StatelessWidget {
       initState: () async => await getOnTheWayOrdersList(),
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderSuccess: ({data}) {
-        if (data.length > 0) {
+        if (data.length > 0) {          
           onTheWayordersList = data;
+       
+            pocessingOrderLength = onTheWayordersList.length;
+          
           return buidNewOnTheWayList(data);
         }
       },

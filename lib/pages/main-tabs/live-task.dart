@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 // import 'package:delivery_app/pages/home/drawer.dart';
 import '../../services/orders-service.dart';
 import 'package:async_loader/async_loader.dart';
+import 'package:location/location.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import 'package:delivery_app/pages/live-tasks/location.dart';
@@ -15,6 +18,72 @@ class LiveTasks extends StatefulWidget {
 
 class _LiveTasksState extends State<LiveTasks> {
   bool val = true;
+
+ 
+
+ Map<String, double> startLocation;
+ Map<String, double> currentLocation;
+
+ StreamSubscription<Map<String, double>> locationSubscription;
+
+ Location _location = new Location();
+ bool permission = false;
+ String error;
+
+ bool currentWidget = true;
+
+ Image image1;
+
+ @override
+ void initState() {
+   super.initState();
+
+   initPlatformState();
+   getResult();
+ }
+
+ getResult() async {
+   locationSubscription = await _location
+       .onLocationChanged()
+       .listen((Map<String, double> result) {
+     if (mounted) {
+       setState(() {
+         currentLocation = result;
+       });
+     }
+     print('kkkkkk $currentLocation');
+   });
+ }
+
+ // Platform messages are asynchronous, so we initialize in an async method.
+ initPlatformState() async {
+   Map<String, double> location;
+   // Platform messages may fail, so we use a try/catch PlatformException.
+
+   try {
+     permission = await _location.hasPermission();
+     location = await _location.getLocation();
+
+     error = null;
+   } on PlatformException catch (e) {
+     if (e.code == 'PERMISSION_DENIED') {
+       error = 'Permission denied';
+     } else if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
+       error =
+           'Permission denied - please ask the user to enable it from the app settings';
+     }
+
+     location = null;
+   }
+
+   if (mounted) {
+     setState(() {
+       startLocation = location;
+      
+     });
+   }
+ }
+
   var formatter = new DateFormat('yyyy-MM-dd');
  dynamic orderList;
   final GlobalKey<AsyncLoaderState> _asyncLoaderState =
@@ -186,7 +255,14 @@ class _LiveTasksState extends State<LiveTasks> {
                   color: Colors.white,
                   child: new GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(Location.tag);
+                      // Navigator.of(context).pushNamed(Location.tag);
+                      Navigator.push(context,new MaterialPageRoute(
+                        builder: (BuildContext context)=>
+                          new LocationDetail(
+                            orderDetail:order,
+                            deliveryBoyLatLong :currentLocation
+                          )
+                      ));
                     },
                     child: new Column(
                       children: <Widget>[

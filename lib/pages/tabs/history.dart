@@ -4,9 +4,19 @@ import 'package:async_loader/async_loader.dart';
 import 'package:intl/intl.dart';
 import '../../services/orders-service.dart';
 
-class History extends StatelessWidget {
+class History extends StatefulWidget {
+
+  @override
+  _HistoryState createState() => new _HistoryState();
+}
+
+class _HistoryState extends State<History> {
   int dollars = 114;
-  dynamic deliveredOrderList;
+  String data = "Hero";
+  int orderId;
+  List orderDataList =List();
+  List deliveredOrderList =List();
+  List orderList =List();
   final GlobalKey<AsyncLoaderState> _asyncLoaderState = GlobalKey<AsyncLoaderState>();
 
   getDeliveredOrdersList() async {
@@ -24,7 +34,8 @@ class History extends StatelessWidget {
       renderSuccess: ({data}) {
         if (data.length > 0) {
           deliveredOrderList = data;
-          return  buildDeliveredList(data);
+          orderList = data;
+          return  buildDeliveredList();
         }
       },
     );
@@ -50,7 +61,7 @@ class History extends StatelessWidget {
                         Flexible(
                           flex:4,
                           fit: FlexFit.tight,
-                          child:new TextFormField(
+                          child:new TextField(
                             decoration: new InputDecoration(
                               labelStyle: TextStyle(color: Colors.grey),
                               border: InputBorder.none,
@@ -59,7 +70,40 @@ class History extends StatelessWidget {
                               color: Colors.black54,
                               fontSize: 12.0,
                             ),
-                            keyboardType: TextInputType.text,
+                            keyboardType: TextInputType.phone,
+                            onChanged: (String value) {
+                              setState((){
+                                 orderId = int.parse(value);
+                              });
+                              print(value.length);
+                             if(value.length == 5){
+                             for(int i=0;i<orderList.length;i++){
+                               if(orderList[i]['orderID'] == orderId ){
+                                 print('inside if ');
+                                 
+                                 orderDataList = [];
+                                 orderDataList.add(orderList[i]);
+                                  deliveredOrderList = orderDataList;
+                                 print(' $orderDataList');
+                                  setState(() {
+                                   data = "Zero";
+                                  deliveredOrderList = orderDataList;
+                                  
+                                 });
+                                   print('here yr data $deliveredOrderList');
+                                  // buildDeliveredList(deliveredOrderList);
+                                 break;
+
+
+                               }else{
+                                 print("not found");
+                               }
+                             }
+                            
+                            
+                             }
+                              print(orderId);
+                            },
                           ),
                         ),
                       ],
@@ -76,11 +120,12 @@ class History extends StatelessWidget {
     );
   }
 
-  Widget buildDeliveredList(dynamic orders){
+  Widget buildDeliveredList(){
+    print("called $data             $deliveredOrderList");
     return Column(
       children: <Widget>[
         ListView.builder(
-          itemCount: orders.length,
+          itemCount: deliveredOrderList.length,
           shrinkWrap: true,
           physics:ScrollPhysics(),
           itemBuilder:(BuildContext context int index){
@@ -94,9 +139,9 @@ class History extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Expanded(child: new Text('#${orders[index]['orderID']}', textAlign: TextAlign.center, style: textmediumsm(),)),
-                        Expanded(child: new Text(' ${orders[index]['productDetails'].length }  items', textAlign: TextAlign.center, style: textmediumsm(),)),
-                        Expanded(child: new Text(new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${orders[index]['createdAt'] }')), textAlign: TextAlign.center, style: textmediumsm(),)),
+                        Expanded(child: new Text('#${deliveredOrderList[index]['orderID']}', textAlign: TextAlign.center, style: textmediumsm(),)),
+                        Expanded(child: new Text(' ${deliveredOrderList[index]['productDetails'].length }  items', textAlign: TextAlign.center, style: textmediumsm(),)),
+                        Expanded(child: new Text(new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${deliveredOrderList[index]['createdAt'] }')), textAlign: TextAlign.center, style: textmediumsm(),)),
                         // Expanded(child: new Icon(Icons.keyboard_arrow_right))
                       ],
                     ),

@@ -3,15 +3,31 @@ import 'package:delivery_app/styles/styles.dart';
 import 'package:async_loader/async_loader.dart';
 import '../../services/orders-service.dart';
 import 'package:intl/intl.dart';
+import './tabs-heading.dart';
 
-class New extends StatelessWidget {
+class New extends StatefulWidget {
+  List orderList = List();
+  New({Key key, this.orderList}):super(key:key);
+   @override
+  _NewState createState() => new _NewState();
+}
+
+class _NewState extends State<New> {
   int dollars = 114;
   dynamic orderList;
   final GlobalKey<AsyncLoaderState> _asyncLoaderState =
       GlobalKey<AsyncLoaderState>();
+  List orderData =List();
   getAcceptedOrdersList() async {
-    return await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
+     orderData = await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
+     setState(() {
+       newOrderLength =orderData.length;
+     });
+     print('newOrderLength ${orderData.length}');
+     return orderData;
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +37,10 @@ class New extends StatelessWidget {
       initState: () async => await getAcceptedOrdersList(),
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderSuccess: ({data}) {
+        
         if (data.length > 0) {
           orderList = data;
+          print('newOrderLength newOrderLength $newOrderLength');
           return buidNewOrdersList(data);
         }
       },
@@ -48,6 +66,7 @@ class New extends StatelessWidget {
   }
 
    Widget buidNewOrdersList(dynamic orders) {
+     
     return Column(
       children: <Widget>[
         ListView.builder(

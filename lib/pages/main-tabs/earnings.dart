@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
+import 'package:async_loader/async_loader.dart';
+import '../../services/orders-service.dart';
+import 'package:intl/intl.dart';
 import 'package:delivery_app/pages/home/drawer.dart';
 
 
@@ -12,8 +15,21 @@ class Earnings extends StatefulWidget {
 class _EarningsState extends State<Earnings> {
   bool val= true;
   int dollar = 120;
-  int total = 567;
+  double total;
+  String selectedDate;
   int profit = 20;
+
+    List orderList =List();
+    int date;
+    int month;
+    int year;
+  final GlobalKey<AsyncLoaderState> _asyncLoaderState = GlobalKey<AsyncLoaderState>();
+
+  getDeliveredOrdersListOnSelectedDate() async {
+    var date =DateTime.now();
+    return await OrdersService.getDeliveredOrdersEaringHistory(date.day,date.month,date.year);
+  }
+
   @override
   Widget VerticalDivider = RotatedBox(
     quarterTurns: 1,
@@ -25,14 +41,74 @@ class _EarningsState extends State<Earnings> {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
+     AsyncLoader asyncloader = AsyncLoader(
+       key:_asyncLoaderState,
+       initState:  () async => await getDeliveredOrdersListOnSelectedDate(),
+       renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderSuccess: ({data}) {
+        if (data['orders'].length > 0) {
+
+            total = data['totalOrderEarningCOD'];
+         
+          orderList = data['orders'];
+          selectedDate = orderList[0]['createdAt'];
+          print(data);
+          return  buildDeliveredList();
+        }
+      },
+     );
+
+    
     return  new SingleChildScrollView(
           child: new Container(
             color: bglight,
-            child: new Column(
+            child:
+            //  new Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: <Widget>[
+            //     new Container(
+            //       width: screenWidth,
+            //       padding: EdgeInsets.only(top:20.0, bottom: 20.0),
+            //       color: Colors.white,
+            //       child: new Column(
+            //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //         children: <Widget>[
+            //           new Text('Total Earnings for ' , style: textsmallregular(),),
+            //           new Padding(padding: EdgeInsets.only(top:5.0)),
+            //           new Text(new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${orderList[0]['createdAt'] }')), overflow: TextOverflow.ellipsis, style: textlight(),),
+            //           new Padding(padding: EdgeInsets.only(top:10.0)),
+            //           new Text('\$ ${total.toStringAsFixed(2)}', style: textred(),)
+            //         ],
+            //       ),
+            //     ),
+            //     new Padding(padding: EdgeInsets.only(top:10.0, bottom: 10.0, right: 20.0, left: 20.0), child:
+            //     new Text('Earning Details',  style: textlight()),),
+
+            //     new Container(
+            //         color: Colors.white,
+            //         child: new Column(
+            //           children: <Widget>[
+                       asyncloader
+                       
+
+          //             ],
+          //           )
+          //       ),
+          //     ],
+          //   ),
+          )
+        );
+
+
+
+  }
+
+          Widget buildDeliveredList(){
+          return new Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 new Container(
-                  width: screenWidth,
+                  width: MediaQuery.of(context).size.width,
                   padding: EdgeInsets.only(top:20.0, bottom: 20.0),
                   color: Colors.white,
                   child: new Column(
@@ -40,9 +116,9 @@ class _EarningsState extends State<Earnings> {
                     children: <Widget>[
                       new Text('Total Earnings for ' , style: textsmallregular(),),
                       new Padding(padding: EdgeInsets.only(top:5.0)),
-                      new Text('Saturday 26 January 2018', style: textlight(),),
+                      new Text(DateFormat.yMMMMd("en_US").format(DateTime.parse('${orderList[0]['createdAt'] }')), overflow: TextOverflow.ellipsis, style: textlight(),),
                       new Padding(padding: EdgeInsets.only(top:10.0)),
-                      new Text('\$ $total.00', style: textred(),)
+                      new Text('\$ ${total.toStringAsFixed(2)}', style: textred(),)
                     ],
                   ),
                 ),
@@ -53,12 +129,20 @@ class _EarningsState extends State<Earnings> {
                     color: Colors.white,
                     child: new Column(
                       children: <Widget>[
-                        new Row(
+                          Column(
+            children: <Widget>[
+            ListView.builder(
+              itemCount: orderList.length,
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemBuilder: (BuildContext contex int index){
+                return Column(children: <Widget>[
+                   new Row(
                           children: <Widget>[
                             Flexible(
                                 flex:2,
                                 fit: FlexFit.tight,
-                                child: new Image.asset('assets/imgs/ricebowl.png')),
+                                child: new Image.network(orderList[index]['productDetails'][0]['imageUrl'])),
                             Flexible(
                               flex:5,
                               fit: FlexFit.tight,
@@ -66,135 +150,55 @@ class _EarningsState extends State<Earnings> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   new Padding(padding: EdgeInsets.only(left: 4.0), child:
-                                  new Text('Goli Vadapav', style: textmediumb(),),),
+                                  new Text(orderList[index]['restaurantName'], style: textmediumb(),),),
                                   IntrinsicHeight(
                                       child: new Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: <Widget>[
-                                          new Text('Order - #2345 ', style: textdblack(),),
+                                          new Text('Order - #${orderList[index]['orderID']}', style: textdblack(),),
                                           VerticalDivider,
-                                          new Text('1 Hour ago', style: textdblack(),),
 
+                                          new Text(new DateFormat.yMMMMd("en_US").format(DateTime.parse('${orderList[index]['createdAt'] }')),overflow: TextOverflow.ellipsis, style: textdblack(),),
                                         ],
-                                      ))
+                                      )),
                                 ],
                               ),
                             ),
-                            Flexible(
-                                flex:3,
-                                fit: FlexFit.tight,
-                                child:new Padding(padding: EdgeInsets.only(right: 10.0), child:
-                                new Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    new Text('\$$dollar', style: textboldsmall(),),
-                                    new Padding(padding: EdgeInsets.all(3.0)),
-                                    new Text('Profit \$$profit .5', style: textdblack(),),
-                                  ],
-                                ),)
-                            )
-                          ],
-                        ),
-                        new Divider(),
-                        new Row(
-                          children: <Widget>[
                             Flexible(
                                 flex:2,
                                 fit: FlexFit.tight,
-                                child: new Image.asset('assets/imgs/ricebowl.png')),
-                            Flexible(
-                              flex:5,
-                              fit: FlexFit.tight,
-                              child:new Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  new Padding(padding: EdgeInsets.only(left: 4.0), child:
-                                  new Text('Goli Vadapav', style: textmediumb(),),),
-                                  IntrinsicHeight(
-                                      child: new Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          new Text('Order - #2345 ', style: textdblack(),),
-                                          VerticalDivider,
-                                          new Text('1 Hour ago', style: textdblack(),),
-
-                                        ],
-                                      ))
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                                flex:3,
-                                fit: FlexFit.tight,
                                 child:new Padding(padding: EdgeInsets.only(right: 10.0), child:
                                 new Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    new Text('\$$dollar', style: textboldsmall(),),
+                                    new Text('\$${(orderList[index]['grandTotal'])}', style: textboldsmall(),),
                                     new Padding(padding: EdgeInsets.all(3.0)),
-                                    new Text('Profit \$$profit .5', style: textdblack(),),
+                                    // new Text('Profit \$$profit .5', style: textdblack(),),
                                   ],
                                 ),)
                             )
                           ],
                         ),
-                        new Divider(),
-                        new Row(
-                          children: <Widget>[
-                            Flexible(
-                                flex:2,
-                                fit: FlexFit.tight,
-                                child: new Image.asset('assets/imgs/ricebowl.png')),
-                            Flexible(
-                              flex:5,
-                              fit: FlexFit.tight,
-                              child:new Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  new Padding(padding: EdgeInsets.only(left: 4.0), child:
-                                  new Text('Goli Vadapav', style: textmediumb(),),),
-                                  IntrinsicHeight(
-                                      child: new Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          new Text('Order - #2345 ', style: textdblack(),),
-                                          VerticalDivider,
-                                          new Text('1 Hour ago', style: textdblack(),),
-
-                                        ],
-                                      ))
-                                ],
-                              ),
-                            ),
-                            Flexible(
-                                flex:3,
-                                fit: FlexFit.tight,
-                                child:new Padding(padding: EdgeInsets.only(right: 10.0), child:
-                                new Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    new Text('\$$dollar', style: textboldsmall(),),
-                                    new Padding(padding: EdgeInsets.all(3.0)),
-                                    new Text('Profit \$$profit .5', style: textdblack(),),
-                                  ],
-                                ),)
-                            )
-                          ],
-                        ),
-
+                ],);
+              },
+            ),
+            
+            ],
+          )
 
                       ],
                     )
                 ),
               ],
-            ),
-          )
-        );
+            );
+          
+        }
 
-  }
+
+
+
+  
 
 //  void something(bool e) {
 //    setState(() {
