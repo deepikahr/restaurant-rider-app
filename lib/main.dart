@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
     LiveTasks.tag: (context) => LiveTasks(),
     Earnings.tag: (context) => Earnings(),
     Order.tag: (context) => Order(),
-    Location.tag: (context) => Location(),
+    LocationDetail.tag: (context) => LocationDetail(),
     OrderPlaced.tag: (context) => OrderPlaced(),
     StartDelivery.tag: (context) => StartDelivery(),
     OrderDelivered.tag: (context) => OrderDelivered(),

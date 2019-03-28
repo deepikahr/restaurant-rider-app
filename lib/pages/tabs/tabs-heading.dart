@@ -5,6 +5,9 @@ import 'history.dart';
 import 'package:delivery_app/styles/styles.dart';
 import '../../services/orders-service.dart';
 
+int newOrderLength = 1;
+int pocessingOrderLength = 1;
+
 class TabsHeading extends StatefulWidget {
   @override
   _TabsHeadingState createState() => new _TabsHeadingState();
@@ -12,8 +15,8 @@ class TabsHeading extends StatefulWidget {
 
 class _TabsHeadingState extends State<TabsHeading>
     with TickerProviderStateMixin {
-  List<dynamic> assignedList;
-  List<dynamic> processingList;
+  dynamic assignedList;
+  List processingList = List();
   List<Tab> _tabs;
   List<Widget> _pages;
   TabController _controller;
@@ -21,12 +24,12 @@ class _TabsHeadingState extends State<TabsHeading>
   @override
   initState() {
     super.initState();
-
+    getAcceptedOrders();
     _tabs = [
       new Tab(
-        text: "New (3)",
+        text: "New ($newOrderLength)",
       ),
-      new Tab(text: 'Processing (0)'),
+      new Tab(text: 'Processing ($pocessingOrderLength)'),
       new Tab(text: 'History'),
     ];
     _pages = [new New(), new Processing(), new History()];
@@ -39,11 +42,18 @@ class _TabsHeadingState extends State<TabsHeading>
   getAcceptedOrders() async {
     assignedList =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
+    print('data in tab $assignedList');
+    setState(() {
+      newOrderLength = assignedList.length;
+    });
   }
 
   getProcessingOrders() async {
     processingList =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('On the Way');
+    setState(() {
+      pocessingOrderLength = processingList.length;
+    });
   }
 
   @override
