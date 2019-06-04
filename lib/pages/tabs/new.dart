@@ -7,8 +7,8 @@ import './tabs-heading.dart';
 
 class New extends StatefulWidget {
   List orderList = List();
-  New({Key key, this.orderList}):super(key:key);
-   @override
+  New({Key key, this.orderList}) : super(key: key);
+  @override
   _NewState createState() => new _NewState();
 }
 
@@ -17,27 +17,24 @@ class _NewState extends State<New> {
   dynamic orderList;
   final GlobalKey<AsyncLoaderState> _asyncLoaderState =
       GlobalKey<AsyncLoaderState>();
-  List orderData =List();
+  List orderData = List();
   getAcceptedOrdersList() async {
-     orderData = await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
-     setState(() {
-       newOrderLength =orderData.length;
-     });
-     print('newOrderLength ${orderData.length}');
-     return orderData;
+    orderData =
+        await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
+    setState(() {
+      newOrderLength = orderData.length;
+    });
+    print('newOrderLength ${orderData.length}');
+    return orderData;
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
-
     AsyncLoader asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getAcceptedOrdersList(),
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderSuccess: ({data}) {
-        
         if (data.length > 0) {
           orderList = data;
           print('newOrderLength newOrderLength $newOrderLength');
@@ -46,18 +43,13 @@ class _NewState extends State<New> {
       },
     );
 
-
- 
-
     return Scaffold(
       backgroundColor: bglight,
       body: ListView(
         children: <Widget>[
           SingleChildScrollView(
             child: new Column(
-              children: <Widget>[  
-               asyncloader
-              ],
+              children: <Widget>[asyncloader],
             ),
           ),
         ],
@@ -65,17 +57,17 @@ class _NewState extends State<New> {
     );
   }
 
-   Widget buidNewOrdersList(dynamic orders) {
-     
+  Widget buidNewOrdersList(dynamic orders) {
     return Column(
       children: <Widget>[
         ListView.builder(
           itemCount: orders.length,
           shrinkWrap: true,
-      physics:ScrollPhysics(),
-          itemBuilder:(BuildContext context int index){
-            return Column(children: <Widget>[
-                            new Container(
+          physics: ScrollPhysics(),
+          itemBuilder: (BuildContext context, int index) {
+            return Column(
+              children: <Widget>[
+                new Container(
                   padding:
                       EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
                   margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
@@ -110,14 +102,16 @@ class _NewState extends State<New> {
                           ),
                           Expanded(
                             child: new Text(
-                              ' ${orders[index]['productDetails'].length }  items',
+                              ' ${orders[index]['productDetails'].length}  items',
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),
                           ),
                           Expanded(
                             child: new Text(
-                              new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${orders[index]['createdAt'] }')),
+                              new DateFormat.yMMMMd("en_US").add_jm().format(
+                                  DateTime.parse(
+                                      '${orders[index]['createdAt']}')),
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),
@@ -127,7 +121,8 @@ class _NewState extends State<New> {
                     ],
                   ),
                 )
-            ],);
+              ],
+            );
           },
         )
       ],

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 // import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
@@ -6,12 +5,12 @@ import 'package:delivery_app/pages/live-tasks/upload-bill.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
 class OrderPlaced extends StatefulWidget {
-  
   static String tag = "orderplaced-page";
   final orderDetail;
   OrderPlaced({Key key, this.orderDetail}) : super(key: key);
- 
+
   @override
   _OrderPlacedState createState() => _OrderPlacedState();
 }
@@ -19,24 +18,22 @@ class OrderPlaced extends StatefulWidget {
 class _OrderPlacedState extends State<OrderPlaced> {
   static File _imageFile, myfile;
   bool val = true;
- 
- void _getImage(BuildContext context, ImageSource source) {
-  setState(() {
-    _imageFile = myfile;
-  });
-   ImagePicker.pickImage(
-     source: source,
-   ).then((File image) {
-     setState(() {
-       _imageFile = image;
-       print(' mmmmmmmmmmmmmmmmmmm$_imageFile');
-     });
-   });
- }
+
+  void _getImage(BuildContext context, ImageSource source) {
+    setState(() {
+      _imageFile = myfile;
+    });
+    ImagePicker.pickImage(
+      source: source,
+    ).then((File image) {
+      setState(() {
+        _imageFile = image;
+        print(' mmmmmmmmmmmmmmmmmmm$_imageFile');
+      });
+    });
+  }
 
   @override
-  
-  
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
@@ -85,48 +82,56 @@ class _OrderPlacedState extends State<OrderPlaced> {
                         ],
                       ),
                     ),
-                   
                     new Container(
-                        padding:
-                            EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
-                        child:ListView.builder(
-                           itemCount: widget.orderDetail['productDetails'].length,
-                            shrinkWrap: true,
-                          physics:ScrollPhysics(),
-                          itemBuilder:(BuildContext context int index){
+                      padding:
+                          EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+                      child: ListView.builder(
+                          itemCount:
+                              widget.orderDetail['productDetails'].length,
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemBuilder: (BuildContext context, int index) {
                             return new Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            new Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Expanded(flex: 7,
-                                    child: new Text(
-                                  widget.orderDetail['productDetails'][index]['title']+""+'('+widget.orderDetail['productDetails'][index]['size']+')',
-                                  style: textlightblack(),
-                                )),
-                                Expanded(flex: 1,
-                                  child: new Text(
-                                    'X ${widget.orderDetail['productDetails'][index]['Quantity']} ',
-                                    textAlign: TextAlign.center,
-                                    style: textlightblack(),
-                                  ),
+                                new Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                        flex: 7,
+                                        child: new Text(
+                                          widget.orderDetail['productDetails']
+                                                  [index]['title'] +
+                                              "" +
+                                              '(' +
+                                              widget.orderDetail[
+                                                      'productDetails'][index]
+                                                  ['size'] +
+                                              ')',
+                                          style: textlightblack(),
+                                        )),
+                                    Expanded(
+                                      flex: 1,
+                                      child: new Text(
+                                        'X ${widget.orderDetail['productDetails'][index]['Quantity']} ',
+                                        textAlign: TextAlign.center,
+                                        style: textlightblack(),
+                                      ),
+                                    ),
+                                    Expanded(
+                                        flex: 2,
+                                        child: new Text(
+                                          '\$ ${widget.orderDetail['productDetails'][index]['totalPrice']}',
+                                          textAlign: TextAlign.end,
+                                          style: textlightblack(),
+                                        ))
+                                  ],
                                 ),
-                                Expanded(flex: 2,
-                                    child: new Text(                                     
-                                  '\$ ${widget.orderDetail['productDetails'][index]['totalPrice']}',
-                                  textAlign: TextAlign.end,
-                                  style: textlightblack(),
-                                ))
+                                Padding(padding: EdgeInsets.only(top: 15.0)),
                               ],
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 15.0)),
-                            
-                          ],
-                        );
-                          }
-                        )
-                         ),
+                            );
+                          }),
+                    ),
                   ],
                 ),
               )
@@ -153,7 +158,9 @@ class _OrderPlacedState extends State<OrderPlaced> {
                           )),
                           Expanded(
                               child: new Text(
-                            new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${widget.orderDetail['createdAt'] }')),
+                            new DateFormat.yMMMMd("en_US").add_jm().format(
+                                DateTime.parse(
+                                    '${widget.orderDetail['createdAt']}')),
                             textAlign: TextAlign.end,
                             style: textdblack(),
                           ))
@@ -170,16 +177,19 @@ class _OrderPlacedState extends State<OrderPlaced> {
                         style: textboldblack(),
                       ),
                       new Padding(padding: EdgeInsets.only(top: 5.0)),
-                    
-                      new Text(  widget.orderDetail['paymentOption'] == 'COD' ?
-                        'Pay Global Restaurant : \$ ${widget.orderDetail['grandTotal']}': ' ',
+                      new Text(
+                        widget.orderDetail['paymentOption'] == 'COD'
+                            ? 'Pay Global Restaurant : \$ ${widget.orderDetail['grandTotal']}'
+                            : ' ',
                         style: textboldblack(),
                       ),
                       new Padding(padding: EdgeInsets.only(top: 5.0)),
                       new Row(
                         children: <Widget>[
-                          new Text(widget.orderDetail['paymentOption'] == 'COD' ?
-                            'Collect from Customer :\$ ${widget.orderDetail['grandTotal']}':' ',
+                          new Text(
+                            widget.orderDetail['paymentOption'] == 'COD'
+                                ? 'Collect from Customer :\$ ${widget.orderDetail['grandTotal']}'
+                                : ' ',
                             style: textboldblack(),
                           ),
                           Expanded(
@@ -206,10 +216,11 @@ class _OrderPlacedState extends State<OrderPlaced> {
       ),
       bottomNavigationBar: RawMaterialButton(
           onPressed: () {
-
-             Navigator.push(context,MaterialPageRoute(
-                builder: (BuildContext context) =>
-                     new BillUpload (orderDetail:widget.orderDetail)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        new BillUpload(orderDetail: widget.orderDetail)));
 //             showDialog<void>(
 //               context: context,
 //               barrierDismissible: false, // user must tap button!
@@ -247,7 +258,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
 //                               )),
 //                             ],
 //                           ),
-//                           InkWell(child: 
+//                           InkWell(child:
 //                            new Padding(
 //                             padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
 //                             child: new Text(
@@ -259,7 +270,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
 //                              _getImage(context, ImageSource.camera);
 //                           },
 //                           ),
-                         
+
 //                           new Row(
 //                             children: <Widget>[
 //                               new Container(
@@ -274,7 +285,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
 //                               ),
 //                               GestureDetector(
 //                                 onTap: () {
-                                 
+
 //                                   // Navigator.of(context)
 //                                   //     .pushNamed(StartDelivery.tag);
 //                                 },
