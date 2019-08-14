@@ -9,18 +9,24 @@ import 'package:delivery_app/pages/live-tasks/order-placed.dart';
 import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
 import 'package:delivery_app/pages/live-tasks/order-delivered.dart';
 import 'package:delivery_app/pages/auth/login.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  Stetho.initialize();
-  runApp(new MyApp());
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String id = prefs.getString('token');
+  print(id);
+  runApp(new MyApp(id: id));
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-//    systemNavigationBarColor: Colors.blue,
-    statusBarColor: Colors.transparent,
+    statusBarColor: Colors.transparent, //top bar color
+    statusBarIconBrightness: Brightness.light, //top bar icons
   ));
 }
 
 class MyApp extends StatefulWidget {
+  final id;
+
+  MyApp({Key key, this.id}) : super(key: key);
   @override
   _MyAppState createState() => new _MyAppState();
 }
@@ -37,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     OrderDelivered.tag: (context) => OrderDelivered(),
     Login.tag: (context) => Login(),
   };
+  var id;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +55,28 @@ class _MyAppState extends State<MyApp> {
         cursorColor: Colors.black,
         unselectedWidgetColor: Colors.grey,
       ),
-      home: Login(),
+      home: routing(),
       routes: routes,
     );
+  }
+
+  routing() {
+    print('function called');
+    // getData();
+    // print('id2 $id');
+    print('   id     $id');
+    if (widget.id != null) {
+      return HomePage();
+    } else {
+      print('execute else part');
+      return Login();
+    }
+  }
+
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    id = prefs.getString('token');
+    print('inside getData');
+    return id;
   }
 }

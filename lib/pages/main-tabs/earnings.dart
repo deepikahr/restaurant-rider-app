@@ -42,60 +42,73 @@ class _EarningsState extends State<Earnings> {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    AsyncLoader asyncloader = AsyncLoader(
+    var asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getDeliveredOrdersListOnSelectedDate(),
       renderLoad: () => Center(child: CircularProgressIndicator()),
       renderSuccess: ({data}) {
-        if (data['orders'].length > 0) {
+        if (data != null && data['orders'].length > 0) {
           total = data['totalOrderEarningCOD'];
 
           orderList = data['orders'];
           selectedDate = orderList[0]['createdAt'];
           print(data);
           return buildDeliveredList();
+        } else {
+          return Container(child: Text("No Earning"));
         }
       },
     );
-
-    return new SingleChildScrollView(
-        child: new Container(
-            color: bglight,
-            child:
-                //  new Column(
-                //   crossAxisAlignment: CrossAxisAlignment.start,
-                //   children: <Widget>[
-                //     new Container(
-                //       width: screenWidth,
-                //       padding: EdgeInsets.only(top:20.0, bottom: 20.0),
-                //       color: Colors.white,
-                //       child: new Column(
-                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //         children: <Widget>[
-                //           new Text('Total Earnings for ' , style: textsmallregular(),),
-                //           new Padding(padding: EdgeInsets.only(top:5.0)),
-                //           new Text(new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${orderList[0]['createdAt'] }')), overflow: TextOverflow.ellipsis, style: textlight(),),
-                //           new Padding(padding: EdgeInsets.only(top:10.0)),
-                //           new Text('\$ ${total.toStringAsFixed(2)}', style: textred(),)
-                //         ],
-                //       ),
-                //     ),
-                //     new Padding(padding: EdgeInsets.only(top:10.0, bottom: 10.0, right: 20.0, left: 20.0), child:
-                //     new Text('Earning Details',  style: textlight()),),
-
-                //     new Container(
-                //         color: Colors.white,
-                //         child: new Column(
-                //           children: <Widget>[
-                asyncloader
-
-            //             ],
-            //           )
-            //       ),
-            //     ],
-            //   ),
-            ));
+    return new Scaffold(
+      // backgroundColor: Colors.black,
+      body: new Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Center(
+            child: asyncloader,
+          ),
+        ],
+      ),
+    );
   }
+  //   return new SingleChildScrollView(
+  //       child: new Container(
+  //           color: bglight,
+  //           child:
+  //               //  new Column(
+  //               //   crossAxisAlignment: CrossAxisAlignment.start,
+  //               //   children: <Widget>[
+  //               //     new Container(
+  //               //       width: screenWidth,
+  //               //       padding: EdgeInsets.only(top:20.0, bottom: 20.0),
+  //               //       color: Colors.white,
+  //               //       child: new Column(
+  //               //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               //         children: <Widget>[
+  //               //           new Text('Total Earnings for ' , style: textsmallregular(),),
+  //               //           new Padding(padding: EdgeInsets.only(top:5.0)),
+  //               //           new Text(new DateFormat.yMMMMd("en_US").add_jm().format(DateTime.parse('${orderList[0]['createdAt'] }')), overflow: TextOverflow.ellipsis, style: textlight(),),
+  //               //           new Padding(padding: EdgeInsets.only(top:10.0)),
+  //               //           new Text('\$ ${total.toStringAsFixed(2)}', style: textred(),)
+  //               //         ],
+  //               //       ),
+  //               //     ),
+  //               //     new Padding(padding: EdgeInsets.only(top:10.0, bottom: 10.0, right: 20.0, left: 20.0), child:
+  //               //     new Text('Earning Details',  style: textlight()),),
+
+  //               //     new Container(
+  //               //         color: Colors.white,
+  //               //         child: new Column(
+  //               //           children: <Widget>[
+  //               asyncloader
+
+  //           //             ],
+  //           //           )
+  //           //       ),
+  //           //     ],
+  //           //   ),
+  //           ));
+  // }
 
   Widget buildDeliveredList() {
     return new Column(

@@ -33,27 +33,22 @@ class _NewState extends State<New> {
     AsyncLoader asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getAcceptedOrdersList(),
-      renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderLoad: () => CircularProgressIndicator(),
       renderSuccess: ({data}) {
         if (data.length > 0) {
           orderList = data;
           print('newOrderLength newOrderLength $newOrderLength');
           return buidNewOrdersList(data);
+        } else {
+          return Container(child: Text("No New Order"));
         }
       },
     );
 
     return Scaffold(
       backgroundColor: bglight,
-      body: ListView(
-        children: <Widget>[
-          SingleChildScrollView(
-            child: new Column(
-              children: <Widget>[asyncloader],
-            ),
-          ),
-        ],
-      ),
+      body:
+          Container(alignment: AlignmentDirectional.center, child: asyncloader),
     );
   }
 

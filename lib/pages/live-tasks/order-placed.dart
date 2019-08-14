@@ -1,3 +1,4 @@
+import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 // import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
@@ -168,7 +169,12 @@ class _OrderPlacedState extends State<OrderPlaced> {
                       ),
                       new Padding(padding: EdgeInsets.only(top: 10.0)),
                       new Text(
-                        'Item(s)',
+                        'Order Status : ${widget.orderDetail['paymentOption']}',
+                        style: textboldblack(),
+                      ),
+                      new Padding(padding: EdgeInsets.only(top: 5.0)),
+                      new Text(
+                        'Total Bill : ${widget.orderDetail['paymentStatus']}',
                         style: textboldblack(),
                       ),
                       new Padding(padding: EdgeInsets.only(top: 5.0)),
@@ -183,33 +189,33 @@ class _OrderPlacedState extends State<OrderPlaced> {
                             : ' ',
                         style: textboldblack(),
                       ),
-                      new Padding(padding: EdgeInsets.only(top: 5.0)),
-                      new Row(
-                        children: <Widget>[
-                          new Text(
-                            widget.orderDetail['paymentOption'] == 'COD'
-                                ? 'Collect from Customer :\$ ${widget.orderDetail['grandTotal']}'
-                                : ' ',
-                            style: textboldblack(),
-                          ),
-                          Expanded(
-                              child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              // new Text(
-                              //   'Help',
-                              //   textAlign: TextAlign.end,
-                              //   style: textblueblack(),
-                              // ),
-                              // new Padding(
-                              //   padding: EdgeInsets.only(left: 5.0),
-                              //   child:
-                              //       new Image.asset('assets/icons/headset.png'),
-                              // )
-                            ],
-                          ))
-                        ],
-                      ),
+                      // new Padding(padding: EdgeInsets.only(top: 5.0)),
+                      // new Row(
+                      //   children: <Widget>[
+                      //     new Text(
+                      //       widget.orderDetail['paymentOption'] == 'COD'
+                      //           ? 'Collect from Customer :\$ ${widget.orderDetail['grandTotal']}'
+                      //           : ' ',
+                      //       style: textboldblack(),
+                      //     ),
+                      //     Expanded(
+                      //         child: new Row(
+                      //       mainAxisAlignment: MainAxisAlignment.end,
+                      //       children: <Widget>[
+                      //         // new Text(
+                      //         //   'Help',
+                      //         //   textAlign: TextAlign.end,
+                      //         //   style: textblueblack(),
+                      //         // ),
+                      //         // new Padding(
+                      //         //   padding: EdgeInsets.only(left: 5.0),
+                      //         //   child:
+                      //         //       new Image.asset('assets/icons/headset.png'),
+                      //         // )
+                      //       ],
+                      //     ))
+                      //   ],
+                      // ),
                     ],
                   )))
         ],
@@ -220,7 +226,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
                 context,
                 MaterialPageRoute(
                     builder: (BuildContext context) =>
-                        new BillUpload(orderDetail: widget.orderDetail)));
+                        new StartDelivery(orderDetail: widget.orderDetail)));
 //             showDialog<void>(
 //               context: context,
 //               barrierDismissible: false, // user must tap button!

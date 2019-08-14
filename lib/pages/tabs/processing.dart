@@ -24,7 +24,7 @@ class _ProcessingState extends State<Processing> {
 
   @override
   Widget build(BuildContext context) {
-    AsyncLoader asyncloader = AsyncLoader(
+    var asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getOnTheWayOrdersList(),
       renderLoad: () => Center(child: CircularProgressIndicator()),
@@ -35,35 +35,22 @@ class _ProcessingState extends State<Processing> {
           pocessingOrderLength = onTheWayordersList.length;
 
           return buidNewOnTheWayList(data);
+        } else {
+          return Container(child: Text("No Processing Order"));
         }
       },
     );
-    return Scaffold(
-        backgroundColor: bglight,
-        body: ListView(
-          children: <Widget>[
-            SingleChildScrollView(
-                child: new Column(
-              children: <Widget>[
-                asyncloader
-                // new Container(
-                //   padding: EdgeInsets.all(25.0),
-                //   margin: EdgeInsets.only(top:10.0, bottom: 5.0),
-                //   color: Colors.white,
-                //   child: new Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     crossAxisAlignment: CrossAxisAlignment.center,
-                //     children: <Widget>[
-                //       Expanded(child: new Text('#3456', textAlign: TextAlign.center, style: textmediumsm(),)),
-                //       Expanded(child: new Text('4 items', textAlign: TextAlign.center, style: textmediumsm(),)),
-                //       Expanded(child: new Text('04.06 pm', textAlign: TextAlign.center, style: textmediumsm(),))
-                //     ],
-                //   ),
-                // ),
-              ],
-            )),
-          ],
-        ));
+    return new Scaffold(
+      // backgroundColor: Colors.black,
+      body: new Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Center(
+            child: asyncloader,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buidNewOnTheWayList(dynamic orders) {
