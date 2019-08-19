@@ -17,6 +17,14 @@ class LocationDetail extends StatefulWidget {
 class _LocationState extends State<LocationDetail> {
   bool val = true;
   GoogleMapController myController;
+  MapType currentMapType = MapType.normal;
+  final Set<Marker> markers = {};
+  @override
+  void initState() {
+    print('order detail${widget.orderDetail}');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -48,40 +56,88 @@ class _LocationState extends State<LocationDetail> {
       body: new Stack(
         children: <Widget>[
           Container(
-              height: screenHeight,
-              width: screenWidth,
-              child: GoogleMap(
-                onMapCreated: (controller) {
-                  setState(() {
-                    myController = controller;
-                  });
-                  print(widget.deliveryBoyLatLong);
-                  controller.addMarker(
-                    MarkerOptions(
-                      position: LatLng(widget.deliveryBoyLatLong['latitude'],
-                          widget.deliveryBoyLatLong['longitude']),
-                    ),
-                  );
-                  controller.addMarker(
-                    MarkerOptions(
-                      position: LatLng(
-                          widget.orderDetail['location']['latitude'],
-                          widget.orderDetail['location']['longitude']),
-                    ),
-                  );
-                },
-                compassEnabled: true,
-                myLocationEnabled: true,
-                initialCameraPosition: CameraPosition(
-                  bearing: 360.0,
-                  target: LatLng(
-                    widget.orderDetail['location']['latitude'],
-                    widget.orderDetail['location']['longitude'],
-                  ),
-                  tilt: 10.0,
-                  zoom: 10.0,
+            height: screenHeight,
+            width: screenWidth,
+            child: GoogleMap(
+              onMapCreated: (controller) {
+                setState(() {
+                  myController = controller;
+                });
+                // print(widget.deliveryBoyLatLong);
+                // markers.add(Marker(
+                //     // icon: BitmapDescriptor.fromAsset(
+                //     //   'assets/shop.png',
+                //     // ),
+                //     markerId: MarkerId(LatLng(
+                //             widget.deliveryBoyLatLong['latitude'],
+                //             widget.deliveryBoyLatLong['longitude'])
+                //         .toString()),
+                //     position: LatLng(widget.deliveryBoyLatLong['latitude'],
+                //         widget.deliveryBoyLatLong['longitude'])));
+                // print(widget.deliveryBoyLatLong);
+                markers.add(Marker(
+                    // icon: BitmapDescriptor.fromAsset(
+                    //   'assets/shop.png',
+                    // ),
+                    markerId: MarkerId(LatLng(
+                            widget.orderDetail['location']['latitude'],
+                            widget.orderDetail['location']['longitude'])
+                        .toString()),
+                    position: LatLng(widget.orderDetail['location']['latitude'],
+                        widget.orderDetail['location']['longitude'])));
+              },
+              initialCameraPosition: CameraPosition(
+                target: LatLng(
+                  widget.orderDetail['location']['latitude'],
+                  widget.orderDetail['location']['longitude'],
                 ),
-              )),
+                zoom: 11.0,
+              ),
+              mapType: currentMapType,
+              markers: markers,
+            ),
+          ),
+          // Container(
+          //     height: screenHeight,
+          //     width: screenWidth,
+          //     child: GoogleMap(
+          //       onMapCreated: (controller) {
+          //         setState(() {
+          //           myController = controller;
+          //         });
+          //         print(widget.deliveryBoyLatLong);
+          //         controller.addMarker(
+          //           MarkerOptions(
+          //             icon: BitmapDescriptor.fromAsset(
+          //               'assets/icons/green-pin.png',
+          //             ),
+          //             position: LatLng(widget.deliveryBoyLatLong['latitude'],
+          //                 widget.deliveryBoyLatLong['longitude']),
+          //           ),
+          //         );
+          //         controller.addMarker(
+          //           MarkerOptions(
+          //             icon: BitmapDescriptor.fromAsset(
+          //               'assets/icons/green-pin.png',
+          //             ),
+          //             position: LatLng(
+          //                 widget.orderDetail['location']['latitude'],
+          //                 widget.orderDetail['location']['longitude']),
+          //           ),
+          //         );
+          //       },
+          //       compassEnabled: true,
+          //       myLocationEnabled: true,
+          //       initialCameraPosition: CameraPosition(
+          //         bearing: 360.0,
+          //         target: LatLng(
+          //           widget.orderDetail['location']['latitude'],
+          //           widget.orderDetail['location']['longitude'],
+          //         ),
+          //         tilt: 10.0,
+          //         zoom: 10.0,
+          //       ),
+          //     )),
           new Positioned(
               child: new Container(
                   padding: EdgeInsets.all(20.0),
@@ -108,30 +164,30 @@ class _LocationState extends State<LocationDetail> {
                         ],
                       )),
 
-                      Expanded(
-                          child: new Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          new Column(
-                            children: <Widget>[
-                              new Text(
-                                'Navigate',
-                                style: textsmallregular(),
-                                textAlign: TextAlign.end,
-                              ),
-                              Padding(
-                                  padding:
-                                      EdgeInsetsDirectional.only(top: 5.0)),
-                              new Padding(
-                                padding: EdgeInsets.only(right: 10.0),
-                                child: new Image.asset(
-                                  'assets/icons/navigate.png',
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ))
+                      // Expanded(
+                      //     child: new Row(
+                      //   mainAxisAlignment: MainAxisAlignment.end,
+                      //   children: <Widget>[
+                      //     new Column(
+                      //       children: <Widget>[
+                      //         new Text(
+                      //           'Navigate',
+                      //           style: textsmallregular(),
+                      //           textAlign: TextAlign.end,
+                      //         ),
+                      //         Padding(
+                      //             padding:
+                      //                 EdgeInsetsDirectional.only(top: 5.0)),
+                      //         new Padding(
+                      //           padding: EdgeInsets.only(right: 10.0),
+                      //           child: new Image.asset(
+                      //             'assets/icons/navigate.png',
+                      //           ),
+                      //         )
+                      //       ],
+                      //     )
+                      //   ],
+                      // ))
 //                Expanded(
 //                    child: FlatButton(onPressed:
 //                myController == null ? null : (){

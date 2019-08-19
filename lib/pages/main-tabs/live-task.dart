@@ -19,12 +19,12 @@ class LiveTasks extends StatefulWidget {
 class _LiveTasksState extends State<LiveTasks> {
   bool val = true;
 
-  Map<String, double> startLocation;
-  Map<String, double> currentLocation;
+  var startLocation;
+  var currentLocation;
 
-  StreamSubscription<Map<String, double>> locationSubscription;
+  var locationSubscription;
 
-  Location _location = new Location();
+  var _location = new Location();
   bool permission = false;
   String error;
 
@@ -41,21 +41,20 @@ class _LiveTasksState extends State<LiveTasks> {
   }
 
   getResult() async {
-    locationSubscription = await _location
-        .onLocationChanged()
-        .listen((Map<String, double> result) {
+    locationSubscription =
+        _location.onLocationChanged().listen((LocationData result) {
       if (mounted) {
         setState(() {
           currentLocation = result;
         });
       }
-      print('kkkkkk $currentLocation');
+      // print('kkkkkk $currentLocation');
     });
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-    Map<String, double> location;
+    var location;
     // Platform messages may fail, so we use a try/catch PlatformException.
 
     try {
@@ -102,18 +101,23 @@ class _LiveTasksState extends State<LiveTasks> {
       key: _asyncLoaderState,
       initState: () async => await getNewOrderToDeliveryBoy(),
       renderLoad: () => Center(child: CircularProgressIndicator()),
-      // renderError: ([error]) => NoData(
-      //     message: 'Please check your internet connection!',
-      //     icon: Icons.block),
+      renderError: ([error]) =>
+          new Text('Sorry, there was an error loading...'),
       renderSuccess: ({data}) {
         if (data.length > 0) {
           orderList = data;
-          print('ksdgfksdgfsdf--$orderList');
+          //  print('ksdgfksdgfsdf--$orderList');
 
           return pickupBuild(data);
         } else {
-          print('no data found');
-          return pickupBuild(data);
+          // print('no data found');
+          return Padding(
+              padding: EdgeInsets.only(top: 100.0),
+              child: Container(
+                  child: Text(
+                "No Orders",
+                style: TextStyle(fontSize: 20.0),
+              )));
         }
       },
     );
@@ -171,11 +175,13 @@ class _LiveTasksState extends State<LiveTasks> {
                     ),
                   ),
                   new Container(
-                    margin: EdgeInsets.only(bottom: 25.0),
+                    // margin: EdgeInsets.only(bottom: 25.0),
                     color: Colors.white,
                     child: new ListTile(
                       leading: new Image.network(
-                        orders[index]['productDetails'][0]['imageUrl'],
+                        orders[index]['productDetails'][0]['imageUrl'] == null
+                            ? "No Image"
+                            : orders[index]['productDetails'][0]['imageUrl'],
                         height: 45.0,
                       ),
                       title: new Text(
@@ -189,19 +195,19 @@ class _LiveTasksState extends State<LiveTasks> {
                       trailing: new Image.asset('assets/icons/right-arrow.png'),
                     ),
                   ),
-                  new Padding(
-                    padding: EdgeInsets.only(right: 20.0),
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        new Text(
-                          'CURRENT TASK',
-                          textAlign: TextAlign.end,
-                          style: textboldSmall(),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // new Padding(
+                  //   padding: EdgeInsets.only(right: 20.0),
+                  //   child: new Row(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: <Widget>[
+                  //       new Text(
+                  //         'CURRENT TASK',
+                  //         textAlign: TextAlign.end,
+                  //         style: textboldSmall(),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             );
@@ -253,7 +259,7 @@ class _LiveTasksState extends State<LiveTasks> {
           ),
         ),
         new Container(
-            margin: EdgeInsets.only(bottom: 25.0),
+            //  margin: EdgeInsets.only(bottom: 25.0),
             padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             color: Colors.white,
             child: new GestureDetector(
@@ -286,7 +292,7 @@ class _LiveTasksState extends State<LiveTasks> {
                             new Padding(
                               padding: EdgeInsets.only(left: 4.0),
                               child: new Text(
-                                '${order['shippingAddress']['name']}',
+                                '${order['shippingAddress'] == null ? "" : order['shippingAddress']['name']}',
                                 style: textmediumb(),
                               ),
                             ),
@@ -314,7 +320,7 @@ class _LiveTasksState extends State<LiveTasks> {
                         child: new Padding(
                             padding: EdgeInsets.only(left: 55.0, right: 30.0),
                             child: new Text(
-                              '${order['shippingAddress']['locationName']},${order['shippingAddress']['address']},Contact No- ${order['shippingAddress']['contactNumber']}',
+                              '${order['shippingAddress'] == null ? "" : order['shippingAddress']['locationName']},${order['shippingAddress'] == null ? "" : order['shippingAddress']['address']},Contact No- ${order['shippingAddress'] == null ? "" : order['shippingAddress']['contactNumber']}',
                               style: textblack(),
                             )),
                       )

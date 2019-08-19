@@ -12,16 +12,22 @@ class History extends StatefulWidget {
 class _HistoryState extends State<History> {
   int dollars = 114;
   String data = "Hero";
-  int orderId;
+  int orderId, searchOrderId;
   List orderDataList = List();
   List deliveredOrderList = List();
   List orderList = List();
+  List searchOrderDataList = List();
+  List searchDeliveredOrderList = List();
+  List searchOrderList = List();
   final GlobalKey<AsyncLoaderState> _asyncLoaderState =
       GlobalKey<AsyncLoaderState>();
 
   getDeliveredOrdersList() async {
     return await OrdersService.getAssignedOrdersListToDeliveryBoy('Delivered');
   }
+
+  TextEditingController editingController = TextEditingController();
+  TextEditingController controller = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,9 @@ class _HistoryState extends State<History> {
         if (data.length > 0) {
           deliveredOrderList = data;
           orderList = data;
-          return buildDeliveredList();
+          return buildDeliveredList(data);
+        } else {
+          return Container(child: Text("No History"));
         }
       },
     );
@@ -41,120 +49,224 @@ class _HistoryState extends State<History> {
         backgroundColor: bglight,
         body: ListView(
           children: <Widget>[
-            SingleChildScrollView(
-                child: new Column(
+            new Column(
               children: <Widget>[
-                new Container(
-                  margin: EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0),
-                  decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Color(0xFF707070).withOpacity(0.46)),
-                      borderRadius: BorderRadius.all(Radius.circular(50.0))),
-                  child: new Row(
-                    children: <Widget>[
-                      Flexible(
-                          flex: 1,
-                          fit: FlexFit.tight,
-                          child: new Icon(Icons.search)),
-                      Flexible(
-                        flex: 4,
-                        fit: FlexFit.tight,
-                        child: new TextField(
-                          decoration: new InputDecoration(
-                            labelStyle: TextStyle(color: Colors.grey),
-                            border: InputBorder.none,
-                          ),
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 12.0,
-                          ),
-                          keyboardType: TextInputType.phone,
-                          onChanged: (String value) {
-                            setState(() {
-                              orderId = int.parse(value);
-                            });
-                            print(value.length);
-                            if (value.length == 5) {
-                              for (int i = 0; i < orderList.length; i++) {
-                                if (orderList[i]['orderID'] == orderId) {
-                                  print('inside if ');
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      keyboardType: TextInputType.phone,
+                      onChanged: (String value) {
+                        setState(() {
+                          searchOrderId = int.parse(value);
+                        });
+                        // print(value.length);
+                        if (value.length == 5) {
+                          for (int i = 0; i < orderList.length; i++) {
+                            if (orderList[i]['orderID'] == searchOrderId) {
+                              print('inside if....... ');
 
-                                  orderDataList = [];
-                                  orderDataList.add(orderList[i]);
-                                  deliveredOrderList = orderDataList;
-                                  print(' $orderDataList');
-                                  setState(() {
-                                    data = "Zero";
-                                    deliveredOrderList = orderDataList;
-                                  });
-                                  print('here yr data $deliveredOrderList');
-                                  // buildDeliveredList(deliveredOrderList);
-                                  break;
-                                } else {
-                                  print("not found");
-                                }
-                              }
+                              searchOrderDataList = [];
+                              print(searchOrderDataList);
+                              searchOrderDataList.add(orderList[i]);
+                              print(searchOrderDataList);
+                              searchDeliveredOrderList = searchOrderDataList;
+                              print('ddjnsvnf $searchOrderDataList');
+                              setState(() {
+                                data = "Zero";
+                                searchDeliveredOrderList = searchOrderDataList;
+                              });
+                              print('here yr data $searchDeliveredOrderList');
+                              // buildDeliveredList(searchDeliveredOrderList);
+                              return;
+                            } else {
+                              print("not found");
+
+                              // buildDeliveredList(data);
                             }
-                            print(orderId);
-                          },
-                        ),
-                      ),
-                    ],
+                          }
+                        } else {
+                          print("inside elese");
+                          setState(() {
+                            searchOrderDataList = [];
+                            deliveredOrderList = orderList;
+                          });
+                          print(deliveredOrderList);
+                        }
+                        // print(searchOrderId);
+                      },
+                      //controller: editingController,
+                      decoration: InputDecoration(
+                          labelText: "Search",
+                          hintText: "Search",
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25.0)))),
+                    ),
                   ),
                 ),
-                asyncloader
+
+                // new Container(
+                //   margin: EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0),
+                //   decoration: BoxDecoration(
+                //       border: Border.all(
+                //           color: Color(0xFF707070).withOpacity(0.46)),
+                //       borderRadius: BorderRadius.all(Radius.circular(50.0))),
+                //   child: new Row(
+                //     children: <Widget>[
+                //       // Flexible(
+                //       //     flex: 1,
+                //       //     fit: FlexFit.tight,
+                //       //     child: new Icon(Icons.search)),
+                //       // Flexible(
+                //       //   flex: 4,
+                //       //   fit: FlexFit.tight,
+                //       //   child: new TextField(
+                //       //     decoration: new InputDecoration(
+                //       //       labelStyle: TextStyle(color: Colors.grey),
+                //       //       border: InputBorder.none,
+                //       //     ),
+                //       //     style: TextStyle(
+                //       //       color: Colors.black54,
+                //       //       fontSize: 12.0,
+                //       //     ),
+                //       //     keyboardType: TextInputType.phone,
+                //       //     onChanged: (String value) {
+                //       //       setState(() {
+                //       //         searchOrderId = int.parse(value);
+                //       //       });
+                //       //       print(value.length);
+                //       //       if (value.length == 5) {
+                //       //         for (int i = 0; i < orderList.length; i++) {
+                //       //           if (orderList[i]['orderID'] == searchOrderId) {
+                //       //             print('inside if ');
+
+                //       //             searchOrderDataList = [];
+                //       //             searchOrderDataList.add(searchOrderList[i]);
+                //       //             searchDeliveredOrderList =
+                //       //                 searchOrderDataList;
+                //       //             print(' $searchOrderDataList');
+                //       //             setState(() {
+                //       //               data = "Zero";
+                //       //               searchDeliveredOrderList =
+                //       //                   searchOrderDataList;
+                //       //             });
+                //       //             print(
+                //       //                 'here yr data $searchDeliveredOrderList');
+                //       //             searchBuildDeliveredList(
+                //       //                 searchDeliveredOrderList);
+                //       //             break;
+                //       //           } else {
+                //       //             print("not found");
+                //       //             return buildDeliveredList(data);
+                //       //           }
+                //       //         }
+                //       //       }
+                //       //       print(searchOrderId);
+                //       //     },
+                //       //   ),
+                //       // ),
+                //     ],
+                //   ),
+                // ),
+                Center(child: asyncloader),
               ],
-            )),
+            )
           ],
         ));
   }
 
-  Widget buildDeliveredList() {
-    print("called $data             $deliveredOrderList");
+  Widget buildDeliveredList(dynamic data) {
+    // print("called $data             $deliveredOrderList");
+
     return Column(
       children: <Widget>[
-        ListView.builder(
-            itemCount: deliveredOrderList.length,
-            shrinkWrap: true,
-            physics: ScrollPhysics(),
-            itemBuilder: (BuildContext context, int index) {
-              return Column(
-                children: <Widget>[
-                  new Container(
-                    padding: EdgeInsets.all(25.0),
-                    margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
-                    color: Colors.white,
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Expanded(
-                            child: new Text(
-                          '#${deliveredOrderList[index]['orderID']}',
-                          textAlign: TextAlign.center,
-                          style: textmediumsm(),
-                        )),
-                        Expanded(
-                            child: new Text(
-                          ' ${deliveredOrderList[index]['productDetails'].length}  items',
-                          textAlign: TextAlign.center,
-                          style: textmediumsm(),
-                        )),
-                        Expanded(
-                            child: new Text(
-                          new DateFormat.yMMMMd("en_US").add_jm().format(
-                              DateTime.parse(
-                                  '${deliveredOrderList[index]['createdAt']}')),
-                          textAlign: TextAlign.center,
-                          style: textmediumsm(),
-                        )),
-                        // Expanded(child: new Icon(Icons.keyboard_arrow_right))
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            })
+        searchOrderDataList.length != 0 || controller.text.isNotEmpty
+            ? ListView.builder(
+                itemCount: searchDeliveredOrderList.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: <Widget>[
+                      new Container(
+                        padding: EdgeInsets.all(25.0),
+                        margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
+                        color: Colors.white,
+                        child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                                child: new Text(
+                              '#${searchDeliveredOrderList[index]['orderID']}',
+                              textAlign: TextAlign.center,
+                              style: textmediumsm(),
+                            )),
+                            Expanded(
+                                child: new Text(
+                              ' ${searchDeliveredOrderList[index]['productDetails'].length}  items',
+                              textAlign: TextAlign.center,
+                              style: textmediumsm(),
+                            )),
+                            Expanded(
+                                child: new Text(
+                              new DateFormat.yMMMMd("en_US").add_jm().format(
+                                  DateTime.parse(
+                                      '${searchDeliveredOrderList[index]['createdAt']}')),
+                              textAlign: TextAlign.center,
+                              style: textmediumsm(),
+                            )),
+                            // Expanded(child: new Icon(Icons.keyboard_arrow_right))
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                })
+            : ListView.builder(
+                itemCount: deliveredOrderList.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: <Widget>[
+                      new Container(
+                        padding: EdgeInsets.all(25.0),
+                        margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
+                        color: Colors.white,
+                        child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                                child: new Text(
+                              '#${deliveredOrderList[index]['orderID']}',
+                              textAlign: TextAlign.center,
+                              style: textmediumsm(),
+                            )),
+                            Expanded(
+                                child: new Text(
+                              ' ${deliveredOrderList[index]['productDetails'].length}  items',
+                              textAlign: TextAlign.center,
+                              style: textmediumsm(),
+                            )),
+                            Expanded(
+                                child: new Text(
+                              new DateFormat.yMMMMd("en_US").add_jm().format(
+                                  DateTime.parse(
+                                      '${deliveredOrderList[index]['createdAt']}')),
+                              textAlign: TextAlign.center,
+                              style: textmediumsm(),
+                            )),
+                            // Expanded(child: new Icon(Icons.keyboard_arrow_right))
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                })
       ],
     );
   }

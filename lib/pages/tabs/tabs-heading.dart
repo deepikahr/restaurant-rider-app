@@ -27,9 +27,9 @@ class _TabsHeadingState extends State<TabsHeading>
     getAcceptedOrders();
     _tabs = [
       new Tab(
-        text: "New ($newOrderLength)",
+        text: "New",
       ),
-      new Tab(text: 'Processing ($pocessingOrderLength)'),
+      new Tab(text: 'Processing '),
       new Tab(text: 'History'),
     ];
     _pages = [new New(), new Processing(), new History()];

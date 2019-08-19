@@ -16,9 +16,7 @@ final darkgreen = const Color(0xFF1c5b10).withOpacity(0.40);
 final lightwhite = const Color(0xFFffffff).withOpacity(0.76);
 final redbtn = const Color(0xFFfe2424);
 final blue = const Color(0xFF038be6);
-
-
-
+final secondary = const Color(0xFFBE9063);
 
 //-----------------------------------------51---
 
@@ -28,7 +26,6 @@ final whited = const Color(0xFFF5F5F5);
 final google = const Color(0xFFDD4B39);
 final facebook = const Color(0xFF3151BD);
 final twitter = const Color(0xFF50ABF1);
-
 
 //.................................. Roboto Regular ....................................
 
@@ -52,6 +49,22 @@ TextStyle textwhites() {
   );
 }
 
+TextStyle subTitleWhite() {
+  return new TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 16.0,
+    color: Colors.white,
+  );
+}
+
+TextStyle subBoldTitleStyle() {
+  return new TextStyle(
+    fontSize: 16.0,
+    color: Colors.white,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 1.0,
+  );
+}
 
 TextStyle textredsmall() {
   return new TextStyle(
@@ -78,7 +91,7 @@ TextStyle textsmallregular() {
     fontWeight: FontWeight.w400,
     fontSize: 13.0,
     letterSpacing: 0.3,
-    color:blacka,
+    color: blacka,
     fontFamily: 'RobotoRegular',
   );
 }
@@ -88,7 +101,7 @@ TextStyle textsmallbold() {
     fontWeight: FontWeight.w400,
     fontSize: 15.0,
     letterSpacing: 0.3,
-    color:boldblack,
+    color: boldblack,
     fontFamily: 'RobotoRegular',
   );
 }
@@ -124,6 +137,7 @@ TextStyle textlightblack() {
     fontFamily: 'RobotoMedium',
   );
 }
+
 TextStyle textlight() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
@@ -164,6 +178,7 @@ TextStyle textmediumblue() {
     fontFamily: 'RobotoMedium',
   );
 }
+
 TextStyle textblueblack() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
@@ -172,6 +187,7 @@ TextStyle textblueblack() {
     fontFamily: 'RobotoMedium',
   );
 }
+
 TextStyle textdullblack() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
@@ -202,7 +218,6 @@ TextStyle textblackc() {
   );
 }
 
-
 TextStyle textblack() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
@@ -214,7 +229,6 @@ TextStyle textblack() {
   );
 }
 
-
 TextStyle textmediumsmall() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
@@ -223,7 +237,6 @@ TextStyle textmediumsmall() {
     fontFamily: 'RobotoMedium',
   );
 }
-
 
 TextStyle textmediumsm() {
   return new TextStyle(
@@ -253,14 +266,12 @@ TextStyle textmediumwhite() {
   );
 }
 
-
-
 TextStyle textred() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 18.0,
     letterSpacing: 0.3,
-    color:red,
+    color: red,
     fontFamily: 'RobotoMedium',
   );
 }
@@ -293,4 +304,3 @@ TextStyle textboldSmall() {
     fontFamily: 'RobotoBold',
   );
 }
-
