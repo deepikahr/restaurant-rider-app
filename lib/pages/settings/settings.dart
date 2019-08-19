@@ -2,6 +2,7 @@ import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/services/auth.dart';
 import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' as prefix0;
 import '../../styles/styles.dart';
 
 import 'package:async_loader/async_loader.dart';
@@ -106,6 +107,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   onPressed: () {
                     Navigator.of(context).pushNamed(HomePage.tag);
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -224,7 +226,7 @@ class _SettingsState extends State<Settings> {
                       child: new FloatingActionButton(
                         foregroundColor: primary,
                         backgroundColor: Colors.white12,
-                        onPressed: () => takeImage(),
+                        onPressed: () => null,
                         tooltip: 'Take Photo',
                         child: new Icon(Icons.camera_alt),
                       ),
@@ -233,7 +235,7 @@ class _SettingsState extends State<Settings> {
                       child: new FloatingActionButton(
                         foregroundColor: primary,
                         backgroundColor: Colors.white12,
-                        onPressed: () => selectImage(),
+                        onPressed: () => null,
                         tooltip: 'Select Photo',
                         child: new Icon(Icons.image),
                       ),
