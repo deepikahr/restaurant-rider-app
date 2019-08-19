@@ -55,9 +55,13 @@ updateUserInfo(name, email, phone, userId) async {
   final Map<String, dynamic> authData = {
     'name': name,
     'email': email,
-    'phone': phone
+    'phone': phone,
   };
   var data = json.encode(authData);
+  prefs.setString('name', authData['name']);
+  prefs.setString('email', authData['email']);
+  prefs.setString('profileImage', authData['imageUrl']);
+  prefs.setString('contactNumber', authData['contactNumber']);
   print(data);
   return await http.put(BASE_URL + 'api/users/${userId}', body: data, headers: {
     'Content-Type': 'application/json',
