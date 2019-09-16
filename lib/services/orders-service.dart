@@ -16,7 +16,7 @@ class OrdersService {
     final response = await client.get(
         API_ENDPOINT + 'deliveryoptions/delivery/assigned/$orderStatus',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
-
+    // print("live  ${json.decode(response.body));
     return json.decode(response.body);
   }
 
@@ -27,7 +27,7 @@ class OrdersService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    print(token);
+    // print(token);
     final response = await client.get(
         API_ENDPOINT + 'deliveryoptions/deliveryboy/details/$date/$month/$year',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
@@ -39,22 +39,27 @@ class OrdersService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    print("$token");
-    print(body);
+    // print("$token");
+    // print(body);
     final response = await client.put(API_ENDPOINT + 'orders/$id',
         body: body,
         headers: {'Content-Type': 'application/json', 'Authorization': token});
-    print(json.decode(response.body));
+    // print(json.decode(response.body));
     return json.decode(response.body);
   }
 
   static Future<dynamic> getUserInfo() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String authToken = prefs.getString('token');
-    print(authToken);
-    return await client.get(API_ENDPOINT + 'users/me', headers: {
-      'Content-Type': 'application/json',
-      'Authorization': authToken,
+    String token;
+    await Common.getToken().then((onValue) {
+      token = 'bearer ' + onValue;
     });
+    // print("$token");
+
+    final response = await client.get(API_ENDPOINT + 'users/me', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token,
+    });
+
+    return json.decode(response.body);
   }
 }

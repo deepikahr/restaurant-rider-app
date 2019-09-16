@@ -26,27 +26,23 @@ class _HomePageState extends State<HomePage> {
     // getCartItem();
 
     super.initState();
-    //fetchUserInfo();
+    fetchUserInfo();
   }
 
-  // fetchUserInfo() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  fetchUserInfo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  //   await OrdersService.getUserInfo().then((response) {
-  //     final int statusCode = response.statusCode;
-  //     print(json.decode(response.body));
-  //     userData = json.decode(response.body);
-  //     prefs.setString('userId', userData['_id']);
-  //     prefs.setString('userName', userData['name']);
-  //     prefs.setString('userEmail', userData['email']);
-  //     prefs.setString('profileImage', userData['imageUrl']);
-  //     prefs.setString('contactNumber', userData['contactNumber']);
-  //     prefs.setString('address', userData['address']);
-  //     if (statusCode != 200 || json == null) {
-  //       throw new Exception("Error while fetching data");
-  //     }
-  //   });
-  // }
+    await OrdersService.getUserInfo().then((response) {
+      // print(response);
+      userData = json.decode(response.body);
+      prefs.setString('userId', userData['_id']);
+      prefs.setString('userName', userData['name']);
+      prefs.setString('userEmail', userData['email']);
+      prefs.setString('profileImage', userData['imageUrl']);
+      prefs.setString('contactNumber', userData['contactNumber']);
+      prefs.setString('address', userData['address']);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

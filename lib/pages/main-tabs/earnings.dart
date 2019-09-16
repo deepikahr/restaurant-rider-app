@@ -53,7 +53,7 @@ class _EarningsState extends State<Earnings> {
           orderList = data['orders'];
           selectedDate = orderList[0]['createdAt'];
           print(data);
-          return buildDeliveredList();
+          return buildDeliveredList(selectedDate);
         } else {
           return Container(child: Text("No Earning"));
         }
@@ -110,7 +110,7 @@ class _EarningsState extends State<Earnings> {
   //           ));
   // }
 
-  Widget buildDeliveredList() {
+  Widget buildDeliveredList(selectedDate) {
     return new Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -128,7 +128,7 @@ class _EarningsState extends State<Earnings> {
               new Padding(padding: EdgeInsets.only(top: 5.0)),
               new Text(
                 DateFormat.yMMMMd("en_US")
-                    .format(DateTime.parse('${orderList[0]['createdAt']}')),
+                    .format(DateTime.parse('$selectedDate')),
                 overflow: TextOverflow.ellipsis,
                 style: textlight(),
               ),
@@ -174,27 +174,35 @@ class _EarningsState extends State<Earnings> {
                                     children: <Widget>[
                                       new Padding(
                                         padding: EdgeInsets.only(left: 4.0),
-                                        child: new Text(
-                                          orderList[index]['restaurantName'],
-                                          style: textmediumb(),
-                                        ),
+                                        child: orderList[index]
+                                                    ['restaurantName'] !=
+                                                null
+                                            ? new Text(
+                                                orderList[index]
+                                                    ['restaurantName'],
+                                                style: textmediumb(),
+                                              )
+                                            : Text(""),
                                       ),
                                       IntrinsicHeight(
-                                          child: new Row(
+                                          child: new Column(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.start,
                                         children: <Widget>[
                                           new Text(
                                             'Order - #${orderList[index]['orderID']}',
                                             style: textdblack(),
                                           ),
-                                          VerticalDivider,
-                                          new Text(
-                                            new DateFormat.yMMMMd("en_US")
-                                                .format(DateTime.parse(
-                                                    '${orderList[index]['createdAt']}')),
-                                            overflow: TextOverflow.ellipsis,
-                                            style: textdblack(),
+                                          // VerticalDivider,
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 5.0),
+                                            child: new Text(
+                                              new DateFormat.yMMMMd("en_US")
+                                                  .format(DateTime.parse(
+                                                      '${orderList[index]['createdAt']}')),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: textdblack(),
+                                            ),
                                           ),
                                         ],
                                       )),

@@ -24,7 +24,7 @@ class _NewState extends State<New> {
     setState(() {
       newOrderLength = orderData.length;
     });
-    print('newOrderLength ${orderData.length}');
+    // print('newOrderLength ${orderData.length}');
     return orderData;
   }
 
@@ -37,7 +37,7 @@ class _NewState extends State<New> {
       renderSuccess: ({data}) {
         if (data.length > 0) {
           orderList = data;
-          print('newOrderLength newOrderLength $newOrderLength');
+          // print('newOrderLength newOrderLength $newOrderLength');
           return buidNewOrdersList(data);
         } else {
           return Container(child: Text("No New Order"));
