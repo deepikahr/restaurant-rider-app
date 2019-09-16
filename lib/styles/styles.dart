@@ -26,7 +26,7 @@ final whited = const Color(0xFFF5F5F5);
 final google = const Color(0xFFDD4B39);
 final facebook = const Color(0xFF3151BD);
 final twitter = const Color(0xFF50ABF1);
-
+final darkTextb = const Color(0xFF343434);
 //.................................. Roboto Regular ....................................
 
 TextStyle textwhitesmall() {
@@ -36,6 +36,15 @@ TextStyle textwhitesmall() {
     letterSpacing: 0.5,
     color: Colors.white,
     fontFamily: 'RobotoRegular',
+  );
+}
+
+TextStyle textOS() {
+  return TextStyle(
+    fontWeight: FontWeight.w500,
+    fontSize: 13.0,
+    color: darkTextb,
+    fontFamily: 'OpenSansLight',
   );
 }
 

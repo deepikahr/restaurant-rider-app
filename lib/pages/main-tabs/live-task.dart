@@ -87,7 +87,10 @@ class _LiveTasksState extends State<LiveTasks> {
 
   getNewOrderToDeliveryBoy() async {
     String orderStatus = 'Accepted';
-    return await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus);
+    await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
+        .then((onValue) {
+      print("kljcon  $onValue");
+    });
   }
 
   int orderIndex = 0;
@@ -104,7 +107,8 @@ class _LiveTasksState extends State<LiveTasks> {
       renderError: ([error]) =>
           new Text('Sorry, there was an error loading...'),
       renderSuccess: ({data}) {
-        if (data.length > 0) {
+        // print(data);
+        if (data != null && data.length > 0) {
           orderList = data;
           //  print('ksdgfksdgfsdf--$orderList');
 
@@ -113,7 +117,7 @@ class _LiveTasksState extends State<LiveTasks> {
           // print('no data found');
           return Padding(
               padding: EdgeInsets.only(top: 100.0),
-              child: Container(
+              child: Center(
                   child: Text(
                 "No Orders",
                 style: TextStyle(fontSize: 20.0),

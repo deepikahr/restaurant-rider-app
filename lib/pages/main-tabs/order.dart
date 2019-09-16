@@ -13,8 +13,9 @@ class _OrderState extends State<Order> {
   bool val = true;
   @override
   Widget build(BuildContext context) {
-    print('inside oder data');
-    return SingleChildScrollView(
+    // print('inside oder data');
+    return Scaffold(
+        body: SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: ListView(
         physics: ScrollPhysics(),
@@ -23,7 +24,7 @@ class _OrderState extends State<Order> {
           new TabsHeading(),
         ],
       ),
-    );
+    ));
   }
 
 //  void something(bool e) {

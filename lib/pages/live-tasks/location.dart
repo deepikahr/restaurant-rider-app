@@ -21,7 +21,7 @@ class _LocationState extends State<LocationDetail> {
   final Set<Marker> markers = {};
   @override
   void initState() {
-    print('order detail${widget.orderDetail}');
+    // print('order detail${widget.orderDetail}');
     super.initState();
   }
 

@@ -27,22 +27,22 @@ class _LoginState extends State<Login> {
 
   login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print('herrr help me');
-    print('$email    $password');
+    // print('herrr help me');
+    // print('$email    $password');
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
       Map<String, dynamic> body = {
         'email': email,
         'password': password,
       };
-      print('$email    $password');
+      // print('$email    $password');
       setState(() {
         loading = true;
       });
       AuthService.login(
         body,
       ).then((onValue) {
-        print("responce   $onValue");
+        // print("responce   $onValue");
         prefs.setString("token", onValue['token']);
         if (onValue['message'] != null) {
           // print(onValue['message']);
@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
         if (onValue['token'] != null) {
           Common.setToken(onValue['token']).then((saved) {
             if (saved) {
-              print(onValue['token']);
+              // print(onValue['token']);
               //  showSnackbar('Login Successful');
               Future.delayed(Duration(milliseconds: 1500), () {
                 Navigator.of(context).pop();
@@ -68,13 +68,13 @@ class _LoginState extends State<Login> {
           });
         }
       }).catchError((onError) {
-        print(onError);
+        // print(onError);
         setState(() {
           loading = false;
         });
       });
     } else {
-      print('not valid');
+      // print('not valid');
       setState(() {
         loading = false;
       });
