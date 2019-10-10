@@ -78,6 +78,7 @@ class _LoginState extends State<Login> {
       setState(() {
         loading = false;
       });
+      return;
     }
   }
 
@@ -117,14 +118,14 @@ class _LoginState extends State<Login> {
     return new WillPopScope(
         onWillPop: _onWillPop,
         child: new Scaffold(
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.white,
             body: new Stack(
               fit: StackFit.expand,
               children: <Widget>[
                 // new Image(
                 //   image: new AssetImage("assets/1.jpeg"),
                 //   fit: BoxFit.cover,
-                //   color: Colors.black54,
+                //   color: Colors.white54,
                 //   colorBlendMode: BlendMode.darken,
                 // ),
 
@@ -169,20 +170,27 @@ class _LoginState extends State<Login> {
                                   margin: const EdgeInsets.all(5.0),
                                   decoration: new BoxDecoration(
                                     border: new Border.all(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                     ),
                                     borderRadius: new BorderRadius.all(
                                         Radius.circular(5.0)),
                                   ),
                                   alignment: FractionalOffset.center,
                                   child: new TextFormField(
+                                    initialValue: "charu@gmail.com",
+                                    style: TextStyle(color: Colors.black),
                                     decoration: new InputDecoration(
                                         border: InputBorder.none,
                                         hintText: 'Employee ID',
-                                        hintStyle: subBoldTitleStyle(),
+                                        hintStyle: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                          letterSpacing: 1.0,
+                                        ),
                                         icon: new Icon(
                                           Icons.email,
-                                          color: Colors.white,
+                                          color: Colors.black,
                                         )),
                                     keyboardType: TextInputType.emailAddress,
                                     validator: (String value) {
@@ -202,19 +210,26 @@ class _LoginState extends State<Login> {
                                   margin: const EdgeInsets.all(5.0),
                                   decoration: new BoxDecoration(
                                     border: new Border.all(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                     ),
                                     borderRadius: new BorderRadius.all(
                                         Radius.circular(5.0)),
                                   ),
                                   alignment: FractionalOffset.center,
                                   child: new TextFormField(
+                                    initialValue: "123456",
+                                    style: TextStyle(color: Colors.black),
                                     decoration: new InputDecoration(
                                       border: InputBorder.none,
                                       hintText: 'Password',
-                                      hintStyle: subBoldTitleStyle(),
+                                      hintStyle: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1.0,
+                                      ),
                                       icon: new Icon(Icons.lock,
-                                          color: Colors.white),
+                                          color: Colors.black),
                                     ),
                                     keyboardType: TextInputType.text,
 
@@ -240,9 +255,24 @@ class _LoginState extends State<Login> {
                                   ),
                                   child: RawMaterialButton(
                                     onPressed: login,
-                                    child: Text(
-                                      "SIGN IN",
-                                      // style: subBoldTitleStyle(),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "LOGIN TO YOUR ACCOUNT",
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 5.0, right: 5.0)),
+                                        loading
+                                            ? Image.asset(
+                                                'assets/icons/spinner.gif',
+                                                width: 19.0,
+                                                height: 19.0,
+                                              )
+                                            : Text(''),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -269,7 +299,7 @@ class _LoginState extends State<Login> {
 //                 child: Container(
 //                   margin: EdgeInsets.only(left: 10.0),
 //                   width: screenWidth * 0.95,
-//                   color: Colors.white,
+//                   color: Colors.black,
 //                   child: Form(
 //                     key: _formkey,
 //                     child: new Column(
