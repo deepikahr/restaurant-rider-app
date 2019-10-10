@@ -7,6 +7,7 @@ import 'package:delivery_app/pages/main-tabs/order.dart';
 import 'package:delivery_app/pages/profile/profile.dart';
 
 import 'package:delivery_app/services/auth.dart';
+import 'package:delivery_app/services/constant.dart';
 import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
@@ -83,14 +84,18 @@ class _drawerState extends State<drawer> {
                     child: new Column(
                       children: <Widget>[
                         new Padding(
-                          padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
-                          child: new Image.asset(
-                            'assets/icons/home.png',
-                            color: primary,
-                            width: 150.0,
-                            height: 30.0,
-                          ),
-                        ),
+                            padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
+                            child: Column(
+                              children: <Widget>[
+                                new Image.asset(
+                                  'assets/imgs/logo.png',
+                                  // color: primary,
+                                  width: 150.0,
+                                  height: 100.0,
+                                ),
+                                Text(APP_NAME)
+                              ],
+                            )),
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
