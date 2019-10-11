@@ -27,7 +27,10 @@ class _ProcessingState extends State<Processing> {
     var asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getOnTheWayOrdersList(),
-      renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderLoad: () => Center(
+          child: CircularProgressIndicator(
+        backgroundColor: primary,
+      )),
       renderSuccess: ({data}) {
         if (data.length > 0) {
           onTheWayordersList = data;
