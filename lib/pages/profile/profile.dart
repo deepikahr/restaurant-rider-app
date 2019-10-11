@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../styles/styles.dart';
 import '../../services/profile-service.dart';
 import 'package:async_loader/async_loader.dart';
-
+import 'package:toast/toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
@@ -42,6 +42,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
       ProfileService.setUserInfo(profileData['_id'], profileData)
           .then((onValue) {
+        Toast.show("Your profile Successfully UPDATED", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         setState(() {
           isLoading = false;
         });
@@ -55,42 +57,109 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     }
   }
 
-  static File _imageFile;
+  File _imageFile;
 
-  void _choose() async {
+  void _choosegallery() async {
     var file = await ImagePicker.pickImage(source: ImageSource.gallery);
     // base64Image = base64Encode(file.readAsBytesSync());
-    setState(() {
+    setState(() async {
       _imageFile = file;
+      setState(() {
+        isPicUploading = true;
+      });
+      if (_imageFile != null) {
+        var stream =
+            new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
+        Map<String, dynamic> body = {"baseKey": base64Image};
+        Map<String, dynamic> imageData;
+        await ProfileService.uploadProfileImage(
+          _imageFile,
+          stream,
+          profileData['_id'],
+        );
+        setState(() {
+          isPicUploading = false;
+        });
+      }
     });
   }
 
-  void _upload() async {
-    setState(() {
-      isPicUploading = true;
-    });
-    if (_imageFile != null) {
-      var stream =
-          new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
-      Map<String, dynamic> body = {"baseKey": base64Image};
-      Map<String, dynamic> imageData;
-      await ProfileService.uploadProfileImage(
-        _imageFile,
-        stream,
-        profileData['_id'],
-      );
+  void _choosecemera() async {
+    var file = await ImagePicker.pickImage(source: ImageSource.camera);
+    // base64Image = base64Encode(file.readAsBytesSync());
+    setState(() async {
+      _imageFile = file;
       setState(() {
-        isPicUploading = false;
+        isPicUploading = true;
       });
-      // await ProfileService.setUserInfo(profileData['_id'], {
-      //   'publicId': imageData['public_id'],
-      //   'logo': imageData['url']
-      // }).then((onValue) {
-      //   setState(() {
-      //     isPicUploading = false;
-      //   });
-      // });
-    }
+      if (_imageFile != null) {
+        var stream =
+            new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
+        Map<String, dynamic> body = {"baseKey": base64Image};
+        Map<String, dynamic> imageData;
+        await ProfileService.uploadProfileImage(
+          _imageFile,
+          stream,
+          profileData['_id'],
+        );
+        setState(() {
+          isPicUploading = false;
+        });
+      }
+    });
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: InkWell(
+              onTap: () {
+                _choosegallery();
+                Navigator.of(context).pop(false);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.image, size: 18.0, color: Colors.black),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                  ),
+                  Text(
+                    "Select Gallery",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            content: InkWell(
+              onTap: () {
+                _choosecemera();
+                Navigator.of(context).pop(false);
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Icon(Icons.delete, size: 18.0, color: Colors.black),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                  ),
+                  Text("Select Cemera",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontSize: 18.0,
+                      )),
+                ],
+              ),
+            ),
+          ),
+        ) ??
+        false;
   }
 
   @override
@@ -98,7 +167,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     AsyncLoader _asyncLoader = AsyncLoader(
         key: _asyncLoaderState,
         initState: () async => await getProfileInfo(),
-        renderLoad: () => Center(child: CircularProgressIndicator()),
+        renderLoad: () => Center(
+                child: CircularProgressIndicator(
+              backgroundColor: primary,
+            )),
         renderError: ([error]) =>
             Text('Please check your internet connection!'),
         renderSuccess: ({data}) {
@@ -107,82 +179,43 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             shrinkWrap: true,
             physics: ScrollPhysics(),
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      new BoxShadow(
-                        blurRadius: 3.0,
-                      ),
-                    ],
-                    border: Border(
-                      top: BorderSide(color: Colors.grey, width: 1.5),
-                      bottom: BorderSide(color: Colors.grey, width: 1.5),
-                    )),
-                child: ListTile(
-                  leading: Container(
-                    height: 50.0,
-                    width: 50.0,
-                    decoration: new BoxDecoration(
-                      border: new Border.all(color: Colors.black, width: 2.0),
-                      borderRadius: BorderRadius.circular(80.0),
-                    ),
-                    child: _imageFile == null
-                        ? profileData['logo'] != null
-                            ? new CircleAvatar(
-                                backgroundImage:
-                                    new NetworkImage("${profileData['logo']}"),
-                              )
-                            : new CircleAvatar(
-                                backgroundImage:
-                                    new AssetImage('assets/imgs/dp.jpg'))
-                        : new CircleAvatar(
-                            backgroundImage: new FileImage(_imageFile),
-                            radius: 80.0,
-                          ),
-                  ),
-                  title: Row(
-                    children: [
-                      RaisedButton(
-                        color: Colors.lightBlue,
-                        onPressed: _choose,
-                        child: Text(
-                          "Change",
-                          style: textOS(),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 5.0),
-                      ),
-                      isPicUploading
-                          ? RaisedButton(
-                              onPressed: () {},
-                              color: Colors.lightBlue,
-                              child: Image.asset(
-                                'assets/icons/spinner.gif',
-                                width: 19.0,
-                                height: 19.0,
-                              ),
-                            )
-                          : RaisedButton(
-                              onPressed: _upload,
-                              color: Colors.lightBlue,
-                              child: Text(
-                                "Upload",
-                                style: textOS(),
-                              ),
-                            ),
-                    ],
-                  ),
-                ),
-              ),
               new Padding(
                 padding: EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: InkWell(
+                          onTap: _onWillPop,
+                          child: Container(
+                            height: 120.0,
+                            width: 120.0,
+                            decoration: new BoxDecoration(
+                              border: new Border.all(
+                                  color: Colors.black, width: 2.0),
+                              borderRadius: BorderRadius.circular(80.0),
+                            ),
+                            child: _imageFile == null
+                                ? profileData['logo'] != null
+                                    ? new CircleAvatar(
+                                        backgroundImage: new NetworkImage(
+                                            "${profileData['logo']}"),
+                                      )
+                                    : new CircleAvatar(
+                                        backgroundImage: new AssetImage(
+                                            'lib/assets/imgs/na.jpg'))
+                                : isPicUploading
+                                    ? CircularProgressIndicator()
+                                    : new CircleAvatar(
+                                        backgroundImage:
+                                            new FileImage(_imageFile),
+                                        radius: 80.0,
+                                      ),
+                          ),
+                        ),
+                      ),
                       Container(
                         margin: EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(

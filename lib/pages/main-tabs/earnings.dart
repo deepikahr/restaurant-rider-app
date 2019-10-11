@@ -14,7 +14,7 @@ class Earnings extends StatefulWidget {
 class _EarningsState extends State<Earnings> {
   bool val = true;
   int dollar = 120;
-  double total;
+  int total;
   String selectedDate;
   int profit = 20;
 
@@ -45,9 +45,13 @@ class _EarningsState extends State<Earnings> {
     var asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getDeliveredOrdersListOnSelectedDate(),
-      renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderLoad: () => Center(
+          child: CircularProgressIndicator(
+        backgroundColor: primary,
+      )),
       renderSuccess: ({data}) {
         if (data != null && data['orders'].length > 0) {
+          print(data['totalOrderEarningCOD']);
           total = data['totalOrderEarningCOD'];
 
           orderList = data['orders'];

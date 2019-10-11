@@ -103,7 +103,10 @@ class _LiveTasksState extends State<LiveTasks> {
     AsyncLoader asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getNewOrderToDeliveryBoy(),
-      renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderLoad: () => Center(
+          child: CircularProgressIndicator(
+        backgroundColor: primary,
+      )),
       renderError: ([error]) =>
           new Text('Sorry, there was an error loading...'),
       renderSuccess: ({data}) {

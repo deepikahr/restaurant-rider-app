@@ -86,18 +86,21 @@ class ProfileService {
     print('$response');
     response.stream.transform(utf8.decoder).listen((value) {
       // print('value $value');
-      var profileImageRes = value + "}";
+      var profileImageRes;
+     if (value.substring(value.length - 1, value.length) == "}") {
+        profileImageRes = value;
+      } else {
+        profileImageRes = value + "}";
+      }
 
       if (value.length > 3) {
         var profileValue = json.decode(profileImageRes);
         print('PROFILERES   $profileValue');
         // prefs.setString("logo", profileValue['url']);
-        print("auto set ${profileValue['public_id']}");
+        print("auto set ${profileValue['public_id']} ${profileValue['url']}");
         ProfileService.setUserProfileInfo(id, {
           'publicId': profileValue['public_id'],
           'logo': profileValue['url']
-        }).then((onValue) {
-          print("jgcvjb  $onValue");
         });
       }
     });

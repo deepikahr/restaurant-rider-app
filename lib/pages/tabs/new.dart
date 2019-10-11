@@ -33,7 +33,10 @@ class _NewState extends State<New> {
     AsyncLoader asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getAcceptedOrdersList(),
-      renderLoad: () => CircularProgressIndicator(),
+      renderLoad: () => Center(
+          child: CircularProgressIndicator(
+        backgroundColor: primary,
+      )),
       renderSuccess: ({data}) {
         if (data.length > 0) {
           orderList = data;

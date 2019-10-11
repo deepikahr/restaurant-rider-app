@@ -34,7 +34,10 @@ class _HistoryState extends State<History> {
     AsyncLoader asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getDeliveredOrdersList(),
-      renderLoad: () => Center(child: CircularProgressIndicator()),
+      renderLoad: () => Center(
+          child: CircularProgressIndicator(
+        backgroundColor: primary,
+      )),
       renderSuccess: ({data}) {
         if (data.length > 0) {
           deliveredOrderList = data;
