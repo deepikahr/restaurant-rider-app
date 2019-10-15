@@ -60,7 +60,7 @@ class _drawerState extends State<drawer> {
         ),
         child: imgUrl == null
             ? new CircleAvatar(
-                backgroundImage: new AssetImage('assets/bgs/bg.png'))
+                backgroundImage: new AssetImage('assets/imgs/na.jpg'))
             : new CircleAvatar(
                 backgroundImage: new NetworkImage(imgUrl),
                 radius: 80.0,
@@ -98,6 +98,7 @@ class _drawerState extends State<drawer> {
                             )),
                         GestureDetector(
                           onTap: () {
+                            Navigator.of(context).pop();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
