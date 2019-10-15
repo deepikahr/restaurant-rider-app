@@ -61,6 +61,17 @@ class ProfileService {
     print("set user info ${json.decode(response.body)}");
     return json.decode(response.body);
   }
+ static Future<Map<String, dynamic>> deleteUserProfilePic() async {
+    String token;
+    await Common.getToken().then((onValue) {
+      token = 'bearer ' + onValue;
+    });
+    print("$token ");
+    final response = await client.delete(API_ENDPOINT + 'users/profile/delete',
+        headers: {'Content-Type': 'application/json', 'Authorization': token});
+    print(json.decode(response.body));
+    return json.decode(response.body);
+  }
 
   static Future<Map<String, dynamic>> uploadProfileImage(
       image, stream, id) async {
