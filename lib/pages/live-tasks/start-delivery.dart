@@ -1,4 +1,3 @@
-import 'package:call_number/call_number.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:delivery_app/pages/live-tasks/order-delivered.dart';
@@ -39,7 +38,6 @@ class _StartDeliveryState extends State<StartDelivery> {
                   setState(() {
                     myController = controller;
                   });
-                  // print(widget.deliveryBoyLatLong);
                   // markers.add(Marker(
                   //     // icon: BitmapDescriptor.fromAsset(
                   //     //   'assets/shop.png',
@@ -50,7 +48,6 @@ class _StartDeliveryState extends State<StartDelivery> {
                   //         .toString()),
                   //     position: LatLng(widget.deliveryBoyLatLong['latitude'],
                   //         widget.deliveryBoyLatLong['longitude'])));
-                  // print(widget.deliveryBoyLatLong);
                   markers.add(Marker(
                       // icon: BitmapDescriptor.fromAsset(
                       //   'assets/shop.png',

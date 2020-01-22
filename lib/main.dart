@@ -12,9 +12,9 @@ import 'package:delivery_app/pages/auth/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String id = prefs.getString('token');
-  // print(id);
   runApp(new MyApp(id: id));
 
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -61,14 +61,10 @@ class _MyAppState extends State<MyApp> {
   }
 
   routing() {
-    // print('function called');
-    // getData();
-    // print('id2 $id');
-    // print('   id     $id');
+   
     if (widget.id != null) {
       return HomePage();
     } else {
-      // print('execute else part');
       return Login();
     }
   }
@@ -76,7 +72,6 @@ class _MyAppState extends State<MyApp> {
   getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     id = prefs.getString('token');
-    // print('inside getData');
     return id;
   }
 }

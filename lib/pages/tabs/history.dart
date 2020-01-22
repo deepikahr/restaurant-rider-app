@@ -63,42 +63,29 @@ class _HistoryState extends State<History> {
                         setState(() {
                           searchOrderId = int.parse(value);
                         });
-                        // print(value.length);
                         if (value.length == 5) {
                           for (int i = 0; i < orderList.length; i++) {
                             if (orderList[i]['orderID'] == searchOrderId) {
-                              // print('inside if....... ');
 
                               searchOrderDataList = [];
-                              // print(searchOrderDataList);
                               searchOrderDataList.add(orderList[i]);
-                              // print(searchOrderDataList);
                               searchDeliveredOrderList = searchOrderDataList;
-                              // print('ddjnsvnf $searchOrderDataList');
                               setState(() {
                                 data = "Zero";
                                 searchDeliveredOrderList = searchOrderDataList;
                               });
-                              // print('here yr data $searchDeliveredOrderList');
-                              // buildDeliveredList(searchDeliveredOrderList);
                               return;
                             } else {
-                              // print("not found");
-
-                              // buildDeliveredList(data);
+                             
                             }
                           }
                         } else {
-                          // print("inside elese");
                           setState(() {
                             searchOrderDataList = [];
                             deliveredOrderList = orderList;
                           });
-                          // print(deliveredOrderList);
                         }
-                        // print(searchOrderId);
                       },
-                      //controller: editingController,
                       decoration: InputDecoration(
                           labelText: "Search",
                           hintText: "Search",
@@ -139,34 +126,27 @@ class _HistoryState extends State<History> {
                 //       //       setState(() {
                 //       //         searchOrderId = int.parse(value);
                 //       //       });
-                //       //       print(value.length);
                 //       //       if (value.length == 5) {
                 //       //         for (int i = 0; i < orderList.length; i++) {
                 //       //           if (orderList[i]['orderID'] == searchOrderId) {
-                //       //             print('inside if ');
 
                 //       //             searchOrderDataList = [];
                 //       //             searchOrderDataList.add(searchOrderList[i]);
                 //       //             searchDeliveredOrderList =
                 //       //                 searchOrderDataList;
-                //       //             print(' $searchOrderDataList');
                 //       //             setState(() {
                 //       //               data = "Zero";
                 //       //               searchDeliveredOrderList =
                 //       //                   searchOrderDataList;
                 //       //             });
-                //       //             print(
-                //       //                 'here yr data $searchDeliveredOrderList');
                 //       //             searchBuildDeliveredList(
                 //       //                 searchDeliveredOrderList);
                 //       //             break;
                 //       //           } else {
-                //       //             print("not found");
                 //       //             return buildDeliveredList(data);
                 //       //           }
                 //       //         }
                 //       //       }
-                //       //       print(searchOrderId);
                 //       //     },
                 //       //   ),
                 //       // ),
@@ -181,7 +161,6 @@ class _HistoryState extends State<History> {
   }
 
   Widget buildDeliveredList(dynamic data) {
-    // print("called $data             $deliveredOrderList");
 
     return Column(
       children: <Widget>[
@@ -215,9 +194,14 @@ class _HistoryState extends State<History> {
                             )),
                             Expanded(
                                 child: new Text(
-                              new DateFormat.yMMMMd("en_US").add_jm().format(
+                                   searchDeliveredOrderList[index]['createdAtTime'] != null
+                              ? new DateFormat.yMMMMd("en_US").format(
+                                  new DateTime.fromMillisecondsSinceEpoch(
+                                      searchDeliveredOrderList[index]['createdAtTime']))
+                              : new DateFormat.yMMMMd("en_US").format(
                                   DateTime.parse(
                                       '${searchDeliveredOrderList[index]['createdAt']}')),
+                             
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             )),
@@ -257,9 +241,14 @@ class _HistoryState extends State<History> {
                             )),
                             Expanded(
                                 child: new Text(
-                              new DateFormat.yMMMMd("en_US").add_jm().format(
+                                      deliveredOrderList[index]['createdAtTime'] != null
+                              ? new DateFormat.yMMMMd("en_US").format(
+                                  new DateTime.fromMillisecondsSinceEpoch(
+                                      deliveredOrderList[index]['createdAtTime']))
+                              : new DateFormat.yMMMMd("en_US").format(
                                   DateTime.parse(
                                       '${deliveredOrderList[index]['createdAt']}')),
+                            
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             )),

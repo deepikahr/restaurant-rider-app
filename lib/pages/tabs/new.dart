@@ -24,7 +24,6 @@ class _NewState extends State<New> {
     setState(() {
       newOrderLength = orderData.length;
     });
-    // print('newOrderLength ${orderData.length}');
     return orderData;
   }
 
@@ -40,7 +39,6 @@ class _NewState extends State<New> {
       renderSuccess: ({data}) {
         if (data.length > 0) {
           orderList = data;
-          // print('newOrderLength newOrderLength $newOrderLength');
           return buidNewOrdersList(data);
         } else {
           return Container(child: Text("No New Order"));
@@ -107,9 +105,13 @@ class _NewState extends State<New> {
                           ),
                           Expanded(
                             child: new Text(
-                              new DateFormat.yMMMMd("en_US").add_jm().format(
-                                  DateTime.parse(
-                                      '${orders[index]['createdAt']}')),
+                              orders[index]['createdAtTime'] != null
+                                  ? new DateFormat.yMMMMd("en_US").format(
+                                      new DateTime.fromMillisecondsSinceEpoch(
+                                          orders[index]['createdAtTime']))
+                                  : new DateFormat.yMMMMd("en_US").format(
+                                      DateTime.parse(
+                                          '${orders[index]['createdAt']}')),
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),

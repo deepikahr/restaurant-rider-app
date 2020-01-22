@@ -8,7 +8,6 @@ import 'package:delivery_app/pages/profile/profile.dart';
 
 import 'package:delivery_app/services/auth.dart';
 import 'package:delivery_app/services/constant.dart';
-import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,9 +32,7 @@ class _drawerState extends State<drawer> {
   void userInformation() async {
     await getUserInfo().then((response) {
       final int statusCode = response.statusCode;
-      // print(json.decode(response.body));
       userData = json.decode(response.body);
-      // print(userData['logo']);
 
       if (statusCode != 200 || json == null) {
         throw new Exception("Error while fetching data");

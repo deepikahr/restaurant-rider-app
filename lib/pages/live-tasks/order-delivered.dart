@@ -4,8 +4,6 @@ import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,7 +22,6 @@ class _OrderDeliveredState extends State<OrderDelivered> {
     var data = json.encode(body);
     OrdersService.orderDelivered(data, widget.orderDetail['_id'])
         .then((response) {
-      print(response);
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) => new HomePage()));
       // verifyMsg = data['message'];
@@ -113,7 +110,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                               child: new Text(
                             new DateFormat.yMMMMd("en_US").add_jm().format(
                                 DateTime.parse(
-                                    '${widget.orderDetail['createdAt']}')),
+                                    '${widget.orderDetail['createdAtTime'] != null ? widget.orderDetail['createdAtTime'] : widget.orderDetail['createdAt']}')),
                             textAlign: TextAlign.end,
                             style: textdblack(),
                           ))

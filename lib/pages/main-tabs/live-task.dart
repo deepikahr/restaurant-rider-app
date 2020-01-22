@@ -1,13 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-// import 'package:delivery_app/pages/home/drawer.dart';
 import '../../services/orders-service.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-
 import 'package:delivery_app/pages/live-tasks/location.dart';
 
 class LiveTasks extends StatefulWidget {
@@ -48,7 +45,6 @@ class _LiveTasksState extends State<LiveTasks> {
           currentLocation = result;
         });
       }
-      // print('kkkkkk $currentLocation');
     });
   }
 
@@ -88,18 +84,13 @@ class _LiveTasksState extends State<LiveTasks> {
   getNewOrderToDeliveryBoy() async {
     String orderStatus = 'Accepted';
     await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
-        .then((onValue) {
-      print("kljcon  $onValue");
-    });
+        .then((onValue) {});
   }
 
   int orderIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    var screenHeight = MediaQuery.of(context).size.height;
-
     AsyncLoader asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getNewOrderToDeliveryBoy(),
@@ -110,14 +101,11 @@ class _LiveTasksState extends State<LiveTasks> {
       renderError: ([error]) =>
           new Text('Sorry, there was an error loading...'),
       renderSuccess: ({data}) {
-        // print(data);
         if (data != null && data.length > 0) {
           orderList = data;
-          //  print('ksdgfksdgfsdf--$orderList');
 
           return pickupBuild(data);
         } else {
-          // print('no data found');
           return Padding(
               padding: EdgeInsets.only(top: 100.0),
               child: Center(
@@ -172,9 +160,13 @@ class _LiveTasksState extends State<LiveTasks> {
                         ),
                         Expanded(
                             child: new Text(
-                          orders[index]['createdAt']
-                              .toString()
-                              .substring(0, 10),
+                          orderList[index]['createdAtTime'] != null
+                              ? new DateFormat.yMMMMd("en_US").format(
+                                  new DateTime.fromMillisecondsSinceEpoch(
+                                      orderList[index]['createdAtTime']))
+                              : new DateFormat.yMMMMd("en_US").format(
+                                  DateTime.parse(
+                                      '${orderList[index]['createdAt']}')),
                           textAlign: TextAlign.end,
                           style: textboldsmall(),
                         ))
