@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
@@ -33,7 +32,6 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await OrdersService.getUserInfo().then((response) {
-      // print(response);
       userData = json.decode(response.body);
       prefs.setString('userId', userData['_id']);
       prefs.setString('userName', userData['name']);

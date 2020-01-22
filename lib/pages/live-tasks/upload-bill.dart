@@ -21,7 +21,6 @@ class _BillUploadState extends State<BillUpload> {
     ).then((File image) {
       setState(() {
         _imageFile = image;
-        // print(' mmmmmmmmmmmmmmmmmmm$_imageFile');
       });
     });
   }

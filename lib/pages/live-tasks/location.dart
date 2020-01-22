@@ -21,7 +21,6 @@ class _LocationState extends State<LocationDetail> {
   final Set<Marker> markers = {};
   @override
   void initState() {
-    // print('order detail${widget.orderDetail}');
     super.initState();
   }
 
@@ -35,23 +34,6 @@ class _LocationState extends State<LocationDetail> {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text('Live Tasks', style: textwhitesmall()),
-        actions: <Widget>[
-          // new Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: <Widget>[
-          //     new Text(
-          //       'Online',
-          //       textAlign: TextAlign.end,
-          //       style: textwhite(),
-          //     ),
-          //     new Switch(
-          //         value: val,
-          //         activeColor: red,
-          //         activeTrackColor: darkgreen,
-          //         onChanged: (bool e) => true),
-          //   ],
-          // )
-        ],
       ),
       body: new Stack(
         children: <Widget>[
@@ -63,7 +45,6 @@ class _LocationState extends State<LocationDetail> {
                 setState(() {
                   myController = controller;
                 });
-                // print(widget.deliveryBoyLatLong);
                 // markers.add(Marker(
                 //     // icon: BitmapDescriptor.fromAsset(
                 //     //   'assets/shop.png',
@@ -74,7 +55,6 @@ class _LocationState extends State<LocationDetail> {
                 //         .toString()),
                 //     position: LatLng(widget.deliveryBoyLatLong['latitude'],
                 //         widget.deliveryBoyLatLong['longitude'])));
-                // print(widget.deliveryBoyLatLong);
                 markers.add(Marker(
                     // icon: BitmapDescriptor.fromAsset(
                     //   'assets/shop.png',
@@ -105,7 +85,6 @@ class _LocationState extends State<LocationDetail> {
           //         setState(() {
           //           myController = controller;
           //         });
-          //         print(widget.deliveryBoyLatLong);
           //         controller.addMarker(
           //           MarkerOptions(
           //             icon: BitmapDescriptor.fromAsset(

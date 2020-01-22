@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
@@ -32,17 +31,10 @@ bool otpVer = false;
 bool errorFnd = false;
 String localToken;
 
-void handleError(err) {
-  // print(err);
-}
-
-final JsonDecoder _decoder = new JsonDecoder();
-
 // registration
 getUserInfo() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String authToken = prefs.getString('token');
-  // print(authToken);
   return await http.get(BASE_URL + 'api/users/me', headers: {
     'Content-Type': 'application/json',
     'Authorization': 'bearer ' + authToken,
@@ -62,8 +54,7 @@ updateUserInfo(name, email, phone, userId) async {
   prefs.setString('email', authData['email']);
   prefs.setString('profileImage', authData['imageUrl']);
   prefs.setString('contactNumber', authData['contactNumber']);
-  // print(data);
-  return await http.put(BASE_URL + 'api/users/${userId}', body: data, headers: {
+  return await http.put(BASE_URL + 'api/users/$userId', body: data, headers: {
     'Content-Type': 'application/json',
     'Authorization': 'bearer ' + authToken,
   });
@@ -77,15 +68,11 @@ updateUserAllInfo(name, email, phone, userId, image, stream, gender) async {
   var request = new http.MultipartRequest("POST", Uri.parse(uri));
   var multipartFile = new http.MultipartFile('file', stream, length,
       filename: basename(image.path));
-  // print(' $multipartFile');
   request.files.add(multipartFile);
   var response = await request.send();
-  // print('$response');
   response.stream.transform(utf8.decoder).listen((value) {
-    // print('value $value');
     var profileImageRes = value + '}';
     if (value.length > 3) {
-      //print('PROFILERES   ${json.decode(profileImageRes)}');
       profileValue = json.decode(profileImageRes);
       if (response.statusCode == 200) {
         var userData = {
@@ -96,12 +83,11 @@ updateUserAllInfo(name, email, phone, userId, image, stream, gender) async {
           'imageUrl': profileValue['url'],
           'deleteId': deleteKey,
         };
-        // print(json.encode(userData));
         prefs.setString('name', userData['name']);
         prefs.setString('email', userData['email']);
         prefs.setString('profileImage', userData['imageUrl']);
         prefs.setString('contactNumber', userData['contactNumber']);
-        return http.put(BASE_URL + 'api/users/${userId}',
+        return http.put(BASE_URL + 'api/users/$userId',
             body: json.encode(userData),
             headers: {
               'Content-Type': 'application/json',
@@ -110,7 +96,6 @@ updateUserAllInfo(name, email, phone, userId, image, stream, gender) async {
           var res = json.decode(response.body);
           final int statusCode = response.statusCode;
           userData = res;
-          // print(userData);
           if (statusCode != 200 || json == null) {
             throw new Exception("Error while fetching data");
           } else {

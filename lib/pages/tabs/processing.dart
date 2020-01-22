@@ -88,8 +88,13 @@ class _ProcessingState extends State<Processing> {
                         )),
                         Expanded(
                             child: new Text(
-                          new DateFormat.yMMMMd("en_US").add_jm().format(
-                              DateTime.parse('${orders[index]['createdAt']}')),
+                          orders[index]['createdAtTime'] != null
+                              ? new DateFormat.yMMMMd("en_US").format(
+                                  new DateTime.fromMillisecondsSinceEpoch(
+                                      orders[index]['createdAtTime']))
+                              : new DateFormat.yMMMMd("en_US").format(
+                                  DateTime.parse(
+                                      '${orders[index]['createdAt']}')),
                           textAlign: TextAlign.center,
                           style: textmediumsm(),
                         ))

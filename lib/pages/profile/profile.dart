@@ -1,4 +1,3 @@
-import 'package:delivery_app/pages/home/home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../styles/styles.dart';
@@ -7,7 +6,6 @@ import 'package:async_loader/async_loader.dart';
 import 'package:toast/toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +37,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         isLoading = true;
       });
       _formKey.currentState.save();
-      print("save button $profileData");
       var body = {
         "name": profileData['name'],
         "contactNumber": profileData['contactNumber'],
@@ -50,13 +47,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         "address": profileData['address'],
       };
       ProfileService.setUserInfo(profileData['_id'], body).then((onValue) {
-        print(onValue);
         Toast.show("Your profile Successfully UPDATED", context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         setState(() {
           isLoading = false;
         });
-        Navigator.of(context).pop();
       });
     }
   }
@@ -65,7 +60,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   void selectGallary() async {
     var file = await ImagePicker.pickImage(source: ImageSource.gallery);
-    // base64Image = base64Encode(file.readAsBytesSync());
     setState(() async {
       _imageFile = file;
       setState(() {
@@ -74,8 +68,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       if (_imageFile != null) {
         var stream =
             new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
-        Map<String, dynamic> body = {"baseKey": base64Image};
-        Map<String, dynamic> imageData;
+
         await ProfileService.uploadProfileImage(
           _imageFile,
           stream,
@@ -92,7 +85,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   void selectCamera() async {
     var file = await ImagePicker.pickImage(source: ImageSource.camera);
-    // base64Image = base64Encode(file.readAsBytesSync());
     setState(() async {
       _imageFile = file;
       setState(() {
@@ -101,8 +93,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       if (_imageFile != null) {
         var stream =
             new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
-        Map<String, dynamic> body = {"baseKey": base64Image};
-        Map<String, dynamic> imageData;
+
         await ProfileService.uploadProfileImage(
           _imageFile,
           stream,
@@ -123,9 +114,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       isImageUploading = true;
     });
     await ProfileService.deleteUserProfilePic().then((onValue) {
-      // print(onValue['statusCode']);
-      // print(onValue['message']);
-      // if (onValue['statusCode'] == 200) {
       Toast.show(onValue['message'], context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       profileData['logo'] = null;
@@ -133,7 +121,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       setState(() {
         isImageUploading = false;
       });
-      // }
     });
   }
 
@@ -160,49 +147,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   key: _formKey,
                   child: Column(
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: InkWell(
-                          onTap: () {
-                            containerForSheet<String>(
-                              context: context,
-                              child: CupertinoActionSheet(
-                                title: const Text('Change profile picture'),
-                                actions: <Widget>[
-                                  CupertinoActionSheetAction(
-                                    child: const Text('Choose from photos'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      selectGallary();
-                                    },
-                                  ),
-                                  CupertinoActionSheetAction(
-                                    child: const Text('Take photo'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      selectCamera();
-                                    },
-                                  ),
-                                  profileData['logo'] != null
-                                      ? CupertinoActionSheetAction(
-                                          child: const Text('Remove photo'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            removeProfilePic();
-                                          },
-                                        )
-                                      : Container(),
-                                ],
-                                cancelButton: CupertinoActionSheetAction(
-                                  child: const Text('Cancel'),
-                                  isDefaultAction: true,
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                              ),
-                            );
-                          },
+                      Stack(children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Container(
                             height: 120.0,
                             width: 120.0,
@@ -219,7 +166,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       )
                                     : new CircleAvatar(
                                         backgroundImage: new AssetImage(
-                                            'assets/imgs/na.jpg'))
+                                            'lib/assets/imgs/na.jpg'))
                                 : isPicUploading
                                     ? CircularProgressIndicator()
                                     : new CircleAvatar(
@@ -229,7 +176,167 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       ),
                           ),
                         ),
-                      ),
+                        Positioned(
+                          right: 2.0,
+                          bottom: 0.0,
+                          child: Container(
+                            height: 40.0,
+                            width: 40.0,
+                            child: new FloatingActionButton(
+                              foregroundColor: Colors.black,
+                              backgroundColor: Colors.white,
+                              onPressed: () {
+                                showDialog<Null>(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return new AlertDialog(
+                                        title:
+                                            new Text('Change profile picture'),
+                                        content: new SingleChildScrollView(
+                                          child: new ListBody(
+                                            children: <Widget>[
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: InkWell(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          selectGallary();
+                                                        },
+                                                        child: new Text(
+                                                            'Choose from photos')),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: InkWell(
+                                                        onTap: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                          selectCamera();
+                                                        },
+                                                        child: new Text(
+                                                            'Take photo')),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: profileData[
+                                                                'logo'] !=
+                                                            null
+                                                        ? InkWell(
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              removeProfilePic();
+                                                            },
+                                                            child: new Text(
+                                                                'Remove photo'))
+                                                        : Container(),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          new FlatButton(
+                                            child: new Text("Cancel"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                              tooltip: 'Photo',
+                              child: new Icon(Icons.edit),
+                            ),
+                          ),
+                        ),
+                      ]),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(top: 8.0),
+                      //   child: InkWell(
+                      //     onTap: () {
+                      //       containerForSheet<String>(
+                      //         context: context,
+                      //         child: CupertinoActionSheet(
+                      //           title: const Text('Change profile picture'),
+                      //           actions: <Widget>[
+                      //             CupertinoActionSheetAction(
+                      //               child: const Text('Choose from photos'),
+                      //               onPressed: () {
+                      //                 Navigator.pop(context);
+                      //                 selectGallary();
+                      //               },
+                      //             ),
+                      //             CupertinoActionSheetAction(
+                      //               child: const Text('Take photo'),
+                      //               onPressed: () {
+                      //                 Navigator.pop(context);
+                      //                 selectCamera();
+                      //               },
+                      //             ),
+                      //             profileData['logo'] != null
+                      //                 ? CupertinoActionSheetAction(
+                      //                     child: const Text('Remove photo'),
+                      //                     onPressed: () {
+                      //                       Navigator.pop(context);
+                      //                       removeProfilePic();
+                      //                     },
+                      //                   )
+                      //                 : Container(),
+                      //           ],
+                      //           cancelButton: CupertinoActionSheetAction(
+                      //             child: const Text('Cancel'),
+                      //             isDefaultAction: true,
+                      //             onPressed: () {
+                      //               Navigator.pop(context);
+                      //             },
+                      //           ),
+                      //         ),
+                      //       );
+                      //     },
+                      //     child: Container(
+                      //       height: 120.0,
+                      //       width: 120.0,
+                      //       decoration: new BoxDecoration(
+                      //         border: new Border.all(
+                      //             color: Colors.black, width: 2.0),
+                      //         borderRadius: BorderRadius.circular(80.0),
+                      //       ),
+                      //       child: _imageFile == null
+                      //           ? profileData['logo'] != null
+                      //               ? new CircleAvatar(
+                      //                   backgroundImage: new NetworkImage(
+                      //                       "${profileData['logo']}"),
+                      //                 )
+                      //               : new CircleAvatar(
+                      //                   backgroundImage: new AssetImage(
+                      //                       'assets/imgs/na.jpg'))
+                      //           : isPicUploading
+                      //               ? CircularProgressIndicator()
+                      //               : new CircleAvatar(
+                      //                   backgroundImage:
+                      //                       new FileImage(_imageFile),
+                      //                   radius: 80.0,
+                      //                 ),
+                      //     ),
+                      //   ),
+                      // ),
                       Container(
                         margin: EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(

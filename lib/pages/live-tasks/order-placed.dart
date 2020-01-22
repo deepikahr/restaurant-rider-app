@@ -1,8 +1,6 @@
 import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-// import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
-import 'package:delivery_app/pages/live-tasks/upload-bill.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -29,7 +27,6 @@ class _OrderPlacedState extends State<OrderPlaced> {
     ).then((File image) {
       setState(() {
         _imageFile = image;
-        print(' mmmmmmmmmmmmmmmmmmm$_imageFile');
       });
     });
   }
@@ -161,7 +158,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
                               child: new Text(
                             new DateFormat.yMMMMd("en_US").add_jm().format(
                                 DateTime.parse(
-                                    '${widget.orderDetail['createdAt']}')),
+                                    '${widget.orderDetail['createdAtTime'] != null ? widget.orderDetail['createdAtTime'] : widget.orderDetail['createdAt']}')),
                             textAlign: TextAlign.end,
                             style: textdblack(),
                           ))

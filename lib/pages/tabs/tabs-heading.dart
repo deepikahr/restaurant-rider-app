@@ -42,7 +42,6 @@ class _TabsHeadingState extends State<TabsHeading>
   getAcceptedOrders() async {
     assignedList =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
-    // print('data in tab $assignedList');
     setState(() {
       newOrderLength = assignedList.length;
     });

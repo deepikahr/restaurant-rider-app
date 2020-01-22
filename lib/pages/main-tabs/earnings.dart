@@ -3,7 +3,6 @@ import 'package:delivery_app/styles/styles.dart';
 import 'package:async_loader/async_loader.dart';
 import '../../services/orders-service.dart';
 import 'package:intl/intl.dart';
-import 'package:delivery_app/pages/home/drawer.dart';
 
 class Earnings extends StatefulWidget {
   static String tag = "earnings-page";
@@ -32,16 +31,9 @@ class _EarningsState extends State<Earnings> {
   }
 
   @override
-  Widget VerticalDivider = RotatedBox(
-    quarterTurns: 1,
-    child: Divider(
-      color: blacka,
-      height: 6.0,
-    ),
-  );
+ 
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    var screenHeight = MediaQuery.of(context).size.height;
+  
     var asyncloader = AsyncLoader(
       key: _asyncLoaderState,
       initState: () async => await getDeliveredOrdersListOnSelectedDate(),
@@ -51,12 +43,12 @@ class _EarningsState extends State<Earnings> {
       )),
       renderSuccess: ({data}) {
         if (data != null && data['orders'].length > 0) {
-          print(data['totalOrderEarningCOD']);
           total = data['totalOrderEarningCOD'];
 
           orderList = data['orders'];
-          selectedDate = orderList[0]['createdAt'];
-          print(data);
+          selectedDate = orderList[0]['createdAtTime'] == null
+              ? orderList[0]['createdAt']
+              : orderList[0]['createdAtTime'];
           return buildDeliveredList(selectedDate);
         } else {
           return Container(child: Text("No Earning"));
@@ -201,6 +193,11 @@ class _EarningsState extends State<Earnings> {
                                           Padding(
                                             padding: EdgeInsets.only(left: 5.0),
                                             child: new Text(
+orderList[index]['createdAtTime']!=null?
+                                                 new DateFormat.yMMMMd("en_US")
+                                                  .format(
+                                      new DateTime.fromMillisecondsSinceEpoch(
+                                          orderList[index]['createdAtTime'])):
                                               new DateFormat.yMMMMd("en_US")
                                                   .format(DateTime.parse(
                                                       '${orderList[index]['createdAt']}')),
