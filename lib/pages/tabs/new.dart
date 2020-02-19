@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import './tabs-heading.dart';
 
 class New extends StatefulWidget {
-  List orderList = List();
+  final orderList;
   New({Key key, this.orderList}) : super(key: key);
   @override
   _NewState createState() => new _NewState();

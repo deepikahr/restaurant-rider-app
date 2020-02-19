@@ -15,18 +15,18 @@ class OrderPlaced extends StatefulWidget {
 }
 
 class _OrderPlacedState extends State<OrderPlaced> {
-  static File _imageFile, myfile;
+  static File imageFile, myfile;
   bool val = true;
 
   void _getImage(BuildContext context, ImageSource source) {
     setState(() {
-      _imageFile = myfile;
+      imageFile = myfile;
     });
     ImagePicker.pickImage(
       source: source,
     ).then((File image) {
       setState(() {
-        _imageFile = image;
+        imageFile = image;
       });
     });
   }
@@ -284,7 +284,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
 //                                     border:
 //                                         Border.all(color: Color(0xFF38707070))
 //                                         ),
-//                                         child:Text('$_imageFile')
+//                                         child:Text('$imageFile')
 //                               ),
 //                               GestureDetector(
 //                                 onTap: () {

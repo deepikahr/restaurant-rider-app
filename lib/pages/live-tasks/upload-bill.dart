@@ -26,8 +26,6 @@ class _BillUploadState extends State<BillUpload> {
   }
 
   Widget build(BuildContext context) {
-    var screenWidth = MediaQuery.of(context).size.width;
-    var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primary,

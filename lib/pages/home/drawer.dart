@@ -12,12 +12,12 @@ import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class drawer extends StatefulWidget {
+class DrawerPage extends StatefulWidget {
   @override
-  _drawerState createState() => _drawerState();
+  _DrawerPageState createState() => _DrawerPageState();
 }
 
-class _drawerState extends State<drawer> {
+class _DrawerPageState extends State<DrawerPage> {
   String name;
   String email;
   String profileImage;
