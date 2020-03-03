@@ -19,7 +19,6 @@ class _LoginState extends State<Login> {
   bool loading = false;
 
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> _scaffKey = GlobalKey<ScaffoldState>();
 
   login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

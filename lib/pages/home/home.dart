@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
     return new Scaffold(
-      drawer: drawer(),
+      drawer: DrawerPage(),
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
