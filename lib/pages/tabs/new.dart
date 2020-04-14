@@ -1,3 +1,4 @@
+import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:async_loader/async_loader.dart';
@@ -7,7 +8,11 @@ import './tabs-heading.dart';
 
 class New extends StatefulWidget {
   final orderList;
-  New({Key key, this.orderList}) : super(key: key);
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  New({Key key, this.orderList, this.locale, this.localizedValues})
+      : super(key: key);
   @override
   _NewState createState() => new _NewState();
 }
@@ -21,9 +26,11 @@ class _NewState extends State<New> {
   getAcceptedOrdersList() async {
     orderData =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
-    setState(() {
-      newOrderLength = orderData.length;
-    });
+    if (mounted) {
+      setState(() {
+        newOrderLength = orderData.length;
+      });
+    }
     return orderData;
   }
 
@@ -41,7 +48,7 @@ class _NewState extends State<New> {
           orderList = data;
           return buidNewOrdersList(data);
         } else {
-          return Container(child: Text("No New Order"));
+          return Container(child: Text(MyLocalizations.of(context).noNewOrder));
         }
       },
     );
@@ -81,7 +88,7 @@ class _NewState extends State<New> {
                           color: red,
                         ),
                         child: new Text(
-                          'Modified',
+                          MyLocalizations.of(context).modified,
                           style: textsmwhite(),
                         ),
                       ),
@@ -98,7 +105,8 @@ class _NewState extends State<New> {
                           ),
                           Expanded(
                             child: new Text(
-                              ' ${orders[index]['productDetails'].length}  items',
+                              ' ${orders[index]['productDetails'].length} ' +
+                                  MyLocalizations.of(context).items,
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),

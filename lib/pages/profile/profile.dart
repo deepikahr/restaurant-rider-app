@@ -1,3 +1,4 @@
+import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../styles/styles.dart';
@@ -8,10 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-
 import 'package:async/async.dart';
 
 class Profile extends StatefulWidget {
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  Profile({Key key, this.locale, this.localizedValues}) : super(key: key);
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -22,10 +26,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       GlobalKey<AsyncLoaderState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   Map<String, dynamic> profileData;
-  bool isLoading = false;
-  Image selectedImage;
-  String base64Image;
-  bool isPicUploading = false, isImageUploading = false;
+  bool isLoading = false, isPicUploading = false;
 
   Future<Map<String, dynamic>> getProfileInfo() async {
     return await ProfileService.getUserInfo();
@@ -33,9 +34,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   void _saveProfileInfo() {
     if (_formKey.currentState.validate()) {
-      setState(() {
-        isLoading = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = true;
+        });
+      }
       _formKey.currentState.save();
       var body = {
         "name": profileData['name'],
@@ -47,11 +50,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         "address": profileData['address'],
       };
       ProfileService.setUserInfo(profileData['_id'], body).then((onValue) {
-        Toast.show("Your profile Successfully UPDATED", context,
+        Toast.show(
+            MyLocalizations.of(context).yourprofileSuccessfullyUPDATED, context,
             duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-        setState(() {
-          isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            isLoading = false;
+          });
+        }
       });
     }
   }
@@ -60,67 +66,89 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
 
   void selectGallary() async {
     var file = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() async {
-      _imageFile = file;
+    if (mounted) {
       setState(() {
-        isPicUploading = true;
-      });
-      if (_imageFile != null) {
-        var stream =
-            new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
+        _imageFile = file;
+        if (mounted) {
+          setState(() {
+            isPicUploading = true;
+          });
+        }
+        if (_imageFile != null) {
+          var stream = new http.ByteStream(
+              DelegatingStream.typed(_imageFile.openRead()));
 
-        await ProfileService.uploadProfileImage(
-          _imageFile,
-          stream,
-          profileData['_id'],
-        );
-        setState(() {
-          isPicUploading = false;
-        });
-        Toast.show("Your profile Picture Successfully UPDATED", context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      }
-    });
+          ProfileService.uploadProfileImage(
+            _imageFile,
+            stream,
+            profileData['_id'],
+          );
+          if (mounted) {
+            setState(() {
+              isPicUploading = false;
+            });
+          }
+          Toast.show(
+              MyLocalizations.of(context).yourprofilePictureSuccessfullyUPDATED,
+              context,
+              duration: Toast.LENGTH_LONG,
+              gravity: Toast.BOTTOM);
+        }
+      });
+    }
   }
 
   void selectCamera() async {
     var file = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() async {
-      _imageFile = file;
+    if (mounted) {
       setState(() {
-        isPicUploading = true;
+        _imageFile = file;
+        if (mounted) {
+          setState(() {
+            isPicUploading = true;
+          });
+        }
+        if (_imageFile != null) {
+          var stream = new http.ByteStream(
+              DelegatingStream.typed(_imageFile.openRead()));
+
+          ProfileService.uploadProfileImage(
+            _imageFile,
+            stream,
+            profileData['_id'],
+          );
+
+          if (mounted) {
+            setState(() {
+              isPicUploading = false;
+            });
+          }
+          Toast.show(
+              MyLocalizations.of(context).yourprofilePictureSuccessfullyUPDATED,
+              context,
+              duration: Toast.LENGTH_LONG,
+              gravity: Toast.BOTTOM);
+        }
       });
-      if (_imageFile != null) {
-        var stream =
-            new http.ByteStream(DelegatingStream.typed(_imageFile.openRead()));
-
-        await ProfileService.uploadProfileImage(
-          _imageFile,
-          stream,
-          profileData['_id'],
-        );
-
-        setState(() {
-          isPicUploading = false;
-        });
-        Toast.show("Your profile Picture Successfully UPDATED", context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      }
-    });
+    }
   }
 
   void removeProfilePic() async {
-    setState(() {
-      isImageUploading = true;
-    });
+    if (mounted) {
+      setState(() {
+        isPicUploading = true;
+      });
+    }
     await ProfileService.deleteUserProfilePic().then((onValue) {
       Toast.show(onValue['message'], context,
           duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       profileData['logo'] = null;
       _imageFile = null;
-      setState(() {
-        isImageUploading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isPicUploading = false;
+        });
+      }
     });
   }
 
@@ -133,8 +161,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                 child: CircularProgressIndicator(
               backgroundColor: primary,
             )),
-        renderError: ([error]) =>
-            Text('Please check your internet connection!'),
+        renderError: ([error]) => Text(
+            MyLocalizations.of(context).somethingwentwrongpleaserestarttheapp),
         renderSuccess: ({data}) {
           profileData = data;
           return ListView(
@@ -166,7 +194,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       )
                                     : new CircleAvatar(
                                         backgroundImage: new AssetImage(
-                                            'lib/assets/imgs/na.jpg'))
+                                            'assets/imgs/na.jpg'))
                                 : isPicUploading
                                     ? CircularProgressIndicator()
                                     : new CircleAvatar(
@@ -191,8 +219,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                     barrierDismissible: false,
                                     builder: (BuildContext context) {
                                       return new AlertDialog(
-                                        title:
-                                            new Text('Change profile picture'),
+                                        title: new Text(
+                                            MyLocalizations.of(context)
+                                                .changeprofilepicture),
                                         content: new SingleChildScrollView(
                                           child: new ListBody(
                                             children: <Widget>[
@@ -207,43 +236,50 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: InkWell(
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                          selectGallary();
-                                                        },
-                                                        child: new Text(
-                                                            'Choose from photos')),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                        selectGallary();
+                                                      },
+                                                      child: new Text(
+                                                          MyLocalizations.of(
+                                                                  context)
+                                                              .choosefromphotos),
+                                                    ),
                                                   ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: InkWell(
-                                                        onTap: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                          selectCamera();
-                                                        },
-                                                        child: new Text(
-                                                            'Take photo')),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                        selectCamera();
+                                                      },
+                                                      child: new Text(
+                                                          MyLocalizations.of(
+                                                                  context)
+                                                              .takephoto),
+                                                    ),
                                                   ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
                                                             8.0),
-                                                    child: profileData[
-                                                                'logo'] !=
-                                                            null
-                                                        ? InkWell(
-                                                            onTap: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                              removeProfilePic();
-                                                            },
-                                                            child: new Text(
-                                                                'Remove photo'))
-                                                        : Container(),
+                                                    child:
+                                                        profileData['logo'] !=
+                                                                null
+                                                            ? InkWell(
+                                                                onTap: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  removeProfilePic();
+                                                                },
+                                                                child: new Text(
+                                                                    MyLocalizations.of(
+                                                                            context)
+                                                                        .removephoto),
+                                                              )
+                                                            : Container(),
                                                   ),
                                                 ],
                                               )
@@ -252,7 +288,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                         ),
                                         actions: <Widget>[
                                           new FlatButton(
-                                            child: new Text("Cancel"),
+                                            child: new Text(
+                                                MyLocalizations.of(context)
+                                                    .cancel),
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
@@ -267,76 +305,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                         ),
                       ]),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 8.0),
-                      //   child: InkWell(
-                      //     onTap: () {
-                      //       containerForSheet<String>(
-                      //         context: context,
-                      //         child: CupertinoActionSheet(
-                      //           title: const Text('Change profile picture'),
-                      //           actions: <Widget>[
-                      //             CupertinoActionSheetAction(
-                      //               child: const Text('Choose from photos'),
-                      //               onPressed: () {
-                      //                 Navigator.pop(context);
-                      //                 selectGallary();
-                      //               },
-                      //             ),
-                      //             CupertinoActionSheetAction(
-                      //               child: const Text('Take photo'),
-                      //               onPressed: () {
-                      //                 Navigator.pop(context);
-                      //                 selectCamera();
-                      //               },
-                      //             ),
-                      //             profileData['logo'] != null
-                      //                 ? CupertinoActionSheetAction(
-                      //                     child: const Text('Remove photo'),
-                      //                     onPressed: () {
-                      //                       Navigator.pop(context);
-                      //                       removeProfilePic();
-                      //                     },
-                      //                   )
-                      //                 : Container(),
-                      //           ],
-                      //           cancelButton: CupertinoActionSheetAction(
-                      //             child: const Text('Cancel'),
-                      //             isDefaultAction: true,
-                      //             onPressed: () {
-                      //               Navigator.pop(context);
-                      //             },
-                      //           ),
-                      //         ),
-                      //       );
-                      //     },
-                      //     child: Container(
-                      //       height: 120.0,
-                      //       width: 120.0,
-                      //       decoration: new BoxDecoration(
-                      //         border: new Border.all(
-                      //             color: Colors.black, width: 2.0),
-                      //         borderRadius: BorderRadius.circular(80.0),
-                      //       ),
-                      //       child: _imageFile == null
-                      //           ? profileData['logo'] != null
-                      //               ? new CircleAvatar(
-                      //                   backgroundImage: new NetworkImage(
-                      //                       "${profileData['logo']}"),
-                      //                 )
-                      //               : new CircleAvatar(
-                      //                   backgroundImage: new AssetImage(
-                      //                       'assets/imgs/na.jpg'))
-                      //           : isPicUploading
-                      //               ? CircularProgressIndicator()
-                      //               : new CircleAvatar(
-                      //                   backgroundImage:
-                      //                       new FileImage(_imageFile),
-                      //                   radius: 80.0,
-                      //                 ),
-                      //     ),
-                      //   ),
-                      // ),
                       Container(
                         margin: EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(
@@ -348,7 +316,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           },
                           initialValue: data['name'],
                           decoration: new InputDecoration(
-                            labelText: 'Full Name',
+                            labelText: MyLocalizations.of(context).fullName,
                             hintStyle: textOS(),
                             contentPadding: EdgeInsets.all(10.0),
                             border: InputBorder.none,
@@ -367,7 +335,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           },
                           initialValue: data['contactNumber'].toString(),
                           decoration: new InputDecoration(
-                            labelText: 'Mobile No.',
+                            labelText: MyLocalizations.of(context).mobileNumber,
                             hintStyle: textOS(),
                             contentPadding: EdgeInsets.all(10.0),
                             border: InputBorder.none,
@@ -386,7 +354,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           },
                           initialValue: data['locationName'],
                           decoration: new InputDecoration(
-                            labelText: 'Suburb',
+                            labelText: MyLocalizations.of(context).locationName,
                             hintStyle: textOS(),
                             contentPadding: EdgeInsets.all(10.0),
                             border: InputBorder.none,
@@ -405,7 +373,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           },
                           initialValue: data['state'],
                           decoration: new InputDecoration(
-                            labelText: 'State',
+                            labelText: MyLocalizations.of(context).state,
                             hintStyle: textOS(),
                             contentPadding: EdgeInsets.all(10.0),
                             border: InputBorder.none,
@@ -424,7 +392,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           },
                           initialValue: data['country'],
                           decoration: new InputDecoration(
-                            labelText: 'Country',
+                            labelText: MyLocalizations.of(context).country,
                             hintStyle: textOS(),
                             contentPadding: EdgeInsets.all(10.0),
                             border: InputBorder.none,
@@ -444,7 +412,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           initialValue:
                               data['zip'] != null ? data['zip'].toString() : '',
                           decoration: new InputDecoration(
-                            labelText: 'Post Code',
+                            labelText: MyLocalizations.of(context).postalCode,
                             hintStyle: textOS(),
                             contentPadding: EdgeInsets.all(10.0),
                             border: InputBorder.none,
@@ -453,26 +421,27 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         ),
                       ),
                       Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1.0),
+                        margin: EdgeInsets.only(top: 10.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 1.0),
+                        ),
+                        child: new Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: new TextFormField(
+                            onSaved: (value) {
+                              data['address'] = value;
+                            },
+                            initialValue: data['address'],
+                            decoration: new InputDecoration(
+                                labelText: MyLocalizations.of(context).address,
+                                hintStyle: textOS(),
+                                fillColor: Colors.black,
+                                border: InputBorder.none),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 3,
                           ),
-                          child: new Padding(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: new TextFormField(
-                              onSaved: (value) {
-                                data['address'] = value;
-                              },
-                              initialValue: data['address'],
-                              decoration: new InputDecoration(
-                                  labelText: 'Address',
-                                  hintStyle: textOS(),
-                                  fillColor: Colors.black,
-                                  border: InputBorder.none),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 3,
-                            ),
-                          )),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -484,7 +453,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primary,
-        title: Text("Profile"),
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        title:
+            Text(MyLocalizations.of(context).profile, style: textwhitesmall()),
       ),
       body: _asyncLoader,
       bottomNavigationBar: _buildBottomBar(),
@@ -504,7 +476,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               height: 40.0,
               child: FlatButton(
                 child: Text(
-                  'Cancel',
+                  MyLocalizations.of(context).cancel,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -525,7 +497,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     )
                   : FlatButton(
                       child: Text(
-                        'Save',
+                        MyLocalizations.of(context).save,
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () {

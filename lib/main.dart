@@ -1,77 +1,121 @@
+import 'dart:async';
+import 'package:delivery_app/services/auth-service.dart';
+import 'package:delivery_app/services/common.dart';
+import 'package:delivery_app/services/constant.dart';
+import 'package:delivery_app/services/initialize_i18n.dart';
+import 'package:delivery_app/services/localizations.dart'
+    show MyLocalizationsDelegate;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:delivery_app/pages/home/home.dart';
-import 'package:delivery_app/pages/main-tabs/live-task.dart';
-import 'package:delivery_app/pages/main-tabs/earnings.dart';
-import 'package:delivery_app/pages/main-tabs/order.dart';
-import 'package:delivery_app/pages/live-tasks/location.dart';
-import 'package:delivery_app/pages/live-tasks/order-placed.dart';
-import 'package:delivery_app/pages/live-tasks/start-delivery.dart';
-import 'package:delivery_app/pages/live-tasks/order-delivered.dart';
 import 'package:delivery_app/pages/auth/login.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
-   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String id = prefs.getString('token');
-  runApp(new MyApp(id: id));
+bool get isInDebugMode {
+  bool inDebugMode = false;
+  assert(inDebugMode = true);
+  return inDebugMode;
+}
 
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent, //top bar color
-    statusBarIconBrightness: Brightness.light, //top bar icons
-  ));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Map<String, Map<String, String>> localizedValues = await initializeI18n();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String locale = prefs.getString('selectedLanguage') == null
+      ? 'en'
+      : prefs.getString('selectedLanguage');
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    if (isInDebugMode) {
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      Zone.current.handleUncaughtError(details.exception, details.stack);
+    }
+  };
+
+  // tokenCheck(locale, localizedValues);
+  runZoned<Future<Null>>(() async {
+    runApp(new MyApp(
+      locale,
+      localizedValues,
+    ));
+  }, onError: (error) async {});
+}
+
+void tokenCheck(locale, localizedValues) {
+  Common.getToken().then((tokenVerification) async {
+    if (tokenVerification != null) {
+      AuthService.verifyTokenOTP(tokenVerification).then((verifyInfo) async {
+        if (verifyInfo['success'] == true) {
+        } else {
+          Common.removeToken();
+        }
+      });
+    }
+  });
 }
 
 class MyApp extends StatefulWidget {
-  final id;
-
-  MyApp({Key key, this.id}) : super(key: key);
+  final String locale;
+  final Map<String, Map<String, String>> localizedValues;
+  MyApp(this.locale, this.localizedValues);
   @override
   _MyAppState createState() => new _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  final routes = <String, WidgetBuilder>{
-    HomePage.tag: (context) => HomePage(),
-    LiveTasks.tag: (context) => LiveTasks(),
-    Earnings.tag: (context) => Earnings(),
-    Order.tag: (context) => Order(),
-    LocationDetail.tag: (context) => LocationDetail(),
-    OrderPlaced.tag: (context) => OrderPlaced(),
-    StartDelivery.tag: (context) => StartDelivery(),
-    OrderDelivered.tag: (context) => OrderDelivered(),
-    Login.tag: (context) => Login(),
-  };
-  var id;
+  bool loginIn = false;
+  bool loginCheck = false;
+  @override
+  void initState() {
+    super.initState();
+    loginInCheck();
+  }
+
+  loginInCheck() {
+    Common.getToken().then((value) {
+      if (value != null) {
+        if (mounted) {
+          setState(() {
+            loginIn = true;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            loginIn = false;
+          });
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: Locale(widget.locale),
+      localizationsDelegates: [
+        MyLocalizationsDelegate(widget.localizedValues),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: LANGUAGES.map((language) => Locale(language, '')),
       debugShowCheckedModeBanner: false,
+      title: APP_NAME,
       theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: Colors.white,
         cursorColor: Colors.black,
         unselectedWidgetColor: Colors.grey,
       ),
-      home: routing(),
-      routes: routes,
+      home: loginIn
+          ? HomePage(
+              locale: widget.locale,
+              localizedValues: widget.localizedValues,
+            )
+          : Login(
+              locale: widget.locale,
+              localizedValues: widget.localizedValues,
+            ),
     );
-  }
-
-  routing() {
-   
-    if (widget.id != null) {
-      return HomePage();
-    } else {
-      return Login();
-    }
-  }
-
-  getData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('token');
-    return id;
   }
 }

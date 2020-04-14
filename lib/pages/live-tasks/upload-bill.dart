@@ -1,3 +1,4 @@
+import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,7 +6,11 @@ import 'dart:io';
 
 class BillUpload extends StatefulWidget {
   final orderDetail;
-  BillUpload({Key key, this.orderDetail}) : super(key: key);
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  BillUpload({Key key, this.orderDetail, this.locale, this.localizedValues})
+      : super(key: key);
   @override
   _BillUploadState createState() => _BillUploadState();
 }
@@ -13,15 +18,19 @@ class BillUpload extends StatefulWidget {
 class _BillUploadState extends State<BillUpload> {
   static File _imageFile, myfile;
   void _getImage(BuildContext context, ImageSource source) {
-    setState(() {
-      _imageFile = myfile;
-    });
+    if (mounted) {
+      setState(() {
+        _imageFile = myfile;
+      });
+    }
     ImagePicker.pickImage(
       source: source,
     ).then((File image) {
-      setState(() {
-        _imageFile = image;
-      });
+      if (mounted) {
+        setState(() {
+          _imageFile = image;
+        });
+      }
     });
   }
 
@@ -30,7 +39,8 @@ class _BillUploadState extends State<BillUpload> {
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
-        title: new Text('Upload Bill', style: textwhitesmall()),
+        title: new Text(MyLocalizations.of(context).uploadBill,
+            style: textwhitesmall()),
       ),
       body: new Container(
         child: Column(
@@ -43,31 +53,17 @@ class _BillUploadState extends State<BillUpload> {
               children: <Widget>[
                 Expanded(
                   child: new Text(
-                    'Submit Bill',
+                    MyLocalizations.of(context).submitBill,
                     style: textmediumb(),
                   ),
                 ),
-                // Expanded(
-                //     child: new Row(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   children: <Widget>[
-                //     GestureDetector(
-                //       onTap: () {
-                //         Navigator.of(context).pop(context);
-                //       },
-                //       child: new Icon(
-                //         Icons.clear,
-                //       ),
-                //     )
-                //   ],
-                // )),
               ],
             ),
             InkWell(
               child: new Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
                 child: new Text(
-                  'Camera',
+                  MyLocalizations.of(context).camera,
                   style: textmediumblue(),
                 ),
               ),
@@ -75,7 +71,6 @@ class _BillUploadState extends State<BillUpload> {
                 _getImage(context, ImageSource.camera);
               },
             ),
-
             new Row(
               children: <Widget>[
                 new Container(
@@ -86,10 +81,7 @@ class _BillUploadState extends State<BillUpload> {
                         border: Border.all(color: Color(0xFF38707070))),
                     child: Text('$_imageFile')),
                 GestureDetector(
-                  onTap: () {
-                    // Navigator.of(context)
-                    //     .pushNamed(StartDelivery.tag);
-                  },
+                  onTap: () {},
                   child: new Container(
                     padding: EdgeInsets.only(top: 6.0, left: 6.0),
                     width: 60.0,
@@ -106,14 +98,13 @@ class _BillUploadState extends State<BillUpload> {
                         ),
                         border: Border.all(color: Color(0xFF38707070))),
                     child: new Text(
-                      'Upload',
+                      MyLocalizations.of(context).upload,
                       style: textlightblack(),
                     ),
                   ),
                 )
               ],
             )
-//
           ],
         ),
       ),
