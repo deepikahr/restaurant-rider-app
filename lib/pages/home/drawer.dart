@@ -1,45 +1,71 @@
-import 'dart:convert';
-
+import 'package:delivery_app/main.dart';
 import 'package:delivery_app/pages/auth/login.dart';
 import 'package:delivery_app/pages/home/home.dart';
-import 'package:delivery_app/pages/main-tabs/earnings.dart';
-import 'package:delivery_app/pages/main-tabs/order.dart';
 import 'package:delivery_app/pages/profile/profile.dart';
-
-import 'package:delivery_app/services/auth.dart';
+import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/constant.dart';
+import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerPage extends StatefulWidget {
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  DrawerPage({Key key, this.locale, this.localizedValues}) : super(key: key);
   @override
   _DrawerPageState createState() => _DrawerPageState();
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  String name;
-  String email;
-  String profileImage;
-  String gender, picture;
-  var userData;
+  String name,
+      email,
+      profileImage,
+      gender,
+      picture,
+      selectedLanguages,
+      selectedLang;
+  List<String> languages = ['English', 'French', 'Arbic', 'Chinese'];
+  var userData, selectedLanguage, selectedLocale;
   @override
   void initState() {
     super.initState();
+    getData();
     userInformation();
   }
 
-  void userInformation() async {
-    await getUserInfo().then((response) {
-      final int statusCode = response.statusCode;
-      userData = json.decode(response.body);
+  getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        selectedLanguage = prefs.getString('selectedLanguage');
+      });
+      if (selectedLanguage == 'en') {
+        selectedLocale = 'English';
+      } else if (selectedLanguage == 'fr') {
+        selectedLocale = 'French';
+      } else if (selectedLanguage == 'ar') {
+        selectedLocale = 'Arbic';
+      } else if (selectedLanguage == 'zh') {
+        selectedLocale = 'Chinese';
+      }
+    }
+  }
 
-      if (statusCode != 200 || json == null) {
-        throw new Exception("Error while fetching data");
-      } else {
+  void userInformation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.getString("name") != null || prefs.getString("picture") != null) {
+      picture = prefs.getString("picture");
+      name = prefs.getString("name");
+    }
+    await AuthService.getUserInfo().then((response) {
+      if (mounted) {
         setState(() {
-          name = userData['name'];
-          picture = userData['logo'];
+          prefs.setString("name", response['name']);
+          prefs.setString("picture", response['logo']);
+          name = response['name'] ?? "";
+          picture = response['logo'];
         });
       }
     });
@@ -86,7 +112,6 @@ class _DrawerPageState extends State<DrawerPage> {
                               children: <Widget>[
                                 new Image.asset(
                                   'assets/imgs/logo.png',
-                                  // color: primary,
                                   width: 150.0,
                                   height: 100.0,
                                 ),
@@ -99,12 +124,15 @@ class _DrawerPageState extends State<DrawerPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (BuildContext context) => Profile(),
+                                builder: (BuildContext context) => Profile(
+                                  locale: widget.locale,
+                                  localizedValues: widget.localizedValues,
+                                ),
                               ),
                             );
                           },
                           child: Container(
-                            margin: EdgeInsets.only(left: 5.0, right: 5.0),
+                            margin: EdgeInsets.only(left: 5.0, right: 12.0),
                             padding: EdgeInsets.only(left: 12.0, right: 12.0),
                             decoration: BoxDecoration(
                                 border: Border(
@@ -115,12 +143,12 @@ class _DrawerPageState extends State<DrawerPage> {
                               children: <Widget>[
                                 _buildMenuProfileLogo(picture),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 20.0),
+                                  padding:
+                                      EdgeInsets.only(left: 20.0, right: 20.0),
                                 ),
                                 name != null
                                     ? Text(
                                         name.toUpperCase(),
-                                        // style: hintStyleWhitePNR()
                                       )
                                     : Container(height: 0, width: 0),
                               ],
@@ -129,17 +157,26 @@ class _DrawerPageState extends State<DrawerPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed(HomePage.tag);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => HomePage(
+                                    locale: widget.locale,
+                                    localizedValues: widget.localizedValues,
+                                    currentIndex: 0,
+                                  ),
+                                ),
+                                (Route<dynamic> route) => false);
                           },
                           child: new ListTile(
-                            contentPadding: EdgeInsets.only(left: 36.0),
+                            contentPadding:
+                                EdgeInsets.only(left: 36.0, right: 20.0),
                             leading: Image.asset(
                               'assets/icons/home.png',
                               color: primary,
                             ),
                             title: new Text(
-                              'Home',
-//                              style: lightTextSmallHNB(),
+                              MyLocalizations.of(context).home,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -149,17 +186,27 @@ class _DrawerPageState extends State<DrawerPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed(Earnings.tag);
+                            Navigator.of(context);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => HomePage(
+                                    locale: widget.locale,
+                                    localizedValues: widget.localizedValues,
+                                    currentIndex: 1,
+                                  ),
+                                ),
+                                (Route<dynamic> route) => false);
                           },
                           child: new ListTile(
-                            contentPadding: EdgeInsets.only(left: 36.0),
+                            contentPadding:
+                                EdgeInsets.only(left: 36.0, right: 20.0),
                             leading: new Icon(
                               Icons.attach_money,
                               color: primary,
                             ),
                             title: new Text(
-                              'Earnings',
-//                              style: lightTextSmallHNB(),
+                              MyLocalizations.of(context).earnings,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -169,17 +216,27 @@ class _DrawerPageState extends State<DrawerPage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.of(context).pushNamed(Order.tag);
+                            Navigator.of(context);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => HomePage(
+                                    locale: widget.locale,
+                                    localizedValues: widget.localizedValues,
+                                    currentIndex: 2,
+                                  ),
+                                ),
+                                (Route<dynamic> route) => false);
                           },
                           child: new ListTile(
-                            contentPadding: EdgeInsets.only(left: 36.0),
+                            contentPadding:
+                                EdgeInsets.only(left: 36.0, right: 20.0),
                             leading: new Image.asset(
                               'assets/icons/order.png',
                               color: primary,
                             ),
                             title: new Text(
-                              'Orders',
-//                              style: lightTextSmallHNB(),
+                              MyLocalizations.of(context).orders,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -192,18 +249,25 @@ class _DrawerPageState extends State<DrawerPage> {
                             SharedPreferences pref =
                                 await SharedPreferences.getInstance();
                             pref.remove('token');
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushNamed(Login.tag);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) => Login(
+                                    locale: widget.locale,
+                                    localizedValues: widget.localizedValues,
+                                  ),
+                                ),
+                                (Route<dynamic> route) => false);
                           },
                           child: new ListTile(
-                            contentPadding: EdgeInsets.only(left: 36.0),
+                            contentPadding:
+                                EdgeInsets.only(left: 36.0, right: 20.0),
                             leading: new Icon(
                               Icons.exit_to_app,
                               color: primary,
                             ),
                             title: new Text(
-                              'Logout',
-//                              style: lightTextSmallHNB(),
+                              MyLocalizations.of(context).logout,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -211,6 +275,82 @@ class _DrawerPageState extends State<DrawerPage> {
                             ),
                           ),
                         ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 1.0),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                                MyLocalizations.of(context).selectLanguages),
+                            trailing: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                hint: Text(selectedLocale == null
+                                    ? 'English'
+                                    : selectedLocale),
+                                value: selectedLanguages,
+                                onChanged: (newValue) async {
+                                  if (newValue == 'English') {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setString('selectedLanguage', 'en');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            MyApp(
+                                          "en",
+                                          widget.localizedValues,
+                                        ),
+                                      ),
+                                    );
+                                  } else if (newValue == 'Arbic') {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setString('selectedLanguage', 'ar');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            MyApp(
+                                          "ar",
+                                          widget.localizedValues,
+                                        ),
+                                      ),
+                                    );
+                                  } else if (newValue == 'Chinese') {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setString('selectedLanguage', 'zh');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            MyApp('zh', widget.localizedValues),
+                                      ),
+                                    );
+                                  } else {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setString('selectedLanguage', 'fr');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            MyApp('fr', widget.localizedValues),
+                                      ),
+                                    );
+                                  }
+                                },
+                                items: languages.map((lang) {
+                                  return DropdownMenuItem(
+                                    child: new Text(lang),
+                                    value: lang,
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),

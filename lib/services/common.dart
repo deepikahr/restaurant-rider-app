@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'dart:convert';
 
@@ -12,5 +14,11 @@ class Common {
   static Future<String> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return Future(() => prefs.getString('token'));
+  }
+
+  // remove token from storage
+  static Future<bool> removeToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.remove('token');
   }
 }

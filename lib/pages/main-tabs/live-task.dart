@@ -1,3 +1,4 @@
+import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import '../../services/orders-service.dart';
@@ -9,26 +10,29 @@ import 'package:delivery_app/pages/live-tasks/location.dart';
 
 class LiveTasks extends StatefulWidget {
   static String tag = "livetasks-page";
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  LiveTasks({Key key, this.locale, this.localizedValues}) : super(key: key);
   @override
   _LiveTasksState createState() => _LiveTasksState();
 }
 
 class _LiveTasksState extends State<LiveTasks> {
-  bool val = true;
+  int orderIndex = 0;
 
-  var startLocation;
-  var currentLocation;
+  var startLocation,
+      currentLocation,
+      locationSubscription,
+      _location = new Location(),
+      formatter = new DateFormat('yyyy-MM-dd');
 
-  var locationSubscription;
-
-  var _location = new Location();
-  bool permission = false;
   String error;
+  PermissionStatus permissionGranted;
 
-  bool currentWidget = true;
-
-  Image image1;
-
+  dynamic orderList;
+  final GlobalKey<AsyncLoaderState> _asyncLoaderState =
+      GlobalKey<AsyncLoaderState>();
   @override
   void initState() {
     super.initState();
@@ -38,8 +42,7 @@ class _LiveTasksState extends State<LiveTasks> {
   }
 
   getResult() async {
-    locationSubscription =
-        _location.onLocationChanged().listen((LocationData result) {
+    _location.onLocationChanged.listen((LocationData result) {
       if (mounted) {
         setState(() {
           currentLocation = result;
@@ -54,7 +57,7 @@ class _LiveTasksState extends State<LiveTasks> {
     // Platform messages may fail, so we use a try/catch PlatformException.
 
     try {
-      permission = await _location.hasPermission();
+      permissionGranted = await _location.hasPermission();
       location = await _location.getLocation();
 
       error = null;
@@ -76,18 +79,11 @@ class _LiveTasksState extends State<LiveTasks> {
     }
   }
 
-  var formatter = new DateFormat('yyyy-MM-dd');
-  dynamic orderList;
-  final GlobalKey<AsyncLoaderState> _asyncLoaderState =
-      GlobalKey<AsyncLoaderState>();
-
   getNewOrderToDeliveryBoy() async {
     String orderStatus = 'Accepted';
     await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
         .then((onValue) {});
   }
-
-  int orderIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -98,8 +94,8 @@ class _LiveTasksState extends State<LiveTasks> {
           child: CircularProgressIndicator(
         backgroundColor: primary,
       )),
-      renderError: ([error]) =>
-          new Text('Sorry, there was an error loading...'),
+      renderError: ([error]) => new Text(
+          MyLocalizations.of(context).somethingwentwrongpleaserestarttheapp),
       renderSuccess: ({data}) {
         if (data != null && data.length > 0) {
           orderList = data;
@@ -107,27 +103,22 @@ class _LiveTasksState extends State<LiveTasks> {
           return pickupBuild(data);
         } else {
           return Padding(
-              padding: EdgeInsets.only(top: 100.0),
-              child: Center(
-                  child: Text(
-                "No Orders",
+            padding: EdgeInsets.only(top: 100.0),
+            child: Center(
+              child: Text(
+                MyLocalizations.of(context).noOrders,
                 style: TextStyle(fontSize: 20.0),
-              )));
+              ),
+            ),
+          );
         }
       },
     );
 
-    return ListView(
-      children: <Widget>[
-        new SingleChildScrollView(
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              asyncloader,
-            ],
-          ),
-        )
-      ],
+    return Scaffold(
+      body: new Center(
+        child: asyncloader,
+      ),
     );
   }
 
@@ -141,9 +132,11 @@ class _LiveTasksState extends State<LiveTasks> {
           itemBuilder: (BuildContext context, int index) {
             return InkWell(
               onTap: () {
-                setState(() {
-                  orderIndex = index;
-                });
+                if (mounted) {
+                  setState(() {
+                    orderIndex = index;
+                  });
+                }
               },
               child: Column(
                 children: <Widget>[
@@ -155,7 +148,8 @@ class _LiveTasksState extends State<LiveTasks> {
                     child: new Row(
                       children: <Widget>[
                         new Text(
-                          'Order #${orders[index]['orderID']}',
+                          MyLocalizations.of(context).orderID +
+                              ' #${orders[index]['orderID']}',
                           style: textmediumsmall(),
                         ),
                         Expanded(
@@ -174,12 +168,11 @@ class _LiveTasksState extends State<LiveTasks> {
                     ),
                   ),
                   new Container(
-                    // margin: EdgeInsets.only(bottom: 25.0),
                     color: Colors.white,
                     child: new ListTile(
                       leading: new Image.network(
                         orders[index]['productDetails'][0]['imageUrl'] == null
-                            ? "No Image"
+                            ? MyLocalizations.of(context).noImage
                             : orders[index]['productDetails'][0]['imageUrl'],
                         height: 45.0,
                       ),
@@ -194,19 +187,6 @@ class _LiveTasksState extends State<LiveTasks> {
                       trailing: new Image.asset('assets/icons/right-arrow.png'),
                     ),
                   ),
-                  // new Padding(
-                  //   padding: EdgeInsets.only(right: 20.0),
-                  //   child: new Row(
-                  //     mainAxisAlignment: MainAxisAlignment.end,
-                  //     children: <Widget>[
-                  //       new Text(
-                  //         'CURRENT TASK',
-                  //         textAlign: TextAlign.end,
-                  //         style: textboldSmall(),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             );
@@ -237,51 +217,44 @@ class _LiveTasksState extends State<LiveTasks> {
                       top: 10.0,
                       left: 10.0,
                       child: new Text(
-                        'Order # ${order['orderID']}',
+                        MyLocalizations.of(context).orderID +
+                            ' # ${order['orderID']}',
                         style: textmediumwhite(),
                       ))
                 ],
               )),
-              // Expanded(
-              //     child: new Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: <Widget>[
-              //     new Image.asset('assets/icons/watch.png'),
-              //     new Text(
-              //       '29 Min',
-              //       textAlign: TextAlign.end,
-              //       style: textboldblack(),
-              //     )
-              //   ],
-              // ))
             ],
           ),
         ),
         new Container(
-            //  margin: EdgeInsets.only(bottom: 25.0),
             padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             color: Colors.white,
             child: new GestureDetector(
               onTap: () {
-                // Navigator.of(context).pushNamed(Location.tag);
                 Navigator.push(
-                    context,
-                    new MaterialPageRoute(
-                        builder: (BuildContext context) => new LocationDetail(
-                            orderDetail: order,
-                            deliveryBoyLatLong: currentLocation)));
+                  context,
+                  new MaterialPageRoute(
+                    builder: (BuildContext context) => new LocationDetail(
+                      orderDetail: order,
+                      deliveryBoyLatLong: currentLocation,
+                      locale: widget.locale,
+                      localizedValues: widget.localizedValues,
+                    ),
+                  ),
+                );
               },
               child: new Column(
                 children: <Widget>[
                   new Row(
                     children: <Widget>[
                       Flexible(
-                          flex: 1,
-                          fit: FlexFit.tight,
-                          child: new Padding(
-                            padding: EdgeInsets.only(left: 20.0),
-                            child: new Image.asset('assets/icons/red-pin.png'),
-                          )),
+                        flex: 1,
+                        fit: FlexFit.tight,
+                        child: new Padding(
+                          padding: EdgeInsets.only(left: 20.0),
+                          child: new Image.asset('assets/icons/red-pin.png'),
+                        ),
+                      ),
                       Flexible(
                         flex: 3,
                         fit: FlexFit.tight,
@@ -317,11 +290,14 @@ class _LiveTasksState extends State<LiveTasks> {
                     children: <Widget>[
                       Expanded(
                         child: new Padding(
-                            padding: EdgeInsets.only(left: 55.0, right: 30.0),
-                            child: new Text(
-                              '${order['shippingAddress'] == null ? "" : order['shippingAddress']['locationName']},${order['shippingAddress'] == null ? "" : order['shippingAddress']['address']},Contact No- ${order['shippingAddress'] == null ? "" : order['shippingAddress']['contactNumber']}',
-                              style: textblack(),
-                            )),
+                          padding: EdgeInsets.only(left: 55.0, right: 30.0),
+                          child: new Text(
+                            '${order['shippingAddress'] == null ? "" : order['shippingAddress']['locationName']},${order['shippingAddress'] == null ? "" : order['shippingAddress']['address']},' +
+                                MyLocalizations.of(context).contactNo +
+                                ' -${order['shippingAddress'] == null ? "" : order['shippingAddress']['contactNumber']}',
+                            style: textblack(),
+                          ),
+                        ),
                       )
                     ],
                   )

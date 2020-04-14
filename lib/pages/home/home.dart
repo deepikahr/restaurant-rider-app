@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
@@ -10,7 +11,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
-  HomePage({Key key}) : super(key: key);
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+  final int currentIndex;
+  HomePage({Key key, this.locale, this.localizedValues, this.currentIndex})
+      : super(key: key);
 
   @override
   _HomePageState createState() => new _HomePageState();
@@ -22,8 +27,13 @@ class _HomePageState extends State<HomePage> {
   var userData;
   @override
   void initState() {
-    // getCartItem();
-
+    if (widget.currentIndex != null) {
+      if (mounted) {
+        setState(() {
+          _currentIndex = widget.currentIndex;
+        });
+      }
+    }
     super.initState();
     fetchUserInfo();
   }
@@ -46,24 +56,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     String title;
     if (_currentIndex == 0) {
-      setState(() {
-        title = 'Live Tasks';
-      });
+      if (mounted) {
+        setState(() {
+          title = MyLocalizations.of(context).liveTasks;
+        });
+      }
     } else if (_currentIndex == 1) {
-      setState(() {
-        title = 'Earnings';
-      });
+      if (mounted) {
+        setState(() {
+          title = MyLocalizations.of(context).earnings;
+        });
+      }
     } else {
-      setState(() {
-        title = 'Orders';
-      });
+      if (mounted) {
+        setState(() {
+          title = MyLocalizations.of(context).orders;
+        });
+      }
     }
     return new Scaffold(
-      drawer: DrawerPage(),
+      drawer: DrawerPage(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
-//        title: new Text('Earning', style: textwhitesmall()),
         title: Text(title, style: textwhitesmall()),
       ),
       backgroundColor: Colors.white,
@@ -94,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 0 ? Colors.white : blackb,
                       ),
                       Text(
-                        'Home',
+                        MyLocalizations.of(context).home,
                         style: TextStyle(
                           color: _currentIndex == 0 ? Colors.white : blackb,
                         ),
@@ -120,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 1 ? Colors.white : blackb,
                       ),
                       Text(
-                        'Earnings',
+                        MyLocalizations.of(context).earnings,
                         style: TextStyle(
                           color: _currentIndex == 1 ? Colors.white : blackb,
                         ),
@@ -146,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 2 ? Colors.white : blackb,
                       ),
                       Text(
-                        'Order',
+                        MyLocalizations.of(context).orders,
                         style: TextStyle(
                           color: _currentIndex == 2 ? Colors.white : blackb,
                         ),

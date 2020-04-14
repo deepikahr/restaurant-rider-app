@@ -10,31 +10,31 @@ description: A new Flutter application.
 version: 1.0.13+14
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.0+1
-  shared_preferences: ^0.4.3
+  http: ^0.12.0+4
+  shared_preferences: ^0.5.6+3
   async_loader: ^0.1.2
-  intl: ^0.15.7
-  location: ^2.3.5 
-  image_picker: ^0.6.1+2
-  url_launcher: ^5.4.1
+  
+  location: ^3.0.2 
+  image_picker: ^0.6.5
+  url_launcher: ^5.4.2
  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  google_maps_flutter: ^0.5.20+2
-  call_number: ^0.0.1 
+  google_maps_flutter: ^0.5.25+3
   toast: ^0.1.5
-
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  intl: 
 
 flutter:
   uses-material-design: true
@@ -61,7 +61,10 @@ flutter:
   - assets/imgs/dp.png
   - assets/bgs/bg.png
   - assets/imgs/na.jpg
-
+  - assets/i18n/en.json
+  - assets/i18n/fr.json
+  - assets/i18n/zh.json
+  - assets/i18n/ar.json
 
 
 

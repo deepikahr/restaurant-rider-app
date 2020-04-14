@@ -9,6 +9,10 @@ int newOrderLength = 1;
 int pocessingOrderLength = 1;
 
 class TabsHeading extends StatefulWidget {
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  TabsHeading({Key key, this.locale, this.localizedValues}) : super(key: key);
   @override
   _TabsHeadingState createState() => new _TabsHeadingState();
 }
@@ -29,10 +33,23 @@ class _TabsHeadingState extends State<TabsHeading>
       new Tab(
         text: "New",
       ),
-      new Tab(text: 'Processing '),
+      new Tab(text: 'Processing'),
       new Tab(text: 'History'),
     ];
-    _pages = [new New(), new Processing(), new History()];
+    _pages = [
+      new New(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
+      new Processing(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
+      new History(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      )
+    ];
     _controller = new TabController(
       length: _tabs.length,
       vsync: this,
@@ -42,43 +59,48 @@ class _TabsHeadingState extends State<TabsHeading>
   getAcceptedOrders() async {
     assignedList =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
-    setState(() {
-      newOrderLength = assignedList.length;
-    });
+    if (mounted) {
+      setState(() {
+        newOrderLength = assignedList.length;
+      });
+    }
   }
 
   getProcessingOrders() async {
     processingList =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('On the Way');
-    setState(() {
-      pocessingOrderLength = processingList.length;
-    });
+    if (mounted) {
+      setState(() {
+        pocessingOrderLength = processingList.length;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return new Container(
-        child: new Column(
-      children: [
-        new TabBar(
-          controller: _controller,
-          tabs: _tabs,
-          isScrollable: true,
-          indicatorColor: primary,
-          labelColor: blackb,
-          indicatorWeight: 3.0,
-          unselectedLabelColor: blackb,
-          labelStyle: textmediumsmall(),
-          unselectedLabelStyle: textmediumsmall(),
-        ),
-        new SizedBox.fromSize(
-          size: const Size.fromHeight(500.0),
-          child: new TabBarView(
+      child: new Column(
+        children: [
+          new TabBar(
             controller: _controller,
-            children: _pages,
+            tabs: _tabs,
+            isScrollable: true,
+            indicatorColor: primary,
+            labelColor: blackb,
+            indicatorWeight: 3.0,
+            unselectedLabelColor: blackb,
+            labelStyle: textmediumsmall(),
+            unselectedLabelStyle: textmediumsmall(),
           ),
-        ),
-      ],
-    ));
+          new SizedBox.fromSize(
+            size: const Size.fromHeight(500.0),
+            child: new TabBarView(
+              controller: _controller,
+              children: _pages,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
