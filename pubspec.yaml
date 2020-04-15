@@ -1,12 +1,6 @@
 name: delivery_app
 description: A new Flutter application.
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# Read more about versioning at semver.org.
 version: 1.0.13+14
 
 environment:
@@ -18,13 +12,9 @@ dependencies:
   http: ^0.12.0+4
   shared_preferences: ^0.5.6+3
   async_loader: ^0.1.2
-  
-  location: ^3.0.2 
+  location: ^3.0.2
   image_picker: ^0.6.5
   url_launcher: ^5.4.2
- 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   google_maps_flutter: ^0.5.25+3
   toast: ^0.1.5
@@ -34,59 +24,55 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  intl: 
+  intl:
 
 flutter:
   uses-material-design: true
   assets:
-  - assets/icons/watch.png
-  - assets/icons/send.png
-  - assets/icons/red-pin.png
-  - assets/icons/green-pin.png
-  - assets/icons/marker.png
-  - assets/icons/home.png
-  - assets/icons/order.png
-  - assets/icons/bell.png
-  - assets/icons/right-arrow.png
-  - assets/icons/delete.png
-  - assets/icons/navigate.png
-  - assets/icons/headset.png
-  - assets/icons/phone.png
-  - assets/icons/cell-phone.png
-  - assets/icons/spinner.gif
-  - assets/imgs/ricebowl.png
-  - assets/imgs/greenbg.png
-  - assets/imgs/logo.png 
-  - assets/imgs/map.png
-  - assets/imgs/dp.png
-  - assets/bgs/bg.png
-  - assets/imgs/na.jpg
-  - assets/i18n/en.json
-  - assets/i18n/fr.json
-  - assets/i18n/zh.json
-  - assets/i18n/ar.json
-
-
-
-
+    - assets/icons/watch.png
+    - assets/icons/send.png
+    - assets/icons/red-pin.png
+    - assets/icons/green-pin.png
+    - assets/icons/marker.png
+    - assets/icons/home.png
+    - assets/icons/order.png
+    - assets/icons/bell.png
+    - assets/icons/right-arrow.png
+    - assets/icons/delete.png
+    - assets/icons/navigate.png
+    - assets/icons/headset.png
+    - assets/icons/phone.png
+    - assets/icons/cell-phone.png
+    - assets/icons/spinner.gif
+    - assets/imgs/ricebowl.png
+    - assets/imgs/greenbg.png
+    - assets/imgs/logo.png
+    - assets/imgs/map.png
+    - assets/imgs/dp.png
+    - assets/bgs/bg.png
+    - assets/imgs/na.jpg
+    - assets/i18n/en.json
+    - assets/i18n/fr.json
+    - assets/i18n/zh.json
+    - assets/i18n/ar.json
 
   fonts:
-  - family: RobotoRegular
-    fonts:
-    - asset: assets/fonts/RobotoRegular.ttf
-      weight: 400
+    - family: RobotoRegular
+      fonts:
+        - asset: assets/fonts/RobotoRegular.ttf
+          weight: 400
 
-  - family: RobotoLight
-    fonts:
-    - asset: assets/fonts/RobotoLight.ttf
-      weight: 400
+    - family: RobotoLight
+      fonts:
+        - asset: assets/fonts/RobotoLight.ttf
+          weight: 400
 
-  - family: RobotoMedium
-    fonts:
-    - asset: assets/fonts/RobotoMedium.ttf
-      weight: 400
+    - family: RobotoMedium
+      fonts:
+        - asset: assets/fonts/RobotoMedium.ttf
+          weight: 400
 
-  - family: RobotoBold
-    fonts:
-    - asset: assets/fonts/RobotoBold.ttf
-      weight: 400
+    - family: RobotoBold
+      fonts:
+        - asset: assets/fonts/RobotoBold.ttf
+          weight: 400

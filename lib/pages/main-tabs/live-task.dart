@@ -28,20 +28,25 @@ class _LiveTasksState extends State<LiveTasks> {
       formatter = new DateFormat('yyyy-MM-dd');
 
   String error;
-  PermissionStatus permissionGranted;
-
+  PermissionStatus _permissionGranted;
   dynamic orderList;
   final GlobalKey<AsyncLoaderState> _asyncLoaderState =
       GlobalKey<AsyncLoaderState>();
   @override
   void initState() {
-    super.initState();
-
     initPlatformState();
-    getResult();
+    super.initState();
   }
 
-  getResult() async {
+  initPlatformState() async {
+    var location;
+    _permissionGranted = await _location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await _location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
     _location.onLocationChanged.listen((LocationData result) {
       if (mounted) {
         setState(() {
@@ -49,15 +54,9 @@ class _LiveTasksState extends State<LiveTasks> {
         });
       }
     });
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  initPlatformState() async {
-    var location;
-    // Platform messages may fail, so we use a try/catch PlatformException.
 
     try {
-      permissionGranted = await _location.hasPermission();
+      _permissionGranted = await _location.hasPermission();
       location = await _location.getLocation();
 
       error = null;
