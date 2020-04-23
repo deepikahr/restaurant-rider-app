@@ -19,50 +19,59 @@ class Processing extends StatefulWidget {
 class _ProcessingState extends State<Processing> {
   int dollars = 114;
   dynamic onTheWayordersList;
+  bool isProcessingLoading = false;
 
-  final GlobalKey<AsyncLoaderState> _asyncLoaderState =
-      GlobalKey<AsyncLoaderState>();
+  @override
+  void initState() {
+    getOnTheWayOrdersList();
+    super.initState();
+  }
 
   getOnTheWayOrdersList() async {
-    return await OrdersService.getAssignedOrdersListToDeliveryBoy('On the Way');
+    if (mounted) {
+      setState(() {
+        isProcessingLoading = true;
+      });
+    }
+
+    await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted')
+        .then((value) {
+      if (mounted) {
+        setState(() {
+          onTheWayordersList = value;
+
+          pocessingOrderLength = onTheWayordersList.length;
+          isProcessingLoading = false;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var asyncloader = AsyncLoader(
-      key: _asyncLoaderState,
-      initState: () async => await getOnTheWayOrdersList(),
-      renderLoad: () => Center(
-          child: CircularProgressIndicator(
-        backgroundColor: primary,
-      )),
-      renderSuccess: ({data}) {
-        if (data.length > 0) {
-          onTheWayordersList = data;
-
-          pocessingOrderLength = onTheWayordersList.length;
-
-          return buidNewOnTheWayList(data);
-        } else {
-          return Container(
-              child: Text(MyLocalizations.of(context).noProcessingOrder));
-        }
-      },
-    );
     return new Scaffold(
       body: new Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Center(
-            child: asyncloader,
-          ),
+          isProcessingLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: primary,
+                  ),
+                )
+              : onTheWayordersList.length > 0
+                  ? buidNewOnTheWayList(onTheWayordersList)
+                  : Center(
+                      child:
+                          Text(MyLocalizations.of(context).noProcessingOrder),
+                    ),
         ],
       ),
     );
   }
 
   Widget buidNewOnTheWayList(dynamic orders) {
-    return Column(
+    return ListView(
       children: <Widget>[
         ListView.builder(
           itemCount: orders.length,
@@ -93,17 +102,16 @@ class _ProcessingState extends State<Processing> {
                         style: textmediumsm(),
                       )),
                       Expanded(
-                          child: new Text(
-                        orders[index]['createdAtTime'] != null
-                            ? new DateFormat.yMMMMd("en_US").format(
-                                new DateTime.fromMillisecondsSinceEpoch(
-                                    orders[index]['createdAtTime']))
-                            : new DateFormat.yMMMMd("en_US").format(
-                                DateTime.parse(
-                                    '${orders[index]['createdAt']}')),
-                        textAlign: TextAlign.center,
-                        style: textmediumsm(),
-                      ))
+                        child: new Text(
+                          orders[index]['createdAtTime'] == null
+                              ? ""
+                              : DateFormat('dd-MMM-yy hh:mm a').format(
+                                  new DateTime.fromMillisecondsSinceEpoch(
+                                      orders[index]['createdAtTime'])),
+                          textAlign: TextAlign.center,
+                          style: textmediumsm(),
+                        ),
+                      )
                     ],
                   ),
                 ),

@@ -9,14 +9,15 @@ class LocationDetail extends StatefulWidget {
   final orderDetail;
   final deliveryBoyLatLong;
   final Map<String, Map<String, String>> localizedValues;
-  final String locale;
+  final String locale, currency;
 
   LocationDetail(
       {Key key,
       this.orderDetail,
       this.deliveryBoyLatLong,
       this.locale,
-      this.localizedValues})
+      this.localizedValues,
+      this.currency})
       : super(key: key);
 
   @override
@@ -96,7 +97,7 @@ class _LocationState extends State<LocationDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text(
-                            widget.orderDetail['restaurantName'],
+                            widget.orderDetail['productDetails'][0]['restaurant'] ?? "",
                             style: textmediumb(),
                           ),
                           Padding(
@@ -159,10 +160,11 @@ class _LocationState extends State<LocationDetail> {
                                   MaterialPageRoute(
                                     builder: (BuildContext context) =>
                                         new OrderPlaced(
-                                      orderDetail: widget.orderDetail,
-                                      locale: widget.locale,
-                                      localizedValues: widget.localizedValues,
-                                    ),
+                                            orderDetail: widget.orderDetail,
+                                            locale: widget.locale,
+                                            localizedValues:
+                                                widget.localizedValues,
+                                            currency: widget.currency),
                                   ),
                                 );
                               },

@@ -20,7 +20,7 @@
         android:label="Delivery App"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDCr17ff-zsj4-gFALQ-IspXJIDgwjudPw"/>
+            android:value="AIzaSyDXxt_aIn5HWQZg3gFYOqcuf8hjUuzmvKg"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

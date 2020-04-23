@@ -293,52 +293,59 @@ class _DrawerPageState extends State<DrawerPage> {
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.setString('selectedLanguage', 'en');
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            MyApp(
-                                          "en",
-                                          widget.localizedValues,
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MyApp(
+                                            "en",
+                                            widget.localizedValues,
+                                          ),
                                         ),
-                                      ),
-                                    );
+                                        (Route<dynamic> route) => false);
                                   } else if (newValue == 'Arbic') {
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.setString('selectedLanguage', 'ar');
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            MyApp(
-                                          "ar",
-                                          widget.localizedValues,
+
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MyApp(
+                                            "ar",
+                                            widget.localizedValues,
+                                          ),
                                         ),
-                                      ),
-                                    );
+                                        (Route<dynamic> route) => false);
                                   } else if (newValue == 'Chinese') {
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.setString('selectedLanguage', 'zh');
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            MyApp('zh', widget.localizedValues),
-                                      ),
-                                    );
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MyApp(
+                                            "zh",
+                                            widget.localizedValues,
+                                          ),
+                                        ),
+                                        (Route<dynamic> route) => false);
                                   } else {
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.setString('selectedLanguage', 'fr');
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            MyApp('fr', widget.localizedValues),
-                                      ),
-                                    );
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MyApp(
+                                            "fr",
+                                            widget.localizedValues,
+                                          ),
+                                        ),
+                                        (Route<dynamic> route) => false);
                                   }
                                 },
                                 items: languages.map((lang) {

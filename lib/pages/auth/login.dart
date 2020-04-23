@@ -2,6 +2,7 @@ import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:delivery_app/pages/home/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/auth-service.dart';
 import '../../services/common.dart';
 
@@ -23,11 +24,14 @@ class _LoginState extends State<Login> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   login() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if (_formkey.currentState.validate()) {
       _formkey.currentState.save();
       Map<String, dynamic> body = {
         'email': email,
         'password': password,
+        "playerId": prefs.getString("playerId")
       };
       if (mounted) {
         setState(() {

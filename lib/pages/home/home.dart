@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:delivery_app/services/orders-service.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   var userData;
   @override
   void initState() {
+    getGlobalSettingsData();
     if (widget.currentIndex != null) {
       if (mounted) {
         setState(() {
@@ -35,7 +37,20 @@ class _HomePageState extends State<HomePage> {
       }
     }
     super.initState();
-    fetchUserInfo();
+  }
+
+  getGlobalSettingsData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await AuthService.getAdminSettings().then((onValue) {
+      var adminSettings = onValue;
+      fetchUserInfo();
+      if (adminSettings['currency'] == null) {
+        prefs.setString('currency', '\$');
+      } else {
+        prefs.setString(
+            'currency', '${adminSettings['currency']['currencySymbol']}');
+      }
+    });
   }
 
   fetchUserInfo() async {

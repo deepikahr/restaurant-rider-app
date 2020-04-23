@@ -2,6 +2,7 @@ import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
 import 'package:async_loader/async_loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/orders-service.dart';
 import 'package:intl/intl.dart';
 
@@ -16,57 +17,69 @@ class Earnings extends StatefulWidget {
 }
 
 class _EarningsState extends State<Earnings> {
-  int total;
+  double total;
   String selectedDate;
-
+  bool isGetEarningLoading = false;
   List orderList = List();
-  final GlobalKey<AsyncLoaderState> _asyncLoaderState =
-      GlobalKey<AsyncLoaderState>();
+  Map earningData;
+  String currency;
 
   getDeliveredOrdersListOnSelectedDate() async {
+    if (mounted) {
+      setState(() {
+        isGetEarningLoading = true;
+      });
+    }
     var date = DateTime.now();
-    return await OrdersService.getDeliveredOrdersEaringHistory(
-        date.day, date.month, date.year);
+
+    await OrdersService.getDeliveredOrdersEaringHistory(
+            date.day, date.month, date.year)
+        .then((value) {
+      if (mounted) {
+        setState(() {
+          earningData = value;
+          isGetEarningLoading = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrency();
+    getDeliveredOrdersListOnSelectedDate();
+  }
+
+  getCurrency() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    currency = prefs.getString('currency');
   }
 
   @override
   Widget build(BuildContext context) {
-    var asyncloader = AsyncLoader(
-      key: _asyncLoaderState,
-      initState: () async => await getDeliveredOrdersListOnSelectedDate(),
-      renderLoad: () => Center(
-          child: CircularProgressIndicator(
-        backgroundColor: primary,
-      )),
-      renderSuccess: ({data}) {
-        if (data != null && data['orders'].length > 0) {
-          total = data['totalOrderEarningCOD'];
-
-          orderList = data['orders'];
-          selectedDate = orderList[0]['createdAtTime'] == null
-              ? orderList[0]['createdAt']
-              : orderList[0]['createdAtTime'];
-          return buildDeliveredList(selectedDate);
-        } else {
-          return Container(child: Text(MyLocalizations.of(context).noEarning));
-        }
-      },
-    );
     return new Scaffold(
       body: new Stack(
         fit: StackFit.expand,
         children: <Widget>[
           Center(
-            child: asyncloader,
-          ),
+              child: isGetEarningLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        backgroundColor: primary,
+                      ),
+                    )
+                  : earningData['orders'].length > 0
+                      ? buildDeliveredList(earningData)
+                      : Container(
+                          child: Text(MyLocalizations.of(context).noEarning))),
         ],
       ),
     );
   }
 
-  Widget buildDeliveredList(selectedDate) {
-    return new Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget buildDeliveredList(data) {
+    return new ListView(
       children: <Widget>[
         new Container(
           width: MediaQuery.of(context).size.width,
@@ -81,14 +94,19 @@ class _EarningsState extends State<Earnings> {
               ),
               new Padding(padding: EdgeInsets.only(top: 5.0)),
               new Text(
-                DateFormat.yMMMMd("en_US")
-                    .format(DateTime.parse('$selectedDate')),
+                selectedDate = data['orders'][0]['createdAtTime'] == null
+                    ? ""
+                    : DateFormat('dd-MMM-yy hh:mm a').format(
+                        new DateTime.fromMillisecondsSinceEpoch(
+                          data['orders'][0]['createdAtTime'],
+                        ),
+                      ),
                 overflow: TextOverflow.ellipsis,
                 style: textlight(),
               ),
               new Padding(padding: EdgeInsets.only(top: 10.0)),
               new Text(
-                '\$ ${total.toStringAsFixed(2)}',
+                '$currency ${data['totalOrderEarningCOD'].toStringAsFixed(2)}',
                 style: textred(),
               )
             ],
@@ -101,25 +119,34 @@ class _EarningsState extends State<Earnings> {
               style: textlight()),
         ),
         new Container(
-          color: Colors.white,
-          child: new Column(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  ListView.builder(
-                    itemCount: orderList.length,
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (BuildContext contex, int index) {
-                      return Column(
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                ListView.builder(
+                  itemCount: data['orders'].length,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (BuildContext contex, int index) {
+                    print(data);
+                    print(data['orders'][index]['createdAtTime']);
+
+                    return Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Column(
                         children: <Widget>[
                           new Row(
                             children: <Widget>[
                               Flexible(
-                                  flex: 2,
-                                  fit: FlexFit.tight,
-                                  child: new Image.network(orderList[index]
-                                      ['productDetails'][0]['imageUrl'])),
+                                flex: 3,
+                                fit: FlexFit.tight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: new Image.network(
+                                    data['orders'][index]['productDetails'][0]
+                                        ['imageUrl'],
+                                  ),
+                                ),
+                              ),
                               Flexible(
                                 flex: 5,
                                 fit: FlexFit.tight,
@@ -128,46 +155,48 @@ class _EarningsState extends State<Earnings> {
                                   children: <Widget>[
                                     new Padding(
                                       padding: EdgeInsets.only(left: 4.0),
-                                      child: orderList[index]
+                                      child: data['orders'][index]
                                                   ['restaurantName'] !=
                                               null
                                           ? new Text(
-                                              orderList[index]
+                                              data['orders'][index]
                                                   ['restaurantName'],
                                               style: textmediumb(),
                                             )
                                           : Text(""),
                                     ),
                                     IntrinsicHeight(
-                                        child: new Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        new Text(
-                                          MyLocalizations.of(context).orderID +
-                                              ' - #${orderList[index]['orderID']}',
-                                          style: textdblack(),
-                                        ),
-                                        // VerticalDivider,
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 5.0),
-                                          child: new Text(
-                                            orderList[index]['createdAtTime'] !=
-                                                    null
-                                                ? new DateFormat.yMMMMd("en_US")
-                                                    .format(new DateTime
-                                                            .fromMillisecondsSinceEpoch(
-                                                        orderList[index]
-                                                            ['createdAtTime']))
-                                                : new DateFormat.yMMMMd("en_US")
-                                                    .format(DateTime.parse(
-                                                        '${orderList[index]['createdAt']}')),
-                                            overflow: TextOverflow.ellipsis,
+                                      child: new Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: <Widget>[
+                                          new Text(
+                                            MyLocalizations.of(context)
+                                                    .orderID +
+                                                ' - #${data['orders'][index]['orderID']}',
                                             style: textdblack(),
                                           ),
-                                        ),
-                                      ],
-                                    )),
+                                          // VerticalDivider,
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 5.0),
+                                            child: new Text(
+                                              data['orders'][0]
+                                                          ['createdAtTime'] ==
+                                                      null
+                                                  ? ""
+                                                  : DateFormat(
+                                                          'dd-MMM-yy hh:mm a')
+                                                      .format(new DateTime
+                                                          .fromMillisecondsSinceEpoch(data[
+                                                              'orders'][index]
+                                                          ['createdAtTime'])),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: textdblack(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -182,7 +211,7 @@ class _EarningsState extends State<Earnings> {
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
                                       new Text(
-                                        '\$${(orderList[index]['grandTotal'])}',
+                                        '$currency${(data['orders'][index]['grandTotal'])}',
                                         style: textboldsmall(),
                                       ),
                                       new Padding(padding: EdgeInsets.all(3.0)),
@@ -192,15 +221,14 @@ class _EarningsState extends State<Earnings> {
                               )
                             ],
                           ),
+                          Divider()
                         ],
-                      );
-                    },
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            )),
       ],
     );
   }

@@ -8,9 +8,14 @@ import 'package:url_launcher/url_launcher.dart';
 class StartDelivery extends StatefulWidget {
   final orderDetail;
   final Map<String, Map<String, String>> localizedValues;
-  final String locale;
+  final String locale, currency;
 
-  StartDelivery({Key key, this.orderDetail, this.locale, this.localizedValues})
+  StartDelivery(
+      {Key key,
+      this.orderDetail,
+      this.locale,
+      this.localizedValues,
+      this.currency})
       : super(key: key);
   static String tag = "startdelivery-page";
   @override
@@ -105,10 +110,10 @@ class _StartDeliveryState extends State<StartDelivery> {
                         context,
                         MaterialPageRoute(
                           builder: (BuildContext context) => OrderDelivered(
-                            orderDetail: widget.orderDetail,
-                            locale: widget.locale,
-                            localizedValues: widget.localizedValues,
-                          ),
+                              orderDetail: widget.orderDetail,
+                              locale: widget.locale,
+                              localizedValues: widget.localizedValues,
+                              currency: widget.currency),
                         ),
                       );
                     },
@@ -137,11 +142,11 @@ class _StartDeliveryState extends State<StartDelivery> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             new Text(
-              '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['name']}',
+              '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['addressType']}',
               style: textmediumb(),
             ),
             new Text(
-              '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['locationName']}'
+              '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['flatNo']}'
               ' ${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['address']}',
               style: textblack(),
             ),
