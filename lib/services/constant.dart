@@ -7,6 +7,8 @@ const APP_NAME = 'Restaurant Saas';
 //api live url
 const BASE_URL = 'https://restaurant-sass.herokuapp.com/';
 
+//one signal
+const ONE_SIGNAL_APP_ID = '05ac6c51-8416-41ab-8779-b48503bbe125';
 // url +api/ add
 const API_ENDPOINT = BASE_URL + 'api/';
 

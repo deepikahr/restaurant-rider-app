@@ -20,48 +20,57 @@ class New extends StatefulWidget {
 class _NewState extends State<New> {
   int dollars = 114;
   dynamic orderList;
-  final GlobalKey<AsyncLoaderState> _asyncLoaderState =
-      GlobalKey<AsyncLoaderState>();
+
   List orderData = List();
+  bool isGetNewOrderLoading = false;
+  @override
+  void initState() {
+    getAcceptedOrdersList();
+    super.initState();
+  }
+
   getAcceptedOrdersList() async {
-    orderData =
-        await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
     if (mounted) {
       setState(() {
-        newOrderLength = orderData.length;
+        isGetNewOrderLoading = true;
       });
     }
-    return orderData;
+
+    await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted')
+        .then((value) {
+      if (mounted) {
+        setState(() {
+          newOrderLength = orderData.length;
+          orderList = value;
+          isGetNewOrderLoading = false;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    AsyncLoader asyncloader = AsyncLoader(
-      key: _asyncLoaderState,
-      initState: () async => await getAcceptedOrdersList(),
-      renderLoad: () => Center(
-          child: CircularProgressIndicator(
-        backgroundColor: primary,
-      )),
-      renderSuccess: ({data}) {
-        if (data.length > 0) {
-          orderList = data;
-          return buidNewOrdersList(data);
-        } else {
-          return Container(child: Text(MyLocalizations.of(context).noNewOrder));
-        }
-      },
-    );
-
     return Scaffold(
       backgroundColor: bglight,
-      body:
-          Container(alignment: AlignmentDirectional.center, child: asyncloader),
+      body: Container(
+        alignment: AlignmentDirectional.center,
+        child: isGetNewOrderLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: primary,
+                ),
+              )
+            : orderList.length > 0
+                ? buidNewOrdersList(orderList)
+                : Center(
+                    child: Text(MyLocalizations.of(context).noNewOrder),
+                  ),
+      ),
     );
   }
 
   Widget buidNewOrdersList(dynamic orders) {
-    return Column(
+    return ListView(
       children: <Widget>[
         ListView.builder(
           itemCount: orders.length,
@@ -113,13 +122,11 @@ class _NewState extends State<New> {
                           ),
                           Expanded(
                             child: new Text(
-                              orders[index]['createdAtTime'] != null
-                                  ? new DateFormat.yMMMMd("en_US").format(
+                              orders[index]['createdAtTime'] == null
+                                  ? ""
+                                  : DateFormat('dd-MMM-yy hh:mm a').format(
                                       new DateTime.fromMillisecondsSinceEpoch(
-                                          orders[index]['createdAtTime']))
-                                  : new DateFormat.yMMMMd("en_US").format(
-                                      DateTime.parse(
-                                          '${orders[index]['createdAt']}')),
+                                          orders[index]['createdAtTime'])),
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),

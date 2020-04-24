@@ -11,9 +11,14 @@ import 'package:url_launcher/url_launcher.dart';
 class OrderDelivered extends StatefulWidget {
   final orderDetail;
   final Map<String, Map<String, String>> localizedValues;
-  final String locale;
+  final String locale, currency;
 
-  OrderDelivered({Key key, this.orderDetail, this.locale, this.localizedValues})
+  OrderDelivered(
+      {Key key,
+      this.orderDetail,
+      this.locale,
+      this.localizedValues,
+      this.currency})
       : super(key: key);
   static String tag = "orderdelivered-page";
   @override
@@ -62,7 +67,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                   children: <Widget>[
                     new Text(
                       '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['address']}'
-                      '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['zip']}',
+                      '${widget.orderDetail['shippingAddress'] == null ? "" : widget.orderDetail['shippingAddress']['postalCode']}',
                       style: textlightblackh(),
                     ),
                     Padding(padding: EdgeInsets.only(top: 5.0)),
@@ -115,9 +120,11 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                       )),
                       Expanded(
                           child: new Text(
-                        new DateFormat.yMMMMd("en_US").add_jm().format(
-                            DateTime.parse(
-                                '${widget.orderDetail['createdAtTime'] != null ? widget.orderDetail['createdAtTime'] : widget.orderDetail['createdAt']}')),
+                        widget.orderDetail['createdAtTime'] == null
+                            ? ""
+                            : DateFormat('dd-MMM-yy hh:mm a').format(
+                                new DateTime.fromMillisecondsSinceEpoch(
+                                    widget.orderDetail['createdAtTime'])),
                         textAlign: TextAlign.end,
                         style: textdblack(),
                       ))
@@ -126,7 +133,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
                     MyLocalizations.of(context).totalBill +
-                        ' : \$ ${widget.orderDetail['grandTotal']}',
+                        ' : ${widget.currency}${widget.orderDetail['grandTotal']}',
                     style: textboldblack(),
                   ),
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
@@ -138,7 +145,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                                     widget.orderDetail['paymentOption'] ==
                                 'COD'
                             ? MyLocalizations.of(context).collectfromCustomer +
-                                ' :\$ ${widget.orderDetail['grandTotal']}'
+                                ' :${widget.currency}${widget.orderDetail['grandTotal']}'
                             : ' ',
                         style: textboldblack(),
                       ),

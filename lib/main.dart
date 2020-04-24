@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/pages/auth/login.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool get isInDebugMode {
@@ -31,8 +32,9 @@ void main() async {
       Zone.current.handleUncaughtError(details.exception, details.stack);
     }
   };
+  initOneSignal();
 
-  // tokenCheck(locale, localizedValues);
+  tokenCheck(locale, localizedValues);
   runZoned<Future<Null>>(() async {
     runApp(new MyApp(
       locale,
@@ -54,6 +56,34 @@ void tokenCheck(locale, localizedValues) {
   });
 }
 
+Future<void> initOneSignal() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  OneSignal.shared
+      .setNotificationReceivedHandler((OSNotification notification) {});
+  OneSignal.shared
+      .setNotificationOpenedHandler((OSNotificationOpenedResult result) {});
+  OneSignal.shared.init(ONE_SIGNAL_APP_ID, iOSSettings: {
+    OSiOSSettings.autoPrompt: false,
+    OSiOSSettings.inAppLaunchUrl: true
+  });
+  OneSignal.shared.setInFocusDisplayType(
+    OSNotificationDisplayType.notification,
+  );
+
+  OneSignal.shared
+      .promptUserForPushNotificationPermission(fallbackToSettings: true);
+  OneSignal.shared
+      .setInFocusDisplayType(OSNotificationDisplayType.notification);
+  var status = await OneSignal.shared.getPermissionSubscriptionState();
+  String playerId = status.subscriptionStatus.userId;
+  if (playerId == null) {
+    initOneSignal();
+  } else {
+    prefs.setString("playerId", playerId);
+  }
+}
+
 class MyApp extends StatefulWidget {
   final String locale;
   final Map<String, Map<String, String>> localizedValues;
@@ -72,7 +102,17 @@ class _MyAppState extends State<MyApp> {
   }
 
   loginInCheck() {
+if (mounted) {
+      setState(() {
+        loginCheck = true;
+      });
+    }
     Common.getToken().then((value) {
+if (mounted) {
+        setState(() {
+          loginCheck = false;
+        });
+      }
       if (value != null) {
         if (mounted) {
           setState(() {
@@ -107,7 +147,12 @@ class _MyAppState extends State<MyApp> {
         cursorColor: Colors.black,
         unselectedWidgetColor: Colors.grey,
       ),
-      home: loginIn
+      home: loginCheck
+          ? CheckTokenScreen(
+              widget.locale,
+              widget.localizedValues,
+            )
+          :loginIn
           ? HomePage(
               locale: widget.locale,
               localizedValues: widget.localizedValues,
@@ -116,6 +161,20 @@ class _MyAppState extends State<MyApp> {
               locale: widget.locale,
               localizedValues: widget.localizedValues,
             ),
+    );
+  }
+}
+class CheckTokenScreen extends StatelessWidget {
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+  CheckTokenScreen(this.locale, this.localizedValues);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

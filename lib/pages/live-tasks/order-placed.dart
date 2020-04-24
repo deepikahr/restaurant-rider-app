@@ -8,9 +8,14 @@ class OrderPlaced extends StatefulWidget {
   static String tag = "orderplaced-page";
   final orderDetail;
   final Map<String, Map<String, String>> localizedValues;
-  final String locale;
+  final String locale, currency;
 
-  OrderPlaced({Key key, this.orderDetail, this.locale, this.localizedValues})
+  OrderPlaced(
+      {Key key,
+      this.orderDetail,
+      this.locale,
+      this.localizedValues,
+      this.currency})
       : super(key: key);
 
   @override
@@ -91,7 +96,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
                                     Expanded(
                                       flex: 2,
                                       child: new Text(
-                                        '\$ ${widget.orderDetail['productDetails'][index]['totalPrice']}',
+                                        '${widget.currency}${widget.orderDetail['productDetails'][index]['totalPrice']}',
                                         textAlign: TextAlign.end,
                                         style: textlightblack(),
                                       ),
@@ -129,9 +134,11 @@ class _OrderPlacedState extends State<OrderPlaced> {
                       )),
                       Expanded(
                           child: new Text(
-                        new DateFormat.yMMMMd("en_US").add_jm().format(
-                            DateTime.parse(
-                                '${widget.orderDetail['createdAtTime'] != null ? widget.orderDetail['createdAtTime'] : widget.orderDetail['createdAt']}')),
+                        widget.orderDetail['createdAtTime'] == null
+                            ? ""
+                            : DateFormat('dd-MMM-yy hh:mm a').format(
+                                new DateTime.fromMillisecondsSinceEpoch(
+                                    widget.orderDetail['createdAtTime'])),
                         textAlign: TextAlign.end,
                         style: textdblack(),
                       ))
@@ -152,14 +159,14 @@ class _OrderPlacedState extends State<OrderPlaced> {
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
                     MyLocalizations.of(context).totalBill +
-                        ' :\$ ${widget.orderDetail['grandTotal']}',
+                        ' :${widget.currency} ${widget.orderDetail['grandTotal']}',
                     style: textboldblack(),
                   ),
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
                     widget.orderDetail['paymentOption'] == 'COD'
                         ? MyLocalizations.of(context).payGlobalRestaurant +
-                            ' : \$ ${widget.orderDetail['grandTotal']}'
+                            ' : ${widget.currency} ${widget.orderDetail['grandTotal']}'
                         : ' ',
                     style: textboldblack(),
                   ),
@@ -175,10 +182,10 @@ class _OrderPlacedState extends State<OrderPlaced> {
             context,
             MaterialPageRoute(
               builder: (BuildContext context) => new StartDelivery(
-                orderDetail: widget.orderDetail,
-                locale: widget.locale,
-                localizedValues: widget.localizedValues,
-              ),
+                  orderDetail: widget.orderDetail,
+                  locale: widget.locale,
+                  localizedValues: widget.localizedValues,
+                  currency: widget.currency),
             ),
           );
         },

@@ -4,6 +4,7 @@ import 'processing.dart';
 import 'history.dart';
 import 'package:delivery_app/styles/styles.dart';
 import '../../services/orders-service.dart';
+import 'package:flutter/widgets.dart';
 
 int newOrderLength = 1;
 int pocessingOrderLength = 1;
@@ -95,6 +96,7 @@ class _TabsHeadingState extends State<TabsHeading>
           new SizedBox.fromSize(
             size: const Size.fromHeight(500.0),
             child: new TabBarView(
+              physics: NeverScrollableScrollPhysics(),
               controller: _controller,
               children: _pages,
             ),

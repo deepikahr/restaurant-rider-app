@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/orders-service.dart';
 import 'package:async_loader/async_loader.dart';
 import 'package:location/location.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:delivery_app/pages/live-tasks/location.dart';
 
@@ -22,101 +24,157 @@ class _LiveTasksState extends State<LiveTasks> {
   int orderIndex = 0;
 
   var startLocation,
-      currentLocation,
       locationSubscription,
-      _location = new Location(),
       formatter = new DateFormat('yyyy-MM-dd');
 
   String error;
-  PermissionStatus _permissionGranted;
+  Location _location = Location();
   dynamic orderList;
-  final GlobalKey<AsyncLoaderState> _asyncLoaderState =
-      GlobalKey<AsyncLoaderState>();
+  LocationData currentLocation;
+  var addressData, currentLocationLatLong;
+
+  bool isGetOrderLoading = false;
+  String currency;
   @override
   void initState() {
     initPlatformState();
-    super.initState();
-  }
-
-  initPlatformState() async {
-    var location;
-    _permissionGranted = await _location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
-    _location.onLocationChanged.listen((LocationData result) {
+    getNewOrderToDeliveryBoy();
+    new Timer.periodic(Duration(seconds: 60), (_) {
       if (mounted) {
         setState(() {
-          currentLocation = result;
+          isGetOrderLoading = false;
+          getNewOrderToDeliveryBoy();
         });
       }
     });
 
-    try {
-      _permissionGranted = await _location.hasPermission();
-      location = await _location.getLocation();
+    super.initState();
+  }
 
-      error = null;
-    } on PlatformException catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        error = 'Permission denied';
-      } else if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
-        error =
-            'Permission denied - please ask the user to enable it from the app settings';
-      }
-
-      location = null;
-    }
-
-    if (mounted) {
-      setState(() {
-        startLocation = location;
-      });
-    }
+  initPlatformState() async {
+    currentLocation = await _location.getLocation();
   }
 
   getNewOrderToDeliveryBoy() async {
+    if (mounted) {
+      setState(() {
+        isGetOrderLoading = true;
+      });
+    }
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    currency = prefs.getString('currency');
     String orderStatus = 'Accepted';
     await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
-        .then((onValue) {});
+        .then((value) {
+      print(value);
+      if (mounted) {
+        setState(() {
+          orderList = value;
+          isGetOrderLoading = false;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    AsyncLoader asyncloader = AsyncLoader(
-      key: _asyncLoaderState,
-      initState: () async => await getNewOrderToDeliveryBoy(),
-      renderLoad: () => Center(
-          child: CircularProgressIndicator(
-        backgroundColor: primary,
-      )),
-      renderError: ([error]) => new Text(
-          MyLocalizations.of(context).somethingwentwrongpleaserestarttheapp),
-      renderSuccess: ({data}) {
-        if (data != null && data.length > 0) {
-          orderList = data;
-
-          return pickupBuild(data);
-        } else {
-          return Padding(
-            padding: EdgeInsets.only(top: 100.0),
-            child: Center(
-              child: Text(
-                MyLocalizations.of(context).noOrders,
-                style: TextStyle(fontSize: 20.0),
-              ),
-            ),
-          );
-        }
-      },
-    );
-
     return Scaffold(
       body: new Center(
-        child: asyncloader,
+        child: isGetOrderLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: primary,
+                ),
+              )
+            : orderList.length > 0
+                ? ListView(
+                    children: <Widget>[
+                      ListView.builder(
+                        itemCount: orderList.length,
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        itemBuilder: (BuildContext context, int index) {
+                          return InkWell(
+                            onTap: () {
+                              if (mounted) {
+                                setState(() {
+                                  orderIndex = index;
+                                });
+                              }
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                new Container(
+                                  margin: EdgeInsets.only(top: 20.0),
+                                  padding:
+                                      EdgeInsets.only(left: 20.0, right: 20.0),
+                                  color: yellow,
+                                  height: 38.0,
+                                  child: new Row(
+                                    children: <Widget>[
+                                      new Text(
+                                        MyLocalizations.of(context).orderID +
+                                            ' #${orderList[index]['orderID']}',
+                                        style: textmediumsmall(),
+                                      ),
+                                      Expanded(
+                                          child: new Text(
+                                        orderList[index]['createdAtTime'] ==
+                                                null
+                                            ? ""
+                                            : DateFormat('dd-MMM-yy hh:mm a')
+                                                .format(new DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                    orderList[index]
+                                                        ['createdAtTime'])),
+                                        textAlign: TextAlign.end,
+                                        style: textboldsmall(),
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                                new Container(
+                                  color: Colors.white,
+                                  child: new ListTile(
+                                    leading: new Image.network(
+                                      orderList[index]['productDetails'][0]
+                                                  ['imageUrl'] ==
+                                              null
+                                          ? MyLocalizations.of(context).noImage
+                                          : orderList[index]['productDetails']
+                                              [0]['imageUrl'],
+                                      height: 45.0,
+                                    ),
+                                    title: new Text(
+                                      orderList[index]['productDetails'][0]
+                                          ['restaurant'],
+                                      style: textmediumb(),
+                                    ),
+                                    subtitle: new Text(
+                                      orderList[index]['locationName'],
+                                      style: textdblack(),
+                                    ),
+                                    trailing: new Image.asset(
+                                        'assets/icons/right-arrow.png'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      buildDeliveryOption(orderList[orderIndex])
+                    ],
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(top: 100.0),
+                    child: Center(
+                      child: Text(
+                        MyLocalizations.of(context).noOrders,
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                  ),
       ),
     );
   }
@@ -152,17 +210,16 @@ class _LiveTasksState extends State<LiveTasks> {
                           style: textmediumsmall(),
                         ),
                         Expanded(
-                            child: new Text(
-                          orderList[index]['createdAtTime'] != null
-                              ? new DateFormat.yMMMMd("en_US").format(
-                                  new DateTime.fromMillisecondsSinceEpoch(
-                                      orderList[index]['createdAtTime']))
-                              : new DateFormat.yMMMMd("en_US").format(
-                                  DateTime.parse(
-                                      '${orderList[index]['createdAt']}')),
-                          textAlign: TextAlign.end,
-                          style: textboldsmall(),
-                        ))
+                          child: new Text(
+                            orders[index]['createdAtTime'] == null
+                                ? ""
+                                : DateFormat('dd-MMM-yy hh:mm a').format(
+                                    new DateTime.fromMillisecondsSinceEpoch(
+                                        orders[index]['createdAtTime'])),
+                            textAlign: TextAlign.end,
+                            style: textboldsmall(),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -210,7 +267,10 @@ class _LiveTasksState extends State<LiveTasks> {
               Expanded(
                   child: new Stack(
                 children: <Widget>[
-                  new Image.asset('assets/imgs/greenbg.png'),
+                  new Image.asset(
+                    'assets/imgs/greenbg.png',
+                    color: primary,
+                  ),
                   new Positioned(
                       height: MediaQuery.of(context).size.height * 0.7,
                       top: 10.0,
@@ -228,17 +288,17 @@ class _LiveTasksState extends State<LiveTasks> {
         new Container(
             padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
             color: Colors.white,
-            child: new GestureDetector(
+            child: new InkWell(
               onTap: () {
                 Navigator.push(
                   context,
                   new MaterialPageRoute(
                     builder: (BuildContext context) => new LocationDetail(
-                      orderDetail: order,
-                      deliveryBoyLatLong: currentLocation,
-                      locale: widget.locale,
-                      localizedValues: widget.localizedValues,
-                    ),
+                        orderDetail: order,
+                        deliveryBoyLatLong: currentLocation,
+                        locale: widget.locale,
+                        localizedValues: widget.localizedValues,
+                        currency: currency),
                   ),
                 );
               },
@@ -263,7 +323,7 @@ class _LiveTasksState extends State<LiveTasks> {
                             new Padding(
                               padding: EdgeInsets.only(left: 4.0),
                               child: new Text(
-                                '${order['shippingAddress'] == null ? "" : order['shippingAddress']['name']}',
+                                '${order['shippingAddress'] == null ? "" : order['shippingAddress']['addressType']}',
                                 style: textmediumb(),
                               ),
                             ),
@@ -291,9 +351,8 @@ class _LiveTasksState extends State<LiveTasks> {
                         child: new Padding(
                           padding: EdgeInsets.only(left: 55.0, right: 30.0),
                           child: new Text(
-                            '${order['shippingAddress'] == null ? "" : order['shippingAddress']['locationName']},${order['shippingAddress'] == null ? "" : order['shippingAddress']['address']},' +
-                                MyLocalizations.of(context).contactNo +
-                                ' -${order['shippingAddress'] == null ? "" : order['shippingAddress']['contactNumber']}',
+                            '${order['shippingAddress'] == null ? "" : order['shippingAddress']['flatNo']},${order['shippingAddress'] == null ? "" : order['shippingAddress']['address']},' +
+                                '${order['shippingAddress'] == null ? "" : order['shippingAddress']['contactNumber']}',
                             style: textblack(),
                           ),
                         ),
