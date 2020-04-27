@@ -32,7 +32,7 @@ class AuthService {
   }
 
   static Future<dynamic> getAdminSettings() async {
-    final response = await client.get(API_ENDPOINT + 'adminsettings');
+    final response = await client.get(API_ENDPOINT + 'adminSettings/');
     return json.decode(response.body);
   }
 }
