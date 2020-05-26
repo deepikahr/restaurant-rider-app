@@ -44,7 +44,7 @@ class _HistoryState extends State<History> {
         .then((value) {
       if (mounted) {
         setState(() {
-          deliveredOrderList = value;
+          deliveredOrderList = value['response_data']['data'];
           isGetHidtoryLoading = false;
         });
       }
