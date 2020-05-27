@@ -38,7 +38,7 @@ class _ProcessingState extends State<Processing> {
         .then((value) {
       if (mounted) {
         setState(() {
-          onTheWayordersList = value;
+          onTheWayordersList = value['response_data']['data'];
 
           pocessingOrderLength = onTheWayordersList.length;
           isProcessingLoading = false;

@@ -41,7 +41,7 @@ class _NewState extends State<New> {
       if (mounted) {
         setState(() {
           newOrderLength = orderData.length;
-          orderList = value;
+          orderList = value['response_data']['data'];
           isGetNewOrderLoading = false;
         });
       }
