@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' show Client;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'constant.dart';
-import 'dart:convert';
 
 class AuthService {
   static final Client client = Client();
+
   static Future<Map<String, dynamic>> login(Map<String, dynamic> body) async {
     final response = await client.post(BASE_URL + 'auth/local', body: body);
     return json.decode(response.body);
@@ -27,6 +30,16 @@ class AuthService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         });
+
+    return json.decode(response.body);
+  }
+
+  static Future<Map<String, dynamic>> getDeliveryBoyStatus(String token) async {
+    final response = await client
+        .get(API_ENDPOINT + 'deliveryoptions/my/details', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    });
 
     return json.decode(response.body);
   }

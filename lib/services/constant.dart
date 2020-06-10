@@ -4,7 +4,7 @@ const APP_NAME = 'Restaurant Saas';
 //api urls
 //const BASE_URL =  'https://8d89ff11.ngrok.io/';
 
-const BASE_URL = 'https://api-otp-version.herokuapp.com/';
+const BASE_URL = 'https://a990926f739a.ngrok.io/';
 
 //api live url
 // const BASE_URL = 'https://restaurant-sass.herokuapp.com/';
@@ -16,8 +16,7 @@ const BASE_URL = 'https://api-otp-version.herokuapp.com/';
 //one signal
 //const ONE_SIGNAL_APP_ID = '05ac6c51-8416-41ab-8779-b48503bbe125';
 
-
-const ONE_SIGNAL_APP_ID =  'abad9271-449e-40fd-80f9-0d36e5ec7e74';
+const ONE_SIGNAL_APP_ID = 'abad9271-449e-40fd-80f9-0d36e5ec7e74';
 
 // url +api/ add
 const API_ENDPOINT = BASE_URL + 'api/';

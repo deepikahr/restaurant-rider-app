@@ -20,6 +20,9 @@ dependencies:
   toast: ^0.1.5
   onesignal_flutter: ^2.4.0
   geocoder: ^0.2.1
+  socket_io_client: ^0.9.10
+  background_location: ^0.0.11
+
 
   flutter_localizations:
     sdk: flutter
