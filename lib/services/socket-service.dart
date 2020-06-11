@@ -17,12 +17,14 @@ class SocketService {
       {String latitude,
       String longitude,
       String deliveryBoyId,
+      String deliveryBoyName,
       bool status,
       bool alloted}) {
     var locationData = {
       "latitude": latitude,
       "longitude": longitude,
       "deliveryBoyId": deliveryBoyId,
+      "name": deliveryBoyName,
       "status": status,
       "alloted": alloted
     };

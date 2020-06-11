@@ -27,7 +27,7 @@ class BackgroundLocationService {
         AuthService.getDeliveryBoyStatus(token).then((response) {
           if (response['response_code'] == 200) {
 //            print('response : ${response['response_data']}');
-//            print('status : ${response['response_data']['data']['status']}');
+//            print('status : ${response['response_data']['data']['name']}');
 //            print('alloted : ${response['response_data']['data']['alloted']}');
 //            print('status : ${response['response_data']['data']['_id']}');
             BackgroundLocation.getLocationUpdates((location) {
@@ -36,6 +36,7 @@ class BackgroundLocationService {
                   status: response['response_data']['data']['status'],
                   alloted: response['response_data']['data']['alloted'],
                   deliveryBoyId: response['response_data']['data']['_id'],
+                  deliveryBoyName: response['response_data']['data']['name'],
                   latitude: location.latitude.toString(),
                   longitude: location.longitude.toString());
             });
