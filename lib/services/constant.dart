@@ -4,7 +4,7 @@ const APP_NAME = 'Restaurant Saas';
 //api urls
 //const BASE_URL =  'https://8d89ff11.ngrok.io/';
 
-const BASE_URL = 'https://353b8a3967c5.ngrok.io/';
+const BASE_URL = 'https://373f3b77ad91.ngrok.io/';
 
 //api live url
 // const BASE_URL = 'https://restaurant-sass.herokuapp.com/';

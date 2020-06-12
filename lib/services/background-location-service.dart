@@ -4,52 +4,51 @@ import 'package:delivery_app/services/common.dart';
 import 'package:delivery_app/services/socket-service.dart';
 
 class BackgroundLocationService {
+  bool isCame = false;
   SocketService _socketService = SocketService();
 
-  initialize({String deliveryBoyId}) {
+  initialize({bool isAfterLogin}) {
     _socketService.socketInitialize();
     startBackgroundService();
-    getLocation();
+    getLocation(isAfterLogin);
   }
 
   startBackgroundService() {
     BackgroundLocation.startLocationService();
   }
 
-  disconnectSocket() {
+  disconnectSocket(userId) {
+    _socketService.emitBeforeDisconnect(userId);
     BackgroundLocation.stopLocationService();
     _socketService.socketDisconnect();
   }
 
-  getLocation() {
+  getLocation(bool isAfterLogin) {
     Common.getToken().then((token) {
       if (token != null) {
         AuthService.getDeliveryBoyStatus(token).then((response) {
-          if (response['response_code'] == 200) {
-//            print('response : ${response['response_data']}');
-//            print('status : ${response['response_data']['data']['name']}');
-//            print('alloted : ${response['response_data']['data']['alloted']}');
-//            print('status : ${response['response_data']['data']['_id']}');
-            BackgroundLocation.getLocationUpdates((location) {
-              Future.delayed(Duration(seconds: 2));
+          BackgroundLocation.getLocationUpdates((location) {
+            if (isAfterLogin) {
+              for (int i = 0; i < 2; i++) {
+                _socketService.sendLocationDataThroughSocket(
+                    status: true,
+                    alloted: response['response_data']['data']['alloted'],
+                    deliveryBoyId: response['response_data']['data']['_id'],
+                    deliveryBoyName: response['response_data']['data']['name'],
+                    latitude: location.latitude.toString(),
+                    longitude: location.longitude.toString());
+              }
+            } else {
               _socketService.sendLocationDataThroughSocket(
-                  status: response['response_data']['data']['status'],
-                  alloted: response['response_data']['data']['alloted'],
                   deliveryBoyId: response['response_data']['data']['_id'],
-                  deliveryBoyName: response['response_data']['data']['name'],
                   latitude: location.latitude.toString(),
                   longitude: location.longitude.toString());
-            });
-          }
+              Future.delayed(Duration(seconds: 3));
+            }
+            isAfterLogin = false;
+          });
         });
       }
     });
   }
-}
-
-class Location {
-  final String latitude;
-  final String longitude;
-
-  Location({this.latitude, this.longitude});
 }

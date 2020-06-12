@@ -13,6 +13,14 @@ class SocketService {
     });
   }
 
+  emitBeforeDisconnect(userId) {
+    socket.emit('onExit', {'id': userId});
+  }
+
+  socketDisconnect() {
+    socket.disconnect();
+  }
+
   sendLocationDataThroughSocket(
       {String latitude,
       String longitude,
@@ -20,18 +28,24 @@ class SocketService {
       String deliveryBoyName,
       bool status,
       bool alloted}) {
-    var locationData = {
-      "latitude": latitude,
-      "longitude": longitude,
-      "deliveryBoyId": deliveryBoyId,
-      "name": deliveryBoyName,
-      "status": status,
-      "alloted": alloted
-    };
-    socket.emit("locationUpdate", locationData);
-  }
+    var locationData;
+    if (deliveryBoyName != null) {
+      locationData = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "deliveryBoyId": deliveryBoyId,
+        "name": deliveryBoyName,
+        "status": status,
+        "alloted": alloted
+      };
+    } else {
+      locationData = {
+        "latitude": latitude,
+        "longitude": longitude,
+        "deliveryBoyId": deliveryBoyId,
+      };
+    }
 
-  socketDisconnect() {
-    socket.disconnect();
+    socket.emit("locationUpdate", locationData);
   }
 }

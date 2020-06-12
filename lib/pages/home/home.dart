@@ -17,8 +17,14 @@ class HomePage extends StatefulWidget {
   final Map<String, Map<String, String>> localizedValues;
   final String locale;
   final int currentIndex;
+  final bool isAfterLogin;
 
-  HomePage({Key key, this.locale, this.localizedValues, this.currentIndex})
+  HomePage(
+      {Key key,
+      this.locale,
+      this.localizedValues,
+      this.currentIndex,
+      this.isAfterLogin = false})
       : super(key: key);
 
   @override
@@ -27,6 +33,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  String userId;
   final List<Widget> _children = [LiveTasks(), Earnings(), Order()];
   var userData;
   BackgroundLocationService _backgroundLocationService =
@@ -34,6 +41,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    print(widget.isAfterLogin.toString());
     getGlobalSettingsData();
     if (widget.currentIndex != null) {
       if (mounted) {
@@ -42,13 +50,14 @@ class _HomePageState extends State<HomePage> {
         });
       }
     }
-    _backgroundLocationService.initialize();
+    _backgroundLocationService.initialize(isAfterLogin: widget.isAfterLogin);
     super.initState();
   }
 
   @override
   void dispose() {
-    _backgroundLocationService.disconnectSocket();
+    print(userId);
+    _backgroundLocationService.disconnectSocket(userId);
     super.dispose();
   }
 
@@ -68,9 +77,9 @@ class _HomePageState extends State<HomePage> {
 
   fetchUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await OrdersService.getUserInfo().then((response) {
-      userData = json.decode(response.body);
+      userId = response['_id'];
+      userData = json.decode(response);
       prefs.setString('userId', userData['_id']);
       prefs.setString('userName', userData['name']);
       prefs.setString('userEmail', userData['email']);
