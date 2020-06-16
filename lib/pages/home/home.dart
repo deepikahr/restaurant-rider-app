@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
     }
-    _backgroundLocationService.initialize(isAfterLogin: widget.isAfterLogin);
+    _backgroundLocationService.initialize(isAfterLogin: true);
     super.initState();
   }
 

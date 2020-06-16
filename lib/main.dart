@@ -24,7 +24,7 @@ void main() async {
   Map<String, Map<String, String>> localizedValues = await initializeI18n();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String locale = prefs.getString('selectedLanguage') == null
-      ? 'en'
+      ? 'ar'
       : prefs.getString('selectedLanguage');
   FlutterError.onError = (FlutterErrorDetails details) async {
     if (isInDebugMode) {

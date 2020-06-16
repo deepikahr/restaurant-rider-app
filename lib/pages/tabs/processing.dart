@@ -1,10 +1,9 @@
 import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:async_loader/async_loader.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './tabs-heading.dart';
 
+import './tabs-heading.dart';
 import '../../services/orders-service.dart';
 
 class Processing extends StatefulWidget {
@@ -12,6 +11,7 @@ class Processing extends StatefulWidget {
   final String locale;
 
   Processing({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _ProcessingState createState() => new _ProcessingState();
 }
@@ -39,8 +39,14 @@ class _ProcessingState extends State<Processing> {
       if (mounted) {
         setState(() {
           onTheWayordersList = value['response_data']['data'];
-
           pocessingOrderLength = onTheWayordersList.length;
+          isProcessingLoading = false;
+        });
+      }
+    }).catchError((error) {
+      if (mounted) {
+        setState(() {
+          onTheWayordersList = [];
           isProcessingLoading = false;
         });
       }
