@@ -112,7 +112,6 @@ class _MyAppState extends State<MyApp> {
       });
     }
     Common.getToken().then((value) {
-      print(value.toString());
       if (mounted) {
         setState(() {
           loginCheck = false;

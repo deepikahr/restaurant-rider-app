@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    print(widget.isAfterLogin.toString());
     getGlobalSettingsData();
     if (widget.currentIndex != null) {
       if (mounted) {

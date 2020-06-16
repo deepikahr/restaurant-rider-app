@@ -66,7 +66,6 @@ class _LiveTasksState extends State<LiveTasks> {
     String orderStatus = 'Accepted';
     await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
         .then((value) {
-          print(value.toString());
       if (mounted) {
         setState(() {
           orderList = value['response_data']['data'];

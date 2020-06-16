@@ -1,4 +1,4 @@
-package com.example1.deliveryapp;
+package com.tahi.deliveryApp;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
