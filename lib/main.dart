@@ -102,13 +102,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   loginInCheck() {
-if (mounted) {
+    if (mounted) {
       setState(() {
         loginCheck = true;
       });
     }
     Common.getToken().then((value) {
-if (mounted) {
+      if (mounted) {
         setState(() {
           loginCheck = false;
         });
@@ -152,18 +152,19 @@ if (mounted) {
               widget.locale,
               widget.localizedValues,
             )
-          :loginIn
-          ? HomePage(
-              locale: widget.locale,
-              localizedValues: widget.localizedValues,
-            )
-          : Login(
-              locale: widget.locale,
-              localizedValues: widget.localizedValues,
-            ),
+          : loginIn
+              ? HomePage(
+                  locale: widget.locale,
+                  localizedValues: widget.localizedValues,
+                )
+              : Login(
+                  locale: widget.locale,
+                  localizedValues: widget.localizedValues,
+                ),
     );
   }
 }
+
 class CheckTokenScreen extends StatelessWidget {
   final Map<String, Map<String, String>> localizedValues;
   final String locale;
