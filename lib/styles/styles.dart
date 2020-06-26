@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final primary = const Color(0xFF00C2C0);
+final primary = const Color(0xFFB6236C);
 final blackb = const Color(0xFF565656);
 final dullblack = const Color(0xFF565656).withOpacity(0.36);
 final dblack = const Color(0xFF565656).withOpacity(0.44);

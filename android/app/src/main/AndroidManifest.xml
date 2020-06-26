@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tahi.deliveryApp">
+    package="com.example1.deliveryapp">
 
    <uses-permission android:name="android.permission.INTERNET"/>
    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
@@ -17,10 +17,10 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label='كابتن طاهي'
+        android:label="Delivery App"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD6Q4UgAYOL203nuwNeBr4j_-yAd1U1gko"/>
+            android:value="AIzaSyDXxt_aIn5HWQZg3gFYOqcuf8hjUuzmvKg"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
