@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:delivery_app/pages/live-tasks/location.dart';
 import 'package:delivery_app/services/localizations.dart';
-import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:location/location.dart';
+import 'package:delivery_app/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../services/orders-service.dart';
+import 'package:async_loader/async_loader.dart';
+import 'package:location/location.dart';
+import 'package:intl/intl.dart';
+import 'package:delivery_app/pages/live-tasks/location.dart';
 
 class LiveTasks extends StatefulWidget {
   static String tag = "livetasks-page";
@@ -16,7 +16,6 @@ class LiveTasks extends StatefulWidget {
   final String locale;
 
   LiveTasks({Key key, this.locale, this.localizedValues}) : super(key: key);
-
   @override
   _LiveTasksState createState() => _LiveTasksState();
 }
@@ -36,7 +35,6 @@ class _LiveTasksState extends State<LiveTasks> {
 
   bool isGetOrderLoading = false;
   String currency;
-
   @override
   void initState() {
     initPlatformState();
@@ -68,16 +66,10 @@ class _LiveTasksState extends State<LiveTasks> {
     String orderStatus = 'Accepted';
     await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
         .then((value) {
+      print(value);
       if (mounted) {
         setState(() {
-          orderList = value['response_data']['data'];
-          isGetOrderLoading = false;
-        });
-      }
-    }).catchError((error) {
-      if (mounted) {
-        setState(() {
-          orderList = [];
+          orderList = value;
           isGetOrderLoading = false;
         });
       }

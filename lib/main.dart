@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:delivery_app/pages/auth/login.dart';
-import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/common.dart';
 import 'package:delivery_app/services/constant.dart';
@@ -9,6 +6,8 @@ import 'package:delivery_app/services/initialize_i18n.dart';
 import 'package:delivery_app/services/localizations.dart'
     show MyLocalizationsDelegate;
 import 'package:flutter/material.dart';
+import 'package:delivery_app/pages/home/home.dart';
+import 'package:delivery_app/pages/auth/login.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +23,7 @@ void main() async {
   Map<String, Map<String, String>> localizedValues = await initializeI18n();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String locale = prefs.getString('selectedLanguage') == null
-      ? 'ar'
+      ? 'en'
       : prefs.getString('selectedLanguage');
   FlutterError.onError = (FlutterErrorDetails details) async {
     if (isInDebugMode) {
@@ -88,9 +87,7 @@ Future<void> initOneSignal() async {
 class MyApp extends StatefulWidget {
   final String locale;
   final Map<String, Map<String, String>> localizedValues;
-
   MyApp(this.locale, this.localizedValues);
-
   @override
   _MyAppState createState() => new _MyAppState();
 }
@@ -98,7 +95,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool loginIn = false;
   bool loginCheck = false;
-
   @override
   void initState() {
     super.initState();
@@ -106,13 +102,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   loginInCheck() {
-    if (mounted) {
+if (mounted) {
       setState(() {
         loginCheck = true;
       });
     }
     Common.getToken().then((value) {
-      if (mounted) {
+if (mounted) {
         setState(() {
           loginCheck = false;
         });
@@ -156,23 +152,21 @@ class _MyAppState extends State<MyApp> {
               widget.locale,
               widget.localizedValues,
             )
-          : loginIn
-              ? HomePage(
-                  locale: widget.locale,
-                  localizedValues: widget.localizedValues,
-                )
-              : Login(
-                  locale: widget.locale,
-                  localizedValues: widget.localizedValues,
-                ),
+          :loginIn
+          ? HomePage(
+              locale: widget.locale,
+              localizedValues: widget.localizedValues,
+            )
+          : Login(
+              locale: widget.locale,
+              localizedValues: widget.localizedValues,
+            ),
     );
   }
 }
-
 class CheckTokenScreen extends StatelessWidget {
   final Map<String, Map<String, String>> localizedValues;
   final String locale;
-
   CheckTokenScreen(this.locale, this.localizedValues);
 
   @override

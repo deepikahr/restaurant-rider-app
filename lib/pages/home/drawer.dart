@@ -5,8 +5,8 @@ import 'package:delivery_app/pages/profile/profile.dart';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/constant.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
-import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:delivery_app/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerPage extends StatefulWidget {
@@ -14,7 +14,6 @@ class DrawerPage extends StatefulWidget {
   final String locale;
 
   DrawerPage({Key key, this.locale, this.localizedValues}) : super(key: key);
-
   @override
   _DrawerPageState createState() => _DrawerPageState();
 }
@@ -27,12 +26,8 @@ class _DrawerPageState extends State<DrawerPage> {
       picture,
       selectedLanguages,
       selectedLang;
-  List<String> languages = [
-    'Arbic',
-    'English',
-  ];
+  List<String> languages = ['English', 'French', 'Arbic', 'Chinese'];
   var userData, selectedLanguage, selectedLocale;
-
   @override
   void initState() {
     super.initState();
@@ -48,8 +43,12 @@ class _DrawerPageState extends State<DrawerPage> {
       });
       if (selectedLanguage == 'en') {
         selectedLocale = 'English';
+      } else if (selectedLanguage == 'fr') {
+        selectedLocale = 'French';
       } else if (selectedLanguage == 'ar') {
         selectedLocale = 'Arbic';
+      } else if (selectedLanguage == 'zh') {
+        selectedLocale = 'Chinese';
       }
     }
   }
@@ -286,7 +285,7 @@ class _DrawerPageState extends State<DrawerPage> {
                             trailing: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 hint: Text(selectedLocale == null
-                                    ? 'Arbic'
+                                    ? 'English'
                                     : selectedLocale),
                                 value: selectedLanguages,
                                 onChanged: (newValue) async {
@@ -315,6 +314,34 @@ class _DrawerPageState extends State<DrawerPage> {
                                           builder: (BuildContext context) =>
                                               MyApp(
                                             "ar",
+                                            widget.localizedValues,
+                                          ),
+                                        ),
+                                        (Route<dynamic> route) => false);
+                                  } else if (newValue == 'Chinese') {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setString('selectedLanguage', 'zh');
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MyApp(
+                                            "zh",
+                                            widget.localizedValues,
+                                          ),
+                                        ),
+                                        (Route<dynamic> route) => false);
+                                  } else {
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.setString('selectedLanguage', 'fr');
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              MyApp(
+                                            "fr",
                                             widget.localizedValues,
                                           ),
                                         ),

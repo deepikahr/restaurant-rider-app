@@ -1,10 +1,8 @@
-import 'package:delivery_app/pages/home/home.dart';
-import 'package:delivery_app/services/background-location-service.dart';
 import 'package:delivery_app/services/localizations.dart';
-import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:delivery_app/styles/styles.dart';
+import 'package:delivery_app/pages/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../services/auth-service.dart';
 import '../../services/common.dart';
 
@@ -24,8 +22,6 @@ class _LoginState extends State<Login> {
   bool loading = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
-  BackgroundLocationService _backgroundLocationService =
-      BackgroundLocationService();
 
   login() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,7 +52,6 @@ class _LoginState extends State<Login> {
 
         if (onValue['token'] != null) {
           showSnackbar(MyLocalizations.of(context).loginSuccessful);
-          _backgroundLocationService.initialize(isAfterLogin: true);
           Common.setToken(onValue['token']).then((saved) {
             if (saved) {
               Future.delayed(Duration(milliseconds: 1500), () {
@@ -64,7 +59,6 @@ class _LoginState extends State<Login> {
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) => HomePage(
-                        isAfterLogin: true,
                         locale: widget.locale,
                         localizedValues: widget.localizedValues,
                       ),

@@ -1,12 +1,10 @@
-import 'package:delivery_app/services/localizations.dart';
-import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import '../../services/orders-service.dart';
-import 'history.dart';
 import 'new.dart';
 import 'processing.dart';
+import 'history.dart';
+import 'package:delivery_app/styles/styles.dart';
+import '../../services/orders-service.dart';
+import 'package:flutter/widgets.dart';
 
 int newOrderLength = 1;
 int pocessingOrderLength = 1;
@@ -16,7 +14,6 @@ class TabsHeading extends StatefulWidget {
   final String locale;
 
   TabsHeading({Key key, this.locale, this.localizedValues}) : super(key: key);
-
   @override
   _TabsHeadingState createState() => new _TabsHeadingState();
 }
@@ -33,6 +30,31 @@ class _TabsHeadingState extends State<TabsHeading>
   initState() {
     super.initState();
     getAcceptedOrders();
+    _tabs = [
+      new Tab(
+        text: "New",
+      ),
+      new Tab(text: 'Processing'),
+      new Tab(text: 'History'),
+    ];
+    _pages = [
+      new New(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
+      new Processing(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
+      new History(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      )
+    ];
+    _controller = new TabController(
+      length: _tabs.length,
+      vsync: this,
+    );
   }
 
   getAcceptedOrders() async {
@@ -57,32 +79,6 @@ class _TabsHeadingState extends State<TabsHeading>
 
   @override
   Widget build(BuildContext context) {
-    _tabs = [
-      new Tab(
-        text: MyLocalizations.of(context).nEW,
-      ),
-      new Tab(text: MyLocalizations.of(context).processing),
-      new Tab(text: MyLocalizations.of(context).history),
-    ];
-
-    _pages = [
-      new New(
-        locale: widget.locale,
-        localizedValues: widget.localizedValues,
-      ),
-      new Processing(
-        locale: widget.locale,
-        localizedValues: widget.localizedValues,
-      ),
-      new History(
-        locale: widget.locale,
-        localizedValues: widget.localizedValues,
-      )
-    ];
-    _controller = new TabController(
-      length: _tabs.length,
-      vsync: this,
-    );
     return new Container(
       child: new Column(
         children: [

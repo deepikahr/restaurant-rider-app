@@ -1,13 +1,10 @@
 import 'dart:async' show Future;
-
 import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:flutter/material.dart';
-
 import 'constant.dart';
 
 class MyLocalizations {
   final Map<String, Map<String, String>> localizedValues;
-
   MyLocalizations(this.locale, this.localizedValues);
 
   final Locale locale;
@@ -204,18 +201,6 @@ class MyLocalizations {
 
   String get myOrders {
     return localizedValues[locale.languageCode]['myOrders'];
-  }
-
-  String get New {
-    return localizedValues[locale.languageCode]['new'];
-  }
-
-  String get processing {
-    return localizedValues[locale.languageCode]['processing'];
-  }
-
-  String get history {
-    return localizedValues[locale.languageCode]['history'];
   }
 
   String get favourites {
@@ -420,6 +405,10 @@ class MyLocalizations {
 
   String get upcoming {
     return localizedValues[locale.languageCode]['upcoming'];
+  }
+
+  String get history {
+    return localizedValues[locale.languageCode]['history'];
   }
 
   String get noCompletedOrders {
@@ -1201,6 +1190,10 @@ class MyLocalizations {
 
   String get nEW {
     return localizedValues[locale.languageCode]['nEW'];
+  }
+
+  String get processing {
+    return localizedValues[locale.languageCode]['processing'];
   }
 
   String get modified {
