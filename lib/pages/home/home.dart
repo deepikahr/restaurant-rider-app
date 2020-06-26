@@ -1,13 +1,15 @@
 import 'dart:convert';
+
+import 'package:delivery_app/pages/home/drawer.dart';
+import 'package:delivery_app/pages/main-tabs/earnings.dart';
+import 'package:delivery_app/pages/main-tabs/live-task.dart';
+import 'package:delivery_app/pages/main-tabs/order.dart';
 import 'package:delivery_app/services/auth-service.dart';
+import 'package:delivery_app/services/background-location-service.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:delivery_app/services/orders-service.dart';
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:delivery_app/pages/main-tabs/live-task.dart';
-import 'package:delivery_app/pages/main-tabs/earnings.dart';
-import 'package:delivery_app/pages/main-tabs/order.dart';
-import 'package:delivery_app/pages/home/drawer.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,7 +17,14 @@ class HomePage extends StatefulWidget {
   final Map<String, Map<String, String>> localizedValues;
   final String locale;
   final int currentIndex;
-  HomePage({Key key, this.locale, this.localizedValues, this.currentIndex})
+  final bool isAfterLogin;
+
+  HomePage(
+      {Key key,
+      this.locale,
+      this.localizedValues,
+      this.currentIndex,
+      this.isAfterLogin = false})
       : super(key: key);
 
   @override
@@ -24,8 +33,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  String userId;
   final List<Widget> _children = [LiveTasks(), Earnings(), Order()];
   var userData;
+  BackgroundLocationService _backgroundLocationService =
+      BackgroundLocationService();
+
   @override
   void initState() {
     getGlobalSettingsData();
@@ -36,7 +49,15 @@ class _HomePageState extends State<HomePage> {
         });
       }
     }
+    _backgroundLocationService.initialize(isAfterLogin: true);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    print(userId);
+    _backgroundLocationService.disconnectSocket(userId);
+    super.dispose();
   }
 
   getGlobalSettingsData() async {
@@ -55,9 +76,9 @@ class _HomePageState extends State<HomePage> {
 
   fetchUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await OrdersService.getUserInfo().then((response) {
-      userData = json.decode(response.body);
+      userId = response['_id'];
+      userData = json.decode(response);
       prefs.setString('userId', userData['_id']);
       prefs.setString('userName', userData['name']);
       prefs.setString('userEmail', userData['email']);
@@ -100,7 +121,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(title, style: textwhitesmall()),
       ),
       backgroundColor: Colors.white,
-      body: _children[_currentIndex], // new
+      body: _children[_currentIndex],
+      // new
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: Colors.white, boxShadow: [
           new BoxShadow(

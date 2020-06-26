@@ -1,21 +1,22 @@
+import 'dart:io';
+
+import 'package:async/async.dart';
 import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../styles/styles.dart';
-import '../../services/profile-service.dart';
-import 'package:async_loader/async_loader.dart';
-import 'package:toast/toast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:async/async.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:toast/toast.dart';
+
+import '../../services/profile-service.dart';
+import '../../styles/styles.dart';
 
 class Profile extends StatefulWidget {
   final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   Profile({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -62,11 +63,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       var body = {
         "name": userDetails['name'],
         "contactNumber": userDetails['contactNumber'],
-        "country": userDetails['country'],
-        "locationName": userDetails['locationName'],
-        "zip": userDetails['zip'],
-        "state": userDetails['state'],
-        "address": userDetails['address'],
       };
       ProfileService.setUserInfo(userDetails['_id'], body).then((onValue) {
         Toast.show(
@@ -367,108 +363,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.text,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1.0),
-                          ),
-                          child: TextFormField(
-                            onSaved: (value) {
-                              userDetails['locationName'] = value;
-                            },
-                            initialValue: userDetails['locationName'],
-                            decoration: new InputDecoration(
-                              labelText:
-                                  MyLocalizations.of(context).locationName,
-                              hintStyle: textOS(),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: InputBorder.none,
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1.0),
-                          ),
-                          child: TextFormField(
-                            onSaved: (value) {
-                              userDetails['state'] = value;
-                            },
-                            initialValue: userDetails['state'],
-                            decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).state,
-                              hintStyle: textOS(),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: InputBorder.none,
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1.0),
-                          ),
-                          child: TextFormField(
-                            onSaved: (value) {
-                              userDetails['country'] = value;
-                            },
-                            initialValue: userDetails['country'],
-                            decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).country,
-                              hintStyle: textOS(),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: InputBorder.none,
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1.0),
-                          ),
-                          child: TextFormField(
-                            onSaved: (value) {
-                              userDetails['zip'] = value;
-                            },
-                            initialValue: userDetails['zip'] != null
-                                ? userDetails['zip'].toString()
-                                : '',
-                            decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).postalCode,
-                              hintStyle: textOS(),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: InputBorder.none,
-                            ),
-                            keyboardType: TextInputType.text,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 1.0),
-                          ),
-                          child: new Padding(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: new TextFormField(
-                              onSaved: (value) {
-                                userDetails['address'] = value;
-                              },
-                              initialValue: userDetails['address'],
-                              decoration: new InputDecoration(
-                                  labelText:
-                                      MyLocalizations.of(context).address,
-                                  hintStyle: textOS(),
-                                  fillColor: Colors.black,
-                                  border: InputBorder.none),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 3,
-                            ),
                           ),
                         ),
                       ],

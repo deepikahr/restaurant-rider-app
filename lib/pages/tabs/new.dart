@@ -1,10 +1,10 @@
 import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:async_loader/async_loader.dart';
-import '../../services/orders-service.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import './tabs-heading.dart';
+import '../../services/orders-service.dart';
 
 class New extends StatefulWidget {
   final orderList;
@@ -13,6 +13,7 @@ class New extends StatefulWidget {
 
   New({Key key, this.orderList, this.locale, this.localizedValues})
       : super(key: key);
+
   @override
   _NewState createState() => new _NewState();
 }
@@ -23,6 +24,7 @@ class _NewState extends State<New> {
 
   List orderData = List();
   bool isGetNewOrderLoading = false;
+
   @override
   void initState() {
     getAcceptedOrdersList();
@@ -41,7 +43,14 @@ class _NewState extends State<New> {
       if (mounted) {
         setState(() {
           newOrderLength = orderData.length;
-          orderList = value;
+          orderList = value['response_data']['data'];
+          isGetNewOrderLoading = false;
+        });
+      }
+    }).catchError((error){
+      if (mounted) {
+        setState(() {
+          orderList = [];
           isGetNewOrderLoading = false;
         });
       }
