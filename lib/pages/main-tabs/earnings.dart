@@ -31,10 +31,10 @@ class _EarningsState extends State<Earnings> {
       });
     }
     var date = DateTime.now();
-
     await OrdersService.getDeliveredOrdersEaringHistory(
             date.day, date.month, date.year)
         .then((value) {
+          print('ear $value');
       if (mounted) {
         setState(() {
           earningData = value;

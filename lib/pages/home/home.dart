@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await OrdersService.getUserInfo().then((response) {
-      userData = json.decode(response.body);
+      userData = response;
       prefs.setString('userId', userData['_id']);
       prefs.setString('userName', userData['name']);
       prefs.setString('userEmail', userData['email']);
