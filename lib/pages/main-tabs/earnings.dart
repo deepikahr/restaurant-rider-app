@@ -72,7 +72,7 @@ class _EarningsState extends State<Earnings> {
                   : earningData['orders'].length > 0
                       ? buildDeliveredList(earningData)
                       : Container(
-                          child: Text(MyLocalizations.of(context).noEarning))),
+                          child: Text(MyLocalizations.of(context).getLocalizations("NO_EARNINGS")))),
         ],
       ),
     );
@@ -89,7 +89,7 @@ class _EarningsState extends State<Earnings> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Text(
-                MyLocalizations.of(context).totalEarningsfor,
+                MyLocalizations.of(context).getLocalizations("TOTAL_EARNINGS_FOR"),
                 style: textsmallregular(),
               ),
               new Padding(padding: EdgeInsets.only(top: 5.0)),
@@ -115,7 +115,7 @@ class _EarningsState extends State<Earnings> {
         new Padding(
           padding:
               EdgeInsets.only(top: 10.0, bottom: 10.0, right: 20.0, left: 20.0),
-          child: new Text(MyLocalizations.of(context).earningDetails,
+          child: new Text(MyLocalizations.of(context).getLocalizations("EARNING_DETAILS"),
               style: textlight()),
         ),
         new Container(
@@ -172,7 +172,7 @@ class _EarningsState extends State<Earnings> {
                                         children: <Widget>[
                                           new Text(
                                             MyLocalizations.of(context)
-                                                    .orderID +
+                                                .getLocalizations("ORDER_ID") +
                                                 ' - #${data['orders'][index]['orderID']}',
                                             style: textdblack(),
                                           ),

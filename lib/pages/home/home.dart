@@ -73,19 +73,19 @@ class _HomePageState extends State<HomePage> {
     if (_currentIndex == 0) {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).liveTasks;
+          title = MyLocalizations.of(context).getLocalizations("LIVE_TASKS");
         });
       }
     } else if (_currentIndex == 1) {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).earnings;
+          title = MyLocalizations.of(context).getLocalizations("EARNINGS");
         });
       }
     } else {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).orders;
+          title = MyLocalizations.of(context).getLocalizations("ORDERS");
         });
       }
     }
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
             blurRadius: 6.0,
           ),
         ]),
-        height: 70,
+        height: 75,
         child: Row(
           children: [
             Expanded(
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 0 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).home,
+                        MyLocalizations.of(context).getLocalizations("HOME"),
                         style: TextStyle(
                           color: _currentIndex == 0 ? Colors.white : blackb,
                         ),
@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 1 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).earnings,
+                        MyLocalizations.of(context).getLocalizations("EARNINGS"),
                         style: TextStyle(
                           color: _currentIndex == 1 ? Colors.white : blackb,
                         ),
@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 2 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).orders,
+                        MyLocalizations.of(context).getLocalizations("ORDERS"),
                         style: TextStyle(
                           color: _currentIndex == 2 ? Colors.white : blackb,
                         ),

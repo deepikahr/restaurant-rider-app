@@ -36,7 +36,7 @@ class _StartDeliveryState extends State<StartDelivery> {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text(
-          MyLocalizations.of(context).liveTasks,
+          MyLocalizations.of(context).getLocalizations("LIVE_TASKS"),
           style: textwhitesmall(),
         ),
       ),
@@ -123,7 +123,7 @@ class _StartDeliveryState extends State<StartDelivery> {
                       alignment: Alignment.center,
                       color: red,
                       child: new Text(
-                        MyLocalizations.of(context).startDelivery,
+                        MyLocalizations.of(context).getLocalizations("START_DELIVERY"),
                         style: textwhites(),
                       ),
                     ),
@@ -154,7 +154,7 @@ class _StartDeliveryState extends State<StartDelivery> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 new Text(
-                  MyLocalizations.of(context).help,
+                  MyLocalizations.of(context).getLocalizations("HELP"),
                   textAlign: TextAlign.end,
                   style: textblueblack(),
                 ),
