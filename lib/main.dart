@@ -134,7 +134,7 @@ if (mounted) {
     return MaterialApp(
       locale: Locale(widget.locale),
       localizationsDelegates: [
-        MyLocalizationsDelegate(widget.localizedValues),
+        MyLocalizationsDelegate(widget.localizedValues, [widget.locale]),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],

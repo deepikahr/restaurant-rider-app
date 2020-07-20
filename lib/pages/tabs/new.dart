@@ -63,7 +63,7 @@ class _NewState extends State<New> {
             : orderList.length > 0
                 ? buidNewOrdersList(orderList)
                 : Center(
-                    child: Text(MyLocalizations.of(context).noNewOrder),
+                    child: Text(MyLocalizations.of(context).getLocalizations("NO_NEW_ORDER")),
                   ),
       ),
     );
@@ -97,7 +97,7 @@ class _NewState extends State<New> {
                           color: red,
                         ),
                         child: new Text(
-                          MyLocalizations.of(context).modified,
+                          MyLocalizations.of(context).getLocalizations("MODIFIED"),
                           style: textsmwhite(),
                         ),
                       ),
@@ -115,7 +115,7 @@ class _NewState extends State<New> {
                           Expanded(
                             child: new Text(
                               ' ${orders[index]['productDetails'].length} ' +
-                                  MyLocalizations.of(context).items,
+                                  MyLocalizations.of(context).getLocalizations("ITEMS"),
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),

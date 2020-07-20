@@ -32,7 +32,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text(
-          MyLocalizations.of(context).liveTasks,
+          MyLocalizations.of(context).getLocalizations("LIVE_TASKS"),
           style: textwhitesmall(),
         ),
       ),
@@ -52,7 +52,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           new Text(
-                            MyLocalizations.of(context).orderisPlaced,
+                            MyLocalizations.of(context).getLocalizations("ORDER_IS_PLACED"),
                             style: textmediumb(),
                           ),
                         ],
@@ -128,7 +128,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
                     children: <Widget>[
                       Expanded(
                           child: new Text(
-                        MyLocalizations.of(context).orderID +
+                        MyLocalizations.of(context).getLocalizations("ORDER_ID") +
                             ' : #${widget.orderDetail['orderID']}',
                         style: textdblack(),
                       )),
@@ -146,26 +146,26 @@ class _OrderPlacedState extends State<OrderPlaced> {
                   ),
                   new Padding(padding: EdgeInsets.only(top: 10.0)),
                   new Text(
-                    MyLocalizations.of(context).orderStatus +
+                    MyLocalizations.of(context).getLocalizations("ORDER_STATUS") +
                         ' : ${widget.orderDetail['paymentOption']}',
                     style: textboldblack(),
                   ),
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
-                    MyLocalizations.of(context).totalBill +
+                    MyLocalizations.of(context).getLocalizations("TOTAL_BILL") +
                         ' : ${widget.orderDetail['paymentStatus']}',
                     style: textboldblack(),
                   ),
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
-                    MyLocalizations.of(context).totalBill +
+                    MyLocalizations.of(context).getLocalizations("TOTAL_BILL") +
                         ' :${widget.currency} ${widget.orderDetail['grandTotal']}',
                     style: textboldblack(),
                   ),
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
                     widget.orderDetail['paymentOption'] == 'COD'
-                        ? MyLocalizations.of(context).payGlobalRestaurant +
+                        ? MyLocalizations.of(context).getLocalizations("PAY_GLOBAL_RESTAURANT") +
                             ' : ${widget.currency} ${widget.orderDetail['grandTotal']}'
                         : ' ',
                     style: textboldblack(),
@@ -194,7 +194,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
           height: 50.0,
           alignment: AlignmentDirectional.center,
           child: Text(
-            MyLocalizations.of(context).orderPicked,
+            MyLocalizations.of(context).getLocalizations("ORDER_PICKED"),
             textAlign: TextAlign.center,
             style: textwhitesmall(),
           ),

@@ -63,7 +63,7 @@ class _ProcessingState extends State<Processing> {
                   ? buidNewOnTheWayList(onTheWayordersList)
                   : Center(
                       child:
-                          Text(MyLocalizations.of(context).noProcessingOrder),
+                          Text(MyLocalizations.of(context).getLocalizations("NO_PROCESSING_ORDER")),
                     ),
         ],
       ),
@@ -97,7 +97,7 @@ class _ProcessingState extends State<Processing> {
                       Expanded(
                           child: new Text(
                         ' ${orders[index]['productDetails'].length} ' +
-                            MyLocalizations.of(context).items,
+                            MyLocalizations.of(context).getLocalizations("ITEMS"),
                         textAlign: TextAlign.center,
                         style: textmediumsm(),
                       )),

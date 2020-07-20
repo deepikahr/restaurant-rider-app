@@ -44,7 +44,7 @@ class _LocationState extends State<LocationDetail> {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text(
-          MyLocalizations.of(context).liveTasks,
+          MyLocalizations.of(context).getLocalizations("LIVE_TASKS"),
           style: textwhitesmall(),
         ),
       ),
@@ -126,14 +126,14 @@ class _LocationState extends State<LocationDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         new Text(
-                          MyLocalizations.of(context).confirmation,
+                          MyLocalizations.of(context).getLocalizations("CONFIRMATION"),
                           style: textmediumb(),
                         ),
                         new Padding(
                           padding: EdgeInsets.only(top: 10.0),
                           child: new Text(
                             MyLocalizations.of(context)
-                                .areyousureyouArrivedatRestaurant,
+                                .getLocalizations("ARE_YOU_SURE_YOU_ARRIVED"),
                             style: textblackc(),
                           ),
                         ),
@@ -142,7 +142,7 @@ class _LocationState extends State<LocationDetail> {
                           children: <Widget>[
                             FlatButton(
                               child: Text(
-                                MyLocalizations.of(context).cancel,
+                                MyLocalizations.of(context).getLocalizations("CANCEL"),
                                 style: textmediumblue(),
                               ),
                               onPressed: () {
@@ -151,7 +151,7 @@ class _LocationState extends State<LocationDetail> {
                             ),
                             FlatButton(
                               child: Text(
-                                MyLocalizations.of(context).cONFIRM,
+                                MyLocalizations.of(context).getLocalizations("CONFIRM"),
                                 style: textmediumblue(),
                               ),
                               onPressed: () {
@@ -184,7 +184,7 @@ class _LocationState extends State<LocationDetail> {
           height: 50.0,
           alignment: AlignmentDirectional.center,
           child: Text(
-            MyLocalizations.of(context).arrivedatRestaurant,
+            MyLocalizations.of(context).getLocalizations("ARRIVED_AT_RESTAURANT"),
             textAlign: TextAlign.center,
             style: textwhitesmall(),
           ),
