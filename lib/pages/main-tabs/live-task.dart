@@ -112,7 +112,7 @@ class _LiveTasksState extends State<LiveTasks> {
                                   child: new Row(
                                     children: <Widget>[
                                       new Text(
-                                        MyLocalizations.of(context).orderID +
+                                        MyLocalizations.of(context).getLocalizations("ORDER_ID") +
                                             ' #${orderList[index]['orderID']}',
                                         style: textmediumsmall(),
                                       ),
@@ -139,7 +139,7 @@ class _LiveTasksState extends State<LiveTasks> {
                                       orderList[index]['productDetails'][0]
                                                   ['imageUrl'] ==
                                               null
-                                          ? MyLocalizations.of(context).noImage
+                                          ? MyLocalizations.of(context).getLocalizations("NO_IMAGE")
                                           : orderList[index]['productDetails']
                                               [0]['imageUrl'],
                                       height: 45.0,
@@ -169,7 +169,7 @@ class _LiveTasksState extends State<LiveTasks> {
                     padding: EdgeInsets.only(top: 100.0),
                     child: Center(
                       child: Text(
-                        MyLocalizations.of(context).noOrders,
+                        MyLocalizations.of(context).getLocalizations("NO_ORDERS"),
                         style: TextStyle(fontSize: 20.0),
                       ),
                     ),
@@ -204,7 +204,7 @@ class _LiveTasksState extends State<LiveTasks> {
                     child: new Row(
                       children: <Widget>[
                         new Text(
-                          MyLocalizations.of(context).orderID +
+                          MyLocalizations.of(context).getLocalizations("ORDER_ID") +
                               ' #${orders[index]['orderID']}',
                           style: textmediumsmall(),
                         ),
@@ -227,7 +227,7 @@ class _LiveTasksState extends State<LiveTasks> {
                     child: new ListTile(
                       leading: new Image.network(
                         orders[index]['productDetails'][0]['imageUrl'] == null
-                            ? MyLocalizations.of(context).noImage
+                            ? MyLocalizations.of(context).getLocalizations("NO_IMAGE")
                             : orders[index]['productDetails'][0]['imageUrl'],
                         height: 45.0,
                       ),
@@ -275,7 +275,7 @@ class _LiveTasksState extends State<LiveTasks> {
                       top: 10.0,
                       left: 10.0,
                       child: new Text(
-                        MyLocalizations.of(context).orderID +
+                        MyLocalizations.of(context).getLocalizations("ORDER_ID") +
                             ' # ${order['orderID']}',
                         style: textmediumwhite(),
                       ))

@@ -64,7 +64,7 @@ class _HistoryState extends State<History> {
           : deliveredOrderList.length > 0
               ? Container(child: buildDeliveredList(deliveredOrderList))
               : Center(
-                  child: Text(MyLocalizations.of(context).noHistory),
+                  child: Text(MyLocalizations.of(context).getLocalizations("NO_HISTORY")),
                 ),
     );
   }
@@ -94,7 +94,7 @@ class _HistoryState extends State<History> {
                   Expanded(
                       child: new Text(
                     ' ${deliveredOrderList[index]['productDetails'].length} ' +
-                        MyLocalizations.of(context).items,
+                        MyLocalizations.of(context).getLocalizations("ITEMS"),
                     textAlign: TextAlign.center,
                     style: textmediumsm(),
                   )),
