@@ -10,7 +10,7 @@ import 'package:delivery_app/styles/styles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerPage extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   DrawerPage({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -26,7 +26,7 @@ class _DrawerPageState extends State<DrawerPage> {
       picture,
       selectedLanguages,
       selectedLang;
-  List<String> languages = ['English', 'French', 'Arbic', 'Chinese'];
+  List<String> languages = ['English', 'French', 'Arabic', 'Chinese'];
   var userData, selectedLanguage, selectedLocale;
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _DrawerPageState extends State<DrawerPage> {
       } else if (selectedLanguage == 'fr') {
         selectedLocale = 'French';
       } else if (selectedLanguage == 'ar') {
-        selectedLocale = 'Arbic';
+        selectedLocale = 'Arabic';
       } else if (selectedLanguage == 'zh') {
         selectedLocale = 'Chinese';
       }
@@ -115,7 +115,7 @@ class _DrawerPageState extends State<DrawerPage> {
                                   width: 150.0,
                                   height: 100.0,
                                 ),
-                                Text(APP_NAME)
+                                Text(Constants.APP_NAME)
                               ],
                             )),
                         GestureDetector(
@@ -176,7 +176,8 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context).home,
+                              MyLocalizations.of(context)
+                                  .getLocalizations("HOME"),
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -206,7 +207,8 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context).earnings,
+                              MyLocalizations.of(context)
+                                  .getLocalizations("EARNINGS"),
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -236,7 +238,8 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context).orders,
+                              MyLocalizations.of(context)
+                                  .getLocalizations("ORDERS"),
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -267,7 +270,8 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context).logout,
+                              MyLocalizations.of(context)
+                                  .getLocalizations("LOGOUT"),
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
@@ -280,8 +284,8 @@ class _DrawerPageState extends State<DrawerPage> {
                             border: Border.all(color: Colors.grey, width: 1.0),
                           ),
                           child: ListTile(
-                            title: Text(
-                                MyLocalizations.of(context).selectLanguages),
+                            title: Text(MyLocalizations.of(context)
+                                .getLocalizations("SELECT_LANGUAGES")),
                             trailing: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 hint: Text(selectedLocale == null
@@ -303,7 +307,7 @@ class _DrawerPageState extends State<DrawerPage> {
                                           ),
                                         ),
                                         (Route<dynamic> route) => false);
-                                  } else if (newValue == 'Arbic') {
+                                  } else if (newValue == 'Arabic') {
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
                                     prefs.setString('selectedLanguage', 'ar');

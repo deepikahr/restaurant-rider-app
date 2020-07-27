@@ -3,16 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../styles/styles.dart';
 import '../../services/profile-service.dart';
-import 'package:async_loader/async_loader.dart';
 import 'package:toast/toast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:async/async.dart';
 
 class Profile extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   Profile({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -70,8 +68,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       };
       ProfileService.setUserInfo(userDetails['_id'], body).then((onValue) {
         Toast.show(
-            MyLocalizations.of(context).yourprofileSuccessfullyUPDATED, context,
-            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+            MyLocalizations.of(context)
+                .getLocalizations("YOUR_PROFILE_PICTURE_UPDATED"),
+            context,
+            duration: Toast.LENGTH_LONG,
+            gravity: Toast.BOTTOM);
         if (mounted) {
           setState(() {
             isLoading = false;
@@ -108,7 +109,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             });
           }
           Toast.show(
-              MyLocalizations.of(context).yourprofilePictureSuccessfullyUPDATED,
+              MyLocalizations.of(context)
+                  .getLocalizations("YOUR_PROFILE_PICTURE_UPDATED"),
               context,
               duration: Toast.LENGTH_LONG,
               gravity: Toast.BOTTOM);
@@ -143,7 +145,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             });
           }
           Toast.show(
-              MyLocalizations.of(context).yourprofilePictureSuccessfullyUPDATED,
+              MyLocalizations.of(context)
+                  .getLocalizations("YOUR_PROFILE_PICTURE_UPDATED"),
               context,
               duration: Toast.LENGTH_LONG,
               gravity: Toast.BOTTOM);
@@ -178,8 +181,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        title:
-            Text(MyLocalizations.of(context).profile, style: textwhitesmall()),
+        title: Text(MyLocalizations.of(context).getLocalizations("PROFILE"),
+            style: textwhitesmall()),
       ),
       body: isProfileLoading
           ? Center(
@@ -241,9 +244,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       barrierDismissible: false,
                                       builder: (BuildContext context) {
                                         return new AlertDialog(
-                                          title: new Text(
-                                              MyLocalizations.of(context)
-                                                  .changeprofilepicture),
+                                          title: new Text(MyLocalizations.of(
+                                                  context)
+                                              .getLocalizations(
+                                                  "CHANGE_PROFILE_PICTURE")),
                                           content: new SingleChildScrollView(
                                             child: new ListBody(
                                               children: <Widget>[
@@ -266,7 +270,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                         child: new Text(
                                                             MyLocalizations.of(
                                                                     context)
-                                                                .choosefromphotos),
+                                                                .getLocalizations(
+                                                                    "CHOOSE_FROM_PHOTOS")),
                                                       ),
                                                     ),
                                                     Padding(
@@ -282,7 +287,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                         child: new Text(
                                                             MyLocalizations.of(
                                                                     context)
-                                                                .takephoto),
+                                                                .getLocalizations(
+                                                                    "TAKE_PHOTO")),
                                                       ),
                                                     ),
                                                     Padding(
@@ -298,10 +304,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                                         context);
                                                                     removeProfilePic();
                                                                   },
-                                                                  child: new Text(
-                                                                      MyLocalizations.of(
-                                                                              context)
-                                                                          .removephoto),
+                                                                  child: new Text(MyLocalizations.of(
+                                                                          context)
+                                                                      .getLocalizations(
+                                                                          "REMOVE_PHOTO")),
                                                                 )
                                                               : Container(),
                                                     ),
@@ -314,7 +320,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             new FlatButton(
                                               child: new Text(
                                                   MyLocalizations.of(context)
-                                                      .cancel),
+                                                      .getLocalizations(
+                                                          "CANCEL")),
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
@@ -340,7 +347,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             },
                             initialValue: userDetails['name'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).fullName,
+                              labelText: MyLocalizations.of(context)
+                                  .getLocalizations("FULL_NAME"),
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -360,8 +368,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             initialValue:
                                 userDetails['contactNumber'].toString(),
                             decoration: new InputDecoration(
-                              labelText:
-                                  MyLocalizations.of(context).mobileNumber,
+                              labelText: MyLocalizations.of(context)
+                                  .getLocalizations("MOBILE_NUMBER"),
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -380,8 +388,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             },
                             initialValue: userDetails['locationName'],
                             decoration: new InputDecoration(
-                              labelText:
-                                  MyLocalizations.of(context).locationName,
+                              labelText: MyLocalizations.of(context)
+                                  .getLocalizations("LOCATION_NAME"),
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -400,7 +408,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             },
                             initialValue: userDetails['state'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).state,
+                              labelText: MyLocalizations.of(context)
+                                  .getLocalizations("STATE"),
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -419,7 +428,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             },
                             initialValue: userDetails['country'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).country,
+                              labelText: MyLocalizations.of(context)
+                                  .getLocalizations("COUNTRY"),
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -440,7 +450,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 ? userDetails['zip'].toString()
                                 : '',
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context).postalCode,
+                              labelText: MyLocalizations.of(context)
+                                  .getLocalizations("POSTAL_CODE"),
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -461,8 +472,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               },
                               initialValue: userDetails['address'],
                               decoration: new InputDecoration(
-                                  labelText:
-                                      MyLocalizations.of(context).address,
+                                  labelText: MyLocalizations.of(context)
+                                      .getLocalizations("ADDRESS"),
                                   hintStyle: textOS(),
                                   fillColor: Colors.black,
                                   border: InputBorder.none),
@@ -494,7 +505,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               height: 40.0,
               child: FlatButton(
                 child: Text(
-                  MyLocalizations.of(context).cancel,
+                  MyLocalizations.of(context).getLocalizations("CANCEL"),
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -515,7 +526,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     )
                   : FlatButton(
                       child: Text(
-                        MyLocalizations.of(context).save,
+                        MyLocalizations.of(context).getLocalizations("SAVE"),
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () {

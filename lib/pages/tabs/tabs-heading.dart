@@ -1,3 +1,4 @@
+import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:flutter/material.dart';
 import 'new.dart';
 import 'processing.dart';
@@ -10,7 +11,7 @@ int newOrderLength = 1;
 int pocessingOrderLength = 1;
 
 class TabsHeading extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   TabsHeading({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -28,33 +29,12 @@ class _TabsHeadingState extends State<TabsHeading>
 
   @override
   initState() {
-    super.initState();
-    getAcceptedOrders();
-    _tabs = [
-      new Tab(
-        text: "New",
-      ),
-      new Tab(text: 'Processing'),
-      new Tab(text: 'History'),
-    ];
-    _pages = [
-      new New(
-        locale: widget.locale,
-        localizedValues: widget.localizedValues,
-      ),
-      new Processing(
-        locale: widget.locale,
-        localizedValues: widget.localizedValues,
-      ),
-      new History(
-        locale: widget.locale,
-        localizedValues: widget.localizedValues,
-      )
-    ];
-    _controller = new TabController(
-      length: _tabs.length,
+    _controller = TabController(
+      length: 3,
       vsync: this,
     );
+    super.initState();
+    getAcceptedOrders();
   }
 
   getAcceptedOrders() async {
@@ -79,6 +59,32 @@ class _TabsHeadingState extends State<TabsHeading>
 
   @override
   Widget build(BuildContext context) {
+    _tabs = [
+      new Tab(
+        text: MyLocalizations.of(context).getLocalizations("NEW"),
+      ),
+      new Tab(
+        text: MyLocalizations.of(context).getLocalizations("PROCESSING"),
+      ),
+      new Tab(
+        text: MyLocalizations.of(context).getLocalizations("HISTORY"),
+      ),
+    ];
+    _pages = [
+      new New(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
+      new Processing(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      ),
+      new History(
+        locale: widget.locale,
+        localizedValues: widget.localizedValues,
+      )
+    ];
+
     return new Container(
       child: new Column(
         children: [

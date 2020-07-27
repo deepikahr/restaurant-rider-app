@@ -8,7 +8,7 @@ import '../../services/common.dart';
 
 class Login extends StatefulWidget {
   static String tag = 'login-page';
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   Login({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -51,7 +51,8 @@ class _LoginState extends State<Login> {
         }
 
         if (onValue['token'] != null) {
-          showSnackbar(MyLocalizations.of(context).loginSuccessful);
+          showSnackbar(
+              MyLocalizations.of(context).getLocalizations("LOGIN_SUCCESSFUL"));
           Common.setToken(onValue['token']).then((saved) {
             if (saved) {
               Future.delayed(Duration(milliseconds: 1500), () {
@@ -149,12 +150,12 @@ class _LoginState extends State<Login> {
                             ),
                             alignment: FractionalOffset.center,
                             child: new TextFormField(
-                              initialValue: "staff1@ionicfirebaseapp.com",
+                              initialValue: "staff2@ionicfirebaseapp.com",
                               style: TextStyle(color: Colors.black),
                               decoration: new InputDecoration(
                                   border: InputBorder.none,
-                                  hintText:
-                                      MyLocalizations.of(context).yourEmail,
+                                  hintText: MyLocalizations.of(context)
+                                      .getLocalizations("EMAIL_ID"),
                                   hintStyle: TextStyle(
                                     fontSize: 16.0,
                                     color: Colors.black,
@@ -171,7 +172,8 @@ class _LoginState extends State<Login> {
                                     !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                                         .hasMatch(value)) {
                                   return MyLocalizations.of(context)
-                                      .pleaseEnterValidEmail;
+                                      .getLocalizations(
+                                          "PLEASE_ENTER_VALID_EMAIL");
                                 } else
                                   return null;
                               },
@@ -196,7 +198,8 @@ class _LoginState extends State<Login> {
                               style: TextStyle(color: Colors.black),
                               decoration: new InputDecoration(
                                 border: InputBorder.none,
-                                hintText: MyLocalizations.of(context).password,
+                                hintText: MyLocalizations.of(context)
+                                    .getLocalizations("PASSWORD"),
                                 hintStyle: TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.black,
@@ -209,7 +212,8 @@ class _LoginState extends State<Login> {
                               validator: (String value) {
                                 if (value.isEmpty || value.length < 6) {
                                   return MyLocalizations.of(context)
-                                      .passwordShouldBeAtleast6CharLong;
+                                      .getLocalizations(
+                                          "PLEASE_ENTER_VALID_PASSWORD");
                                 } else
                                   return null;
                               },
@@ -234,7 +238,7 @@ class _LoginState extends State<Login> {
                                 children: <Widget>[
                                   Text(
                                     MyLocalizations.of(context)
-                                        .loginToYourAccount,
+                                        .getLocalizations("LOGIN"),
                                   ),
                                   Padding(
                                       padding: EdgeInsets.only(

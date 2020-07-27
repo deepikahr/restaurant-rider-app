@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class OrderDelivered extends StatefulWidget {
   final orderDetail;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale, currency;
 
   OrderDelivered(
@@ -52,7 +52,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text(
-          MyLocalizations.of(context).liveTasks,
+          MyLocalizations.of(context).getLocalizations("LIVE_TASKS"),
           style: textwhitesmall(),
         ),
       ),
@@ -114,7 +114,8 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                     children: <Widget>[
                       Expanded(
                           child: new Text(
-                        MyLocalizations.of(context).orderID +
+                        MyLocalizations.of(context)
+                                .getLocalizations("ORDER_ID") +
                             ' : ${widget.orderDetail['orderID']}',
                         style: textdblack(),
                       )),
@@ -132,7 +133,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                   ),
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
-                    MyLocalizations.of(context).totalBill +
+                    MyLocalizations.of(context).getLocalizations("TOTAL_BILL") +
                         ' : ${widget.currency}${widget.orderDetail['grandTotal']}',
                     style: textboldblack(),
                   ),
@@ -140,11 +141,13 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                   new Row(
                     children: <Widget>[
                       new Text(
-                        MyLocalizations.of(context).collectfromCustomer +
+                        MyLocalizations.of(context).getLocalizations(
+                                        "COLLECT_FROM_CUSTOMER") +
                                     ' :' +
                                     widget.orderDetail['paymentOption'] ==
                                 'COD'
-                            ? MyLocalizations.of(context).collectfromCustomer +
+                            ? MyLocalizations.of(context)
+                                    .getLocalizations("COLLECT_FROM_CUSTOMER") +
                                 ' :${widget.currency}${widget.orderDetail['grandTotal']}'
                             : ' ',
                         style: textboldblack(),
@@ -154,7 +157,8 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           new Text(
-                            MyLocalizations.of(context).help,
+                            MyLocalizations.of(context)
+                                .getLocalizations("HELP"),
                             textAlign: TextAlign.end,
                             style: textblueblack(),
                           ),
@@ -179,7 +183,7 @@ class _OrderDeliveredState extends State<OrderDelivered> {
           height: 50.0,
           alignment: AlignmentDirectional.center,
           child: Text(
-            MyLocalizations.of(context).orderDelivered,
+            MyLocalizations.of(context).getLocalizations("ORDER_DELIVERED"),
             textAlign: TextAlign.center,
             style: textwhitesmall(),
           ),

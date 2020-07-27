@@ -6,7 +6,7 @@ import 'dart:io';
 
 class BillUpload extends StatefulWidget {
   final orderDetail;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   BillUpload({Key key, this.orderDetail, this.locale, this.localizedValues})
@@ -39,7 +39,8 @@ class _BillUploadState extends State<BillUpload> {
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
-        title: new Text(MyLocalizations.of(context).uploadBill,
+        title: new Text(
+            MyLocalizations.of(context).getLocalizations("UPLOAD_BILL"),
             style: textwhitesmall()),
       ),
       body: new Container(
@@ -53,7 +54,7 @@ class _BillUploadState extends State<BillUpload> {
               children: <Widget>[
                 Expanded(
                   child: new Text(
-                    MyLocalizations.of(context).submitBill,
+                    MyLocalizations.of(context).getLocalizations("SUBMIT_BILL"),
                     style: textmediumb(),
                   ),
                 ),
@@ -63,7 +64,7 @@ class _BillUploadState extends State<BillUpload> {
               child: new Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
                 child: new Text(
-                  MyLocalizations.of(context).camera,
+                  MyLocalizations.of(context).getLocalizations("CAMERA"),
                   style: textmediumblue(),
                 ),
               ),
@@ -98,7 +99,7 @@ class _BillUploadState extends State<BillUpload> {
                         ),
                         border: Border.all(color: Color(0xFF38707070))),
                     child: new Text(
-                      MyLocalizations.of(context).upload,
+                      MyLocalizations.of(context).getLocalizations("UPLOAD"),
                       style: textlightblack(),
                     ),
                   ),

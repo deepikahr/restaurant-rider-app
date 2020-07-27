@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:delivery_app/services/orders-service.dart';
@@ -12,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
   final int currentIndex;
   HomePage({Key key, this.locale, this.localizedValues, this.currentIndex})
@@ -57,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await OrdersService.getUserInfo().then((response) {
-      userData = json.decode(response.body);
+      userData = response;
       prefs.setString('userId', userData['_id']);
       prefs.setString('userName', userData['name']);
       prefs.setString('userEmail', userData['email']);
@@ -73,19 +72,19 @@ class _HomePageState extends State<HomePage> {
     if (_currentIndex == 0) {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).liveTasks;
+          title = MyLocalizations.of(context).getLocalizations("LIVE_TASKS");
         });
       }
     } else if (_currentIndex == 1) {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).earnings;
+          title = MyLocalizations.of(context).getLocalizations("EARNINGS");
         });
       }
     } else {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).orders;
+          title = MyLocalizations.of(context).getLocalizations("ORDERS");
         });
       }
     }
@@ -108,7 +107,7 @@ class _HomePageState extends State<HomePage> {
             blurRadius: 6.0,
           ),
         ]),
-        height: 70,
+        height: 75,
         child: Row(
           children: [
             Expanded(
@@ -127,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 0 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).home,
+                        MyLocalizations.of(context).getLocalizations("HOME"),
                         style: TextStyle(
                           color: _currentIndex == 0 ? Colors.white : blackb,
                         ),
@@ -153,7 +152,8 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 1 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).earnings,
+                        MyLocalizations.of(context)
+                            .getLocalizations("EARNINGS"),
                         style: TextStyle(
                           color: _currentIndex == 1 ? Colors.white : blackb,
                         ),
@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 2 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).orders,
+                        MyLocalizations.of(context).getLocalizations("ORDERS"),
                         style: TextStyle(
                           color: _currentIndex == 2 ? Colors.white : blackb,
                         ),

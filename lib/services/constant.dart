@@ -2,7 +2,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Constants {
   // app name
-  static const APP_NAME = "Kitchen App";
+  static const APP_NAME = "Delivery App";
 
   // delopy url production
   static String apiUrl = DotEnv().env['API_URL'];
