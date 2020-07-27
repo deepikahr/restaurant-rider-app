@@ -20,6 +20,7 @@ dependencies:
   toast: ^0.1.5
   onesignal_flutter: ^2.4.0
   geocoder: ^0.2.1
+  flutter_dotenv: ^2.1.0
 
   flutter_localizations:
     sdk: flutter
@@ -32,6 +33,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - .env
     - assets/icons/watch.png
     - assets/icons/send.png
     - assets/icons/red-pin.png

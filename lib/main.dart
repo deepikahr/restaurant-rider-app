@@ -5,6 +5,7 @@ import 'package:delivery_app/services/constant.dart';
 import 'package:delivery_app/services/initialize_i18n.dart';
 import 'package:delivery_app/services/localizations.dart'
     show MyLocalizationsDelegate;
+import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/pages/auth/login.dart';
@@ -63,7 +64,7 @@ Future<void> initOneSignal() async {
       .setNotificationReceivedHandler((OSNotification notification) {});
   OneSignal.shared
       .setNotificationOpenedHandler((OSNotificationOpenedResult result) {});
-  OneSignal.shared.init(ONE_SIGNAL_APP_ID, iOSSettings: {
+  OneSignal.shared.init(Constants.oneSignalKey, iOSSettings: {
     OSiOSSettings.autoPrompt: false,
     OSiOSSettings.inAppLaunchUrl: true
   });
@@ -134,13 +135,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       locale: Locale(widget.locale),
       localizationsDelegates: [
-        MyLocalizationsDelegate(widget.localizedValues),
+        MyLocalizationsDelegate(widget.localizedValues, [widget.locale]),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
-      supportedLocales: LANGUAGES.map((language) => Locale(language, '')),
+      supportedLocales: [Locale(widget.locale)],
       debugShowCheckedModeBanner: false,
-      title: APP_NAME,
+      title: Constants.APP_NAME,
       theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: Colors.white,
@@ -148,10 +149,7 @@ class _MyAppState extends State<MyApp> {
         unselectedWidgetColor: Colors.grey,
       ),
       home: loginCheck
-          ? CheckTokenScreen(
-              widget.locale,
-              widget.localizedValues,
-            )
+          ? CheckTokenScreen()
           : loginIn
               ? HomePage(
                   locale: widget.locale,
@@ -166,15 +164,19 @@ class _MyAppState extends State<MyApp> {
 }
 
 class CheckTokenScreen extends StatelessWidget {
-  final Map<String, Map<String, String>> localizedValues;
-  final String locale;
-  CheckTokenScreen(this.locale, this.localizedValues);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
+      body: Container(
+        color: primary,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Image.asset(
+          'lib/assets/splash.png',
+          fit: BoxFit.cover,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+        ),
       ),
     );
   }
