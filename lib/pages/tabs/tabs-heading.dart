@@ -11,7 +11,7 @@ int newOrderLength = 1;
 int pocessingOrderLength = 1;
 
 class TabsHeading extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   TabsHeading({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -37,7 +37,6 @@ class _TabsHeadingState extends State<TabsHeading>
     getAcceptedOrders();
   }
 
-
   getAcceptedOrders() async {
     assignedList =
         await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted');
@@ -60,12 +59,16 @@ class _TabsHeadingState extends State<TabsHeading>
 
   @override
   Widget build(BuildContext context) {
-
     _tabs = [
-      new Tab(text: MyLocalizations.of(context).getLocalizations("NEW"),
+      new Tab(
+        text: MyLocalizations.of(context).getLocalizations("NEW"),
       ),
-      new Tab(text: MyLocalizations.of(context).getLocalizations("PROCESSING"),),
-      new Tab(text: MyLocalizations.of(context).getLocalizations("HISTORY"),),
+      new Tab(
+        text: MyLocalizations.of(context).getLocalizations("PROCESSING"),
+      ),
+      new Tab(
+        text: MyLocalizations.of(context).getLocalizations("HISTORY"),
+      ),
     ];
     _pages = [
       new New(
@@ -81,7 +84,6 @@ class _TabsHeadingState extends State<TabsHeading>
         localizedValues: widget.localizedValues,
       )
     ];
-
 
     return new Container(
       child: new Column(

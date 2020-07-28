@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:delivery_app/services/orders-service.dart';
@@ -12,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
   final int currentIndex;
   HomePage({Key key, this.locale, this.localizedValues, this.currentIndex})
@@ -153,7 +152,8 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 1 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).getLocalizations("EARNINGS"),
+                        MyLocalizations.of(context)
+                            .getLocalizations("EARNINGS"),
                         style: TextStyle(
                           color: _currentIndex == 1 ? Colors.white : blackb,
                         ),

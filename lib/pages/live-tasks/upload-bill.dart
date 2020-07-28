@@ -6,7 +6,7 @@ import 'dart:io';
 
 class BillUpload extends StatefulWidget {
   final orderDetail;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   BillUpload({Key key, this.orderDetail, this.locale, this.localizedValues})
@@ -39,7 +39,8 @@ class _BillUploadState extends State<BillUpload> {
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
-        title: new Text(MyLocalizations.of(context).getLocalizations("UPLOAD_BILL"),
+        title: new Text(
+            MyLocalizations.of(context).getLocalizations("UPLOAD_BILL"),
             style: textwhitesmall()),
       ),
       body: new Container(

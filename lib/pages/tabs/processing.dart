@@ -8,7 +8,7 @@ import './tabs-heading.dart';
 import '../../services/orders-service.dart';
 
 class Processing extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   Processing({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -62,8 +62,8 @@ class _ProcessingState extends State<Processing> {
               : onTheWayordersList.length > 0
                   ? buidNewOnTheWayList(onTheWayordersList)
                   : Center(
-                      child:
-                          Text(MyLocalizations.of(context).getLocalizations("NO_PROCESSING_ORDER")),
+                      child: Text(MyLocalizations.of(context)
+                          .getLocalizations("NO_PROCESSING_ORDER")),
                     ),
         ],
       ),
@@ -97,7 +97,8 @@ class _ProcessingState extends State<Processing> {
                       Expanded(
                           child: new Text(
                         ' ${orders[index]['productDetails'].length} ' +
-                            MyLocalizations.of(context).getLocalizations("ITEMS"),
+                            MyLocalizations.of(context)
+                                .getLocalizations("ITEMS"),
                         textAlign: TextAlign.center,
                         style: textmediumsm(),
                       )),

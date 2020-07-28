@@ -17,7 +17,7 @@ Map<String, String> convertValueToString(obj) {
 
 Future<Map<String, Map<String, String>>> initializeI18n() async {
   Map<String, Map<String, String>> values = {};
-  for (String language in LANGUAGES) {
+  for (String language in Constants.languagesList) {
     Map<String, dynamic> translation =
         json.decode(await loadJsonFromAsset(language));
     values[language] = convertValueToString(translation);

@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class OrderDelivered extends StatefulWidget {
   final orderDetail;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale, currency;
 
   OrderDelivered(
@@ -114,7 +114,8 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                     children: <Widget>[
                       Expanded(
                           child: new Text(
-                        MyLocalizations.of(context).getLocalizations("ORDER_ID") +
+                        MyLocalizations.of(context)
+                                .getLocalizations("ORDER_ID") +
                             ' : ${widget.orderDetail['orderID']}',
                         style: textdblack(),
                       )),
@@ -140,11 +141,13 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                   new Row(
                     children: <Widget>[
                       new Text(
-                        MyLocalizations.of(context).getLocalizations("COLLECT_FROM_CUSTOMER") +
+                        MyLocalizations.of(context).getLocalizations(
+                                        "COLLECT_FROM_CUSTOMER") +
                                     ' :' +
                                     widget.orderDetail['paymentOption'] ==
                                 'COD'
-                            ? MyLocalizations.of(context).getLocalizations("COLLECT_FROM_CUSTOMER") +
+                            ? MyLocalizations.of(context)
+                                    .getLocalizations("COLLECT_FROM_CUSTOMER") +
                                 ' :${widget.currency}${widget.orderDetail['grandTotal']}'
                             : ' ',
                         style: textboldblack(),
@@ -154,7 +157,8 @@ class _OrderDeliveredState extends State<OrderDelivered> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           new Text(
-                            MyLocalizations.of(context).getLocalizations("HELP"),
+                            MyLocalizations.of(context)
+                                .getLocalizations("HELP"),
                             textAlign: TextAlign.end,
                             style: textblueblack(),
                           ),

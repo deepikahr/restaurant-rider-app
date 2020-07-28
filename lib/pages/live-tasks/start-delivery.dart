@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class StartDelivery extends StatefulWidget {
   final orderDetail;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale, currency;
 
   StartDelivery(
@@ -123,7 +123,8 @@ class _StartDeliveryState extends State<StartDelivery> {
                       alignment: Alignment.center,
                       color: red,
                       child: new Text(
-                        MyLocalizations.of(context).getLocalizations("START_DELIVERY"),
+                        MyLocalizations.of(context)
+                            .getLocalizations("START_DELIVERY"),
                         style: textwhites(),
                       ),
                     ),

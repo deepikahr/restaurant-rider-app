@@ -12,7 +12,8 @@ class OrdersService {
       token = 'bearer ' + onValue;
     });
     final response = await client.get(
-        API_ENDPOINT + 'deliveryoptions/delivery/assigned/$orderStatus',
+        Constants.apiEndPoint +
+            'deliveryoptions/delivery/assigned/$orderStatus',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -25,7 +26,8 @@ class OrdersService {
       token = 'bearer ' + onValue;
     });
     final response = await client.get(
-        API_ENDPOINT + 'deliveryoptions/deliveryboy/details/$date/$month/$year',
+        Constants.apiEndPoint +
+            'deliveryoptions/deliveryboy/details/$date/$month/$year',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -35,7 +37,7 @@ class OrdersService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.put(API_ENDPOINT + 'orders/$id',
+    final response = await client.put(Constants.apiEndPoint + 'orders/$id',
         body: body,
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
@@ -47,7 +49,8 @@ class OrdersService {
       token = 'bearer ' + onValue;
     });
 
-    final response = await client.get(API_ENDPOINT + 'users/me', headers: {
+    final response =
+        await client.get(Constants.apiEndPoint + 'users/me', headers: {
       'Content-Type': 'application/json',
       'Authorization': token,
     });

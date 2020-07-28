@@ -3,7 +3,7 @@ import 'package:delivery_app/pages/tabs/tabs-heading.dart';
 
 class Order extends StatefulWidget {
   static String tag = "order-page";
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   Order({Key key, this.locale, this.localizedValues}) : super(key: key);
