@@ -1,11 +1,6 @@
 //App name
-const APP_NAME = 'Restaurant Saas';
+const APP_NAME = 'Restaurant Saas Delivery';
 
-//api urls
-// const BASE_URL = 'http://192.168.0.5:5020/';
-
-//api live url
-// const BASE_URL = 'https://restaurant-sass.herokuapp.com/';
 // api deploy testing
 // const BASE_URL = 'http://162.243.171.81:8000/';
 
