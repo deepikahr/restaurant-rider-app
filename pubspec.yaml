@@ -18,7 +18,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   google_maps_flutter: ^0.5.25+3
   toast: ^0.1.5
-  onesignal_flutter: ^2.4.0
+  onesignal_flutter: ^2.6.1
   geocoder: ^0.2.1
 
   flutter_localizations:
