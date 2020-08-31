@@ -9,7 +9,6 @@ import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/pages/auth/login.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +20,6 @@ bool get isInDebugMode {
 }
 
 void main() async {
-  await DotEnv().load('.env');
   WidgetsFlutterBinding.ensureInitialized();
   Map localizedValues = await initializeI18n();
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -84,6 +82,7 @@ class _MyAppState extends State<MyApp> {
     oneSignalTimer = Timer.periodic(Duration(seconds: 2), (timer) {
       initOneSignal();
     });
+    initOneSignal();
     Common.getToken().then((value) {
       if (value != null) {
         if (mounted) {

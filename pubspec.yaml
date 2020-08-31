@@ -1,7 +1,7 @@
 name: delivery_app
 description: A new Flutter application.
 
-version: 1.0.15+16
+version: 1.0.16+17
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -18,9 +18,8 @@ dependencies:
   cupertino_icons: ^0.1.3
   google_maps_flutter: ^0.5.28+1
   toast: ^0.1.5
-  onesignal_flutter: ^2.6.0
+  onesignal_flutter: ^2.6.1
   geocoder: ^0.2.1
-  flutter_dotenv: ^2.1.0
 
   flutter_localizations:
     sdk: flutter
@@ -33,7 +32,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - .env
     - assets/icons/watch.png
     - assets/icons/send.png
     - assets/icons/red-pin.png
@@ -61,7 +59,6 @@ flutter:
     - assets/i18n/zh.json
     - assets/i18n/ar.json
     - assets/splash.png
-
 
   fonts:
     - family: RobotoRegular
