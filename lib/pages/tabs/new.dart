@@ -8,7 +8,7 @@ import './tabs-heading.dart';
 
 class New extends StatefulWidget {
   final orderList;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   New({Key key, this.orderList, this.locale, this.localizedValues})
@@ -63,7 +63,8 @@ class _NewState extends State<New> {
             : orderList.length > 0
                 ? buidNewOrdersList(orderList)
                 : Center(
-                    child: Text(MyLocalizations.of(context).getLocalizations("NO_NEW_ORDER")),
+                    child: Text(MyLocalizations.of(context)
+                        .getLocalizations("NO_NEW_ORDER")),
                   ),
       ),
     );
@@ -97,7 +98,8 @@ class _NewState extends State<New> {
                           color: red,
                         ),
                         child: new Text(
-                          MyLocalizations.of(context).getLocalizations("MODIFIED"),
+                          MyLocalizations.of(context)
+                              .getLocalizations("MODIFIED"),
                           style: textsmwhite(),
                         ),
                       ),
@@ -115,7 +117,8 @@ class _NewState extends State<New> {
                           Expanded(
                             child: new Text(
                               ' ${orders[index]['productDetails'].length} ' +
-                                  MyLocalizations.of(context).getLocalizations("ITEMS"),
+                                  MyLocalizations.of(context)
+                                      .getLocalizations("ITEMS"),
                               textAlign: TextAlign.center,
                               style: textmediumsm(),
                             ),

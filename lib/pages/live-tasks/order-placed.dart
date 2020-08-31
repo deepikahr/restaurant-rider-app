@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class OrderPlaced extends StatefulWidget {
   static String tag = "orderplaced-page";
   final orderDetail;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale, currency;
 
   OrderPlaced(
@@ -52,7 +52,8 @@ class _OrderPlacedState extends State<OrderPlaced> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           new Text(
-                            MyLocalizations.of(context).getLocalizations("ORDER_IS_PLACED"),
+                            MyLocalizations.of(context)
+                                .getLocalizations("ORDER_IS_PLACED"),
                             style: textmediumb(),
                           ),
                         ],
@@ -128,7 +129,8 @@ class _OrderPlacedState extends State<OrderPlaced> {
                     children: <Widget>[
                       Expanded(
                           child: new Text(
-                        MyLocalizations.of(context).getLocalizations("ORDER_ID") +
+                        MyLocalizations.of(context)
+                                .getLocalizations("ORDER_ID") +
                             ' : #${widget.orderDetail['orderID']}',
                         style: textdblack(),
                       )),
@@ -146,7 +148,8 @@ class _OrderPlacedState extends State<OrderPlaced> {
                   ),
                   new Padding(padding: EdgeInsets.only(top: 10.0)),
                   new Text(
-                    MyLocalizations.of(context).getLocalizations("ORDER_STATUS") +
+                    MyLocalizations.of(context)
+                            .getLocalizations("ORDER_STATUS") +
                         ' : ${widget.orderDetail['paymentOption']}',
                     style: textboldblack(),
                   ),
@@ -165,7 +168,8 @@ class _OrderPlacedState extends State<OrderPlaced> {
                   new Padding(padding: EdgeInsets.only(top: 5.0)),
                   new Text(
                     widget.orderDetail['paymentOption'] == 'COD'
-                        ? MyLocalizations.of(context).getLocalizations("PAY_GLOBAL_RESTAURANT") +
+                        ? MyLocalizations.of(context)
+                                .getLocalizations("PAY_GLOBAL_RESTAURANT") +
                             ' : ${widget.currency} ${widget.orderDetail['grandTotal']}'
                         : ' ',
                     style: textboldblack(),

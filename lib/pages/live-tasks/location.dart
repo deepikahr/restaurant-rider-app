@@ -8,7 +8,7 @@ class LocationDetail extends StatefulWidget {
   static String tag = "location-page";
   final orderDetail;
   final deliveryBoyLatLong;
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale, currency;
 
   LocationDetail(
@@ -97,7 +97,9 @@ class _LocationState extends State<LocationDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           new Text(
-                            widget.orderDetail['productDetails'][0]['restaurant'] ?? "",
+                            widget.orderDetail['productDetails'][0]
+                                    ['restaurant'] ??
+                                "",
                             style: textmediumb(),
                           ),
                           Padding(
@@ -126,7 +128,8 @@ class _LocationState extends State<LocationDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         new Text(
-                          MyLocalizations.of(context).getLocalizations("CONFIRMATION"),
+                          MyLocalizations.of(context)
+                              .getLocalizations("CONFIRMATION"),
                           style: textmediumb(),
                         ),
                         new Padding(
@@ -142,7 +145,8 @@ class _LocationState extends State<LocationDetail> {
                           children: <Widget>[
                             FlatButton(
                               child: Text(
-                                MyLocalizations.of(context).getLocalizations("CANCEL"),
+                                MyLocalizations.of(context)
+                                    .getLocalizations("CANCEL"),
                                 style: textmediumblue(),
                               ),
                               onPressed: () {
@@ -151,7 +155,8 @@ class _LocationState extends State<LocationDetail> {
                             ),
                             FlatButton(
                               child: Text(
-                                MyLocalizations.of(context).getLocalizations("CONFIRM"),
+                                MyLocalizations.of(context)
+                                    .getLocalizations("CONFIRM"),
                                 style: textmediumblue(),
                               ),
                               onPressed: () {
@@ -184,7 +189,8 @@ class _LocationState extends State<LocationDetail> {
           height: 50.0,
           alignment: AlignmentDirectional.center,
           child: Text(
-            MyLocalizations.of(context).getLocalizations("ARRIVED_AT_RESTAURANT"),
+            MyLocalizations.of(context)
+                .getLocalizations("ARRIVED_AT_RESTAURANT"),
             textAlign: TextAlign.center,
             style: textwhitesmall(),
           ),

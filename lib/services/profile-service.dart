@@ -14,7 +14,8 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'users/verify/token',
+    final response = await client.get(
+        Constants.apiEndPoint + 'users/verify/token',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -24,7 +25,7 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'users/me',
+    final response = await client.get(Constants.apiEndPoint + 'users/me',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -36,7 +37,7 @@ class ProfileService {
       token = 'bearer ' + onValue;
     });
 
-    final response = await client.put(API_ENDPOINT + 'users/$id',
+    final response = await client.put(Constants.apiEndPoint + 'users/$id',
         headers: {'Content-Type': 'application/json', 'Authorization': token},
         body: json.encode(body));
     return json.decode(response.body);
@@ -48,7 +49,8 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.put(API_ENDPOINT + 'users/userProfile/$id',
+    final response = await client.put(
+        Constants.apiEndPoint + 'users/userProfile/$id',
         headers: {'Content-Type': 'application/json', 'Authorization': token},
         body: json.encode(body));
     return json.decode(response.body);
@@ -59,7 +61,8 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.delete(API_ENDPOINT + 'users/profile/delete',
+    final response = await client.delete(
+        Constants.apiEndPoint + 'users/profile/delete',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -67,7 +70,7 @@ class ProfileService {
   static Future<Map<String, dynamic>> uploadProfileImage(
       image, stream, id) async {
     var length = await image.length();
-    String uri = API_ENDPOINT + 'users/upload/to/cloud';
+    String uri = Constants.apiEndPoint + 'users/upload/to/cloud';
     var request = new http.MultipartRequest("POST", Uri.parse(uri));
     var multipartFile = new http.MultipartFile('file', stream, length,
         filename: basename(image.path));
@@ -97,7 +100,8 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'users/newaddress/address',
+    final response = await client.get(
+        Constants.apiEndPoint + 'users/newaddress/address',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -108,7 +112,8 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.post(API_ENDPOINT + 'users/add/address',
+    final response = await client.post(
+        Constants.apiEndPoint + 'users/add/address',
         headers: {'Content-Type': 'application/json', 'Authorization': token},
         body: json.encode(body));
     return json.decode(response.body);
@@ -120,7 +125,7 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.post(API_ENDPOINT + 'orders',
+    final response = await client.post(Constants.apiEndPoint + 'orders',
         headers: {'Content-Type': 'application/json', 'Authorization': token},
         body: json.encode(body));
     return json.decode(response.body);
@@ -131,7 +136,7 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'orders/$id',
+    final response = await client.get(Constants.apiEndPoint + 'orders/$id',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -141,11 +146,11 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'orders/userorder/pending',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }).catchError((onError) {});
+    final response = await client
+        .get(Constants.apiEndPoint + 'orders/userorder/pending', headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token
+    }).catchError((onError) {});
     return json.decode(response.body);
   }
 
@@ -154,7 +159,8 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'orders/userorder/history',
+    final response = await client.get(
+        Constants.apiEndPoint + 'orders/userorder/history',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -164,7 +170,7 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.get(API_ENDPOINT + 'favourites',
+    final response = await client.get(Constants.apiEndPoint + 'favourites',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return json.decode(response.body);
   }
@@ -174,7 +180,7 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    await client.delete(API_ENDPOINT + 'favourites/$id',
+    await client.delete(Constants.apiEndPoint + 'favourites/$id',
         headers: {'Content-Type': 'application/json', 'Authorization': token});
     return Future(() => true);
   }
@@ -186,7 +192,7 @@ class ProfileService {
     });
     Map<String, dynamic> body = {'product': productId};
     final response = await client.post(
-        API_ENDPOINT + 'favourites/check/product',
+        Constants.apiEndPoint + 'favourites/check/product',
         headers: {'Content-Type': 'application/json', 'Authorization': token},
         body: json.encode(body));
     return json.decode(response.body);
@@ -205,7 +211,7 @@ class ProfileService {
     };
     var response;
     await client
-        .post(API_ENDPOINT + 'favourites',
+        .post(Constants.apiEndPoint + 'favourites',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': token
@@ -225,7 +231,7 @@ class ProfileService {
     await Common.getToken().then((onValue) {
       token = 'bearer ' + onValue;
     });
-    final response = await client.post(API_ENDPOINT + 'productRatings',
+    final response = await client.post(Constants.apiEndPoint + 'productRatings',
         headers: {'Content-Type': 'application/json', 'Authorization': token},
         body: json.encode(body));
     return json.decode(response.body);

@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import '../../services/orders-service.dart';
 
 class History extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   History({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -64,7 +64,8 @@ class _HistoryState extends State<History> {
           : deliveredOrderList.length > 0
               ? Container(child: buildDeliveredList(deliveredOrderList))
               : Center(
-                  child: Text(MyLocalizations.of(context).getLocalizations("NO_HISTORY")),
+                  child: Text(MyLocalizations.of(context)
+                      .getLocalizations("NO_HISTORY")),
                 ),
     );
   }

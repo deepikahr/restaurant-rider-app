@@ -7,7 +7,7 @@ import '../../services/orders-service.dart';
 import 'package:intl/intl.dart';
 
 class Earnings extends StatefulWidget {
-  final Map<String, Map<String, String>> localizedValues;
+  final Map localizedValues;
   final String locale;
 
   Earnings({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -34,7 +34,7 @@ class _EarningsState extends State<Earnings> {
     await OrdersService.getDeliveredOrdersEaringHistory(
             date.day, date.month, date.year)
         .then((value) {
-          print('ear $value');
+      print('ear $value');
       if (mounted) {
         setState(() {
           earningData = value;
@@ -72,7 +72,8 @@ class _EarningsState extends State<Earnings> {
                   : earningData['orders'].length > 0
                       ? buildDeliveredList(earningData)
                       : Container(
-                          child: Text(MyLocalizations.of(context).getLocalizations("NO_EARNINGS")))),
+                          child: Text(MyLocalizations.of(context)
+                              .getLocalizations("NO_EARNINGS")))),
         ],
       ),
     );
@@ -89,7 +90,8 @@ class _EarningsState extends State<Earnings> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               new Text(
-                MyLocalizations.of(context).getLocalizations("TOTAL_EARNINGS_FOR"),
+                MyLocalizations.of(context)
+                    .getLocalizations("TOTAL_EARNINGS_FOR"),
                 style: textsmallregular(),
               ),
               new Padding(padding: EdgeInsets.only(top: 5.0)),
@@ -115,7 +117,8 @@ class _EarningsState extends State<Earnings> {
         new Padding(
           padding:
               EdgeInsets.only(top: 10.0, bottom: 10.0, right: 20.0, left: 20.0),
-          child: new Text(MyLocalizations.of(context).getLocalizations("EARNING_DETAILS"),
+          child: new Text(
+              MyLocalizations.of(context).getLocalizations("EARNING_DETAILS"),
               style: textlight()),
         ),
         new Container(
@@ -172,7 +175,8 @@ class _EarningsState extends State<Earnings> {
                                         children: <Widget>[
                                           new Text(
                                             MyLocalizations.of(context)
-                                                .getLocalizations("ORDER_ID") +
+                                                    .getLocalizations(
+                                                        "ORDER_ID") +
                                                 ' - #${data['orders'][index]['orderID']}',
                                             style: textdblack(),
                                           ),
