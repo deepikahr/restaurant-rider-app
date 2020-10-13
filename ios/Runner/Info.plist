@@ -29,11 +29,11 @@
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app requires access to your current location to show map to customer location.</string>
+    	<string>This app requires access to your current location to show map to customer location.</string>
 	<key>NSLocationUsageDescription</key>
-	<string>This app requires access to your current location to show map to customer location.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app requires access to your current location to show map to customer location.</string>
+    	<string>This app requires access to your current location to show map to customer location.</string>
+    	<key>NSLocationWhenInUseUsageDescription</key>
+    	<string>This app requires access to your current location to show map to customer location.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

@@ -1,14 +1,20 @@
+import 'dart:convert';
+import 'package:delivery_app/pages/live-tasks/order-delivered.dart';
+import 'package:delivery_app/pages/map/custom_map.dart';
+import 'package:delivery_app/services/common.dart';
 import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
+import 'package:delivery_app/services/orders-service.dart';
 import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/material.dart';
+import 'package:getwidget/components/button/gf_button.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:delivery_app/pages/live-tasks/order-placed.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocationDetail extends StatefulWidget {
   static String tag = "location-page";
   final orderDetail;
   final deliveryBoyLatLong;
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale, currency;
 
   LocationDetail(
@@ -25,9 +31,9 @@ class LocationDetail extends StatefulWidget {
 }
 
 class _LocationState extends State<LocationDetail> {
-  GoogleMapController myController;
-  MapType currentMapType = MapType.normal;
-  final Set<Marker> markers = {};
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -39,12 +45,13 @@ class _LocationState extends State<LocationDetail> {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: bglight,
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text(
-          MyLocalizations.of(context).getLocalizations("LIVE_TASKS"),
+          MyLocalizations.of(context).liveTasks,
           style: textwhitesmall(),
         ),
       ),
@@ -53,38 +60,14 @@ class _LocationState extends State<LocationDetail> {
           Container(
             height: screenHeight,
             width: screenWidth,
-            child: GoogleMap(
-              onMapCreated: (controller) {
-                if (mounted) {
-                  setState(() {
-                    myController = controller;
-                  });
-                }
-
-                markers.add(
-                  Marker(
-                    markerId: MarkerId(LatLng(
-                            widget.orderDetail['location']['latitude'],
-                            widget.orderDetail['location']['longitude'])
-                        .toString()),
-                    position: LatLng(widget.orderDetail['location']['latitude'],
-                        widget.orderDetail['location']['longitude']),
-                  ),
-                );
-              },
-              initialCameraPosition: CameraPosition(
-                target: LatLng(
-                  widget.orderDetail['location']['latitude'],
-                  widget.orderDetail['location']['longitude'],
-                ),
-                zoom: 11.0,
-              ),
-              mapType: currentMapType,
-              markers: markers,
+            child: CustomMapForAgentToStore(
+              orderDetail: widget.orderDetail,
             ),
           ),
-          new Positioned(
-              child: new Container(
+          Positioned(
+              child: Column(
+            children: <Widget>[
+              Container(
                   padding: EdgeInsets.all(20.0),
                   color: Colors.white,
                   height: 100.0,
@@ -106,96 +89,120 @@ class _LocationState extends State<LocationDetail> {
                               padding: EdgeInsetsDirectional.only(top: 5.0)),
                           new Text(
                             widget.orderDetail['locationName'],
-                            style: textblack(),
+                            style: textmediumb(),
                           )
                         ],
                       )),
+                      Text(
+                        '${MyLocalizations.of(context).grandTotal}  : ${widget.currency}${double.parse(widget.orderDetail['grandTotal'].toString()).toStringAsFixed(2)}',
+                        style: textmediumb(),
+                      ),
                     ],
-                  ))),
-        ],
-      ),
-      bottomNavigationBar: RawMaterialButton(
-        onPressed: () {
-          showDialog<void>(
-            context: context,
-            barrierDismissible: false, // user must tap button!
-            builder: (BuildContext context) {
-              return AlertDialog(
-                content: SingleChildScrollView(
-                  child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new Text(
-                          MyLocalizations.of(context)
-                              .getLocalizations("CONFIRMATION"),
-                          style: textmediumb(),
-                        ),
-                        new Padding(
-                          padding: EdgeInsets.only(top: 10.0),
-                          child: new Text(
-                            MyLocalizations.of(context)
-                                .getLocalizations("ARE_YOU_SURE_YOU_ARRIVED"),
-                            style: textblackc(),
-                          ),
-                        ),
-                        new Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            FlatButton(
-                              child: Text(
-                                MyLocalizations.of(context)
-                                    .getLocalizations("CANCEL"),
-                                style: textmediumblue(),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).pop(context);
-                              },
-                            ),
-                            FlatButton(
-                              child: Text(
-                                MyLocalizations.of(context)
-                                    .getLocalizations("CONFIRM"),
-                                style: textmediumblue(),
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        new OrderPlaced(
-                                            orderDetail: widget.orderDetail,
-                                            locale: widget.locale,
-                                            localizedValues:
-                                                widget.localizedValues,
-                                            currency: widget.currency),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      ],
+                  )),
+              Align(
+                alignment: Alignment.topRight,
+                child: SizedBox(
+                  width: 200,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: GFButton(
+                      fullWidthButton: false,
+                      onPressed: () {
+                        _launchMap(LatLng(
+                            widget.orderDetail['location']['latitude'],
+                            widget.orderDetail['location']['longitude']));
+                      },
+                      text: MyLocalizations.of(context).toStore.toUpperCase(),
+                      textStyle: textDRed(),
+                      icon: Icon(Icons.directions, color: red),
+                      color: Colors.white,
+                      size: 35,
+                      borderShape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                     ),
                   ),
                 ),
-              );
-            },
-          );
-        },
-        child: Container(
-          color: redbtn,
-          height: 50.0,
-          alignment: AlignmentDirectional.center,
-          child: Text(
-            MyLocalizations.of(context)
-                .getLocalizations("ARRIVED_AT_RESTAURANT"),
-            textAlign: TextAlign.center,
-            style: textwhitesmall(),
-          ),
-        ),
+              ),
+            ],
+          )),
+        ],
       ),
+      bottomNavigationBar: isLoading
+          ? SizedBox(
+              height: 50,
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(primary),
+                ),
+              ),
+            )
+          : RawMaterialButton(
+              onPressed: () {
+                if (mounted) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                }
+                Map<String, dynamic> body = {"status": "On the Way"};
+                var data = json.encode(body);
+                OrdersService.orderDelivered(data, widget.orderDetail['_id'])
+                    .then((value) {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => new OrderDelivered(
+                          orderDetail: widget.orderDetail,
+                          locale: widget.locale,
+                          localizedValues: widget.localizedValues,
+                          currency: widget.currency),
+                    ),
+                  );
+                }).catchError((error) {
+                  if (mounted) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  }
+//                  showSnackbar(error.toString());
+                });
+              },
+              child: Container(
+                color: redbtn,
+                height: 50.0,
+                alignment: AlignmentDirectional.center,
+                child: Text(
+                  MyLocalizations.of(context).orderPicked,
+                  textAlign: TextAlign.center,
+                  style: textwhitesmall(),
+                ),
+              ),
+            ),
     );
+  }
+
+  void showSnackbar(message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: Duration(milliseconds: 3000),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  void _launchMap(LatLng location) async {
+    var mapSchema =
+        'google.navigation:q=${location.latitude},${location.longitude}';
+    if (await canLaunch(mapSchema)) {
+      await launch(mapSchema);
+    } else {
+      _launchURL(
+          'https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}');
+    }
+  }
+
+  void _launchURL(url) async {
+    await canLaunch(url)
+        ? launch(url)
+        : Common.showSnackbar(_scaffoldKey, '$url lauch failed');
   }
 }

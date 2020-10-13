@@ -1,13 +1,13 @@
-import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
-import 'package:delivery_app/styles/styles.dart';
 import 'package:delivery_app/pages/live-tasks/order-delivered.dart';
+import 'package:delivery_app/services/localizations.dart';
+import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class StartDelivery extends StatefulWidget {
   final orderDetail;
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale, currency;
 
   StartDelivery(
@@ -18,6 +18,7 @@ class StartDelivery extends StatefulWidget {
       this.currency})
       : super(key: key);
   static String tag = "startdelivery-page";
+
   @override
   _StartDeliveryState createState() => _StartDeliveryState();
 }
@@ -36,7 +37,7 @@ class _StartDeliveryState extends State<StartDelivery> {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         title: new Text(
-          MyLocalizations.of(context).getLocalizations("LIVE_TASKS"),
+          MyLocalizations.of(context).liveTasks,
           style: textwhitesmall(),
         ),
       ),
@@ -123,8 +124,7 @@ class _StartDeliveryState extends State<StartDelivery> {
                       alignment: Alignment.center,
                       color: red,
                       child: new Text(
-                        MyLocalizations.of(context)
-                            .getLocalizations("START_DELIVERY"),
+                        MyLocalizations.of(context).startDelivery,
                         style: textwhites(),
                       ),
                     ),
@@ -155,7 +155,7 @@ class _StartDeliveryState extends State<StartDelivery> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 new Text(
-                  MyLocalizations.of(context).getLocalizations("HELP"),
+                  MyLocalizations.of(context).help,
                   textAlign: TextAlign.end,
                   style: textblueblack(),
                 ),

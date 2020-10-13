@@ -1,4 +1,7 @@
 import 'dart:async';
+
+import 'package:delivery_app/pages/auth/login.dart';
+import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/common.dart';
 import 'package:delivery_app/services/constant.dart';
@@ -6,12 +9,12 @@ import 'package:delivery_app/services/initialize_i18n.dart';
 import 'package:delivery_app/services/localizations.dart'
     show MyLocalizationsDelegate;
 import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:delivery_app/pages/home/home.dart';
-import 'package:delivery_app/pages/auth/login.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'pages/notification/notification_page.dart';
 
 bool get isInDebugMode {
   bool inDebugMode = false;
@@ -19,11 +22,17 @@ bool get isInDebugMode {
   return inDebugMode;
 }
 
+Timer oneSignalTimer;
+Map<String, Map<String, String>> localizedValues;
+String locale;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Map localizedValues = await initializeI18n();
+  localizedValues = await initializeI18n();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String locale = prefs.getString('selectedLanguage') ?? "en";
+  locale = prefs.getString('selectedLanguage') == null
+      ? 'en'
+      : prefs.getString('selectedLanguage');
   FlutterError.onError = (FlutterErrorDetails details) async {
     if (isInDebugMode) {
       FlutterError.dumpErrorToConsole(details);
@@ -31,6 +40,10 @@ void main() async {
       Zone.current.handleUncaughtError(details.exception, details.stack);
     }
   };
+  initOneSignal();
+  oneSignalTimer = Timer.periodic(Duration(seconds: 4), (timer) {
+    initOneSignal();
+  });
 
   tokenCheck(locale, localizedValues);
   runZoned<Future<Null>>(() async {
@@ -54,10 +67,60 @@ void tokenCheck(locale, localizedValues) {
   });
 }
 
+Future<void> initOneSignal() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  OneSignal.shared
+      .setNotificationReceivedHandler((OSNotification notification) {});
+  OneSignal.shared.init(
+    ONE_SIGNAL_APP_ID,
+    iOSSettings: {
+      OSiOSSettings.autoPrompt: true,
+      OSiOSSettings.inAppLaunchUrl: true
+    },
+  );
+  OneSignal.shared
+      .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+    if (result.notification.payload.rawPayload["custom"]
+        .toString()
+        .contains("orderID")) {
+      runApp(Notification(
+        localizedValues: localizedValues,
+        locale: locale,
+        orderId: result.notification.payload.additionalData["orderID"],
+      ));
+    } else {
+      runApp(Notification(
+        localizedValues: localizedValues,
+        locale: locale,
+        orderId: null,
+      ));
+    }
+  });
+
+  OneSignal.shared.setInFocusDisplayType(
+    OSNotificationDisplayType.notification,
+  );
+
+  OneSignal.shared
+      .promptUserForPushNotificationPermission(fallbackToSettings: true);
+  OneSignal.shared
+      .setInFocusDisplayType(OSNotificationDisplayType.notification);
+  var status = await OneSignal.shared.getPermissionSubscriptionState();
+  String playerId = status.subscriptionStatus.userId;
+  if (playerId != null) {
+    await prefs.setString("playerId", playerId);
+    if (oneSignalTimer != null && oneSignalTimer.isActive)
+      oneSignalTimer.cancel();
+  }
+}
+
 class MyApp extends StatefulWidget {
   final String locale;
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
+
   MyApp(this.locale, this.localizedValues);
+
   @override
   _MyAppState createState() => new _MyAppState();
 }
@@ -65,7 +128,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool loginIn = false;
   bool loginCheck = false;
-  Timer oneSignalTimer;
 
   @override
   void initState() {
@@ -79,11 +141,12 @@ class _MyAppState extends State<MyApp> {
         loginCheck = true;
       });
     }
-    oneSignalTimer = Timer.periodic(Duration(seconds: 2), (timer) {
-      initOneSignal();
-    });
-    initOneSignal();
     Common.getToken().then((value) {
+      if (mounted) {
+        setState(() {
+          loginCheck = false;
+        });
+      }
       if (value != null) {
         if (mounted) {
           setState(() {
@@ -100,51 +163,20 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> initOneSignal() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    OneSignal.shared
-        .setNotificationReceivedHandler((OSNotification notification) {});
-    OneSignal.shared
-        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {});
-    OneSignal.shared.init(Constants.oneSignalKey, iOSSettings: {
-      OSiOSSettings.autoPrompt: false,
-      OSiOSSettings.inAppLaunchUrl: true
-    });
-    OneSignal.shared.setInFocusDisplayType(
-      OSNotificationDisplayType.notification,
-    );
-
-    OneSignal.shared
-        .promptUserForPushNotificationPermission(fallbackToSettings: true);
-    OneSignal.shared
-        .setInFocusDisplayType(OSNotificationDisplayType.notification);
-    var status = await OneSignal.shared.getPermissionSubscriptionState();
-    String playerId = status.subscriptionStatus.userId;
-    if (playerId != null) {
-      if (mounted) {
-        setState(() {
-          loginCheck = false;
-        });
-      }
-      prefs.setString("playerId", playerId);
-      if (oneSignalTimer != null && oneSignalTimer.isActive)
-        oneSignalTimer.cancel();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       locale: Locale(widget.locale),
       localizationsDelegates: [
-        MyLocalizationsDelegate(widget.localizedValues, [widget.locale]),
-        GlobalMaterialLocalizations.delegate,
+        MyLocalizationsDelegate(widget.localizedValues),
         GlobalWidgetsLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        DefaultCupertinoLocalizations.delegate
       ],
-      supportedLocales: [Locale(widget.locale)],
+      supportedLocales: LANGUAGES.map((language) => Locale(language, '')),
       debugShowCheckedModeBanner: false,
-      title: Constants.APP_NAME,
+      title: APP_NAME,
       theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: Colors.white,
@@ -152,7 +184,10 @@ class _MyAppState extends State<MyApp> {
         unselectedWidgetColor: Colors.grey,
       ),
       home: loginCheck
-          ? CheckTokenScreen()
+          ? CheckTokenScreen(
+              widget.locale,
+              widget.localizedValues,
+            )
           : loginIn
               ? HomePage(
                   locale: widget.locale,
@@ -167,20 +202,52 @@ class _MyAppState extends State<MyApp> {
 }
 
 class CheckTokenScreen extends StatelessWidget {
+  final Map<String, Map<String, String>> localizedValues;
+  final String locale;
+
+  CheckTokenScreen(this.locale, this.localizedValues);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: primary,
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Image.asset(
-          'assets/splash.png',
-          fit: BoxFit.cover,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-        ),
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
+  }
+}
+
+class Notification extends StatelessWidget {
+  final String locale;
+  final int orderId;
+  final Map localizedValues;
+
+  Notification({Key key, this.locale, this.localizedValues, this.orderId});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        locale: Locale(locale),
+        localizationsDelegates: [
+          MyLocalizationsDelegate(localizedValues),
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          DefaultCupertinoLocalizations.delegate
+        ],
+        supportedLocales: LANGUAGES.map((language) => Locale(language, '')),
+        debugShowCheckedModeBanner: false,
+        title: APP_NAME,
+        theme: ThemeData(primaryColor: primary, accentColor: primary),
+        home: orderId != null
+            ? NotificationPage(
+                localizedValues: localizedValues,
+                locale: locale,
+                orderId: orderId,
+              )
+            : HomeNotification(
+                localizedValues: localizedValues,
+                locale: locale,
+              ));
   }
 }

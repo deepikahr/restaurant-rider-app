@@ -1,20 +1,22 @@
-import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
+import 'package:delivery_app/services/localizations.dart';
+import 'package:delivery_app/styles/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../services/orders-service.dart';
+import 'history.dart';
 import 'new.dart';
 import 'processing.dart';
-import 'history.dart';
-import 'package:delivery_app/styles/styles.dart';
-import '../../services/orders-service.dart';
-import 'package:flutter/widgets.dart';
 
 int newOrderLength = 1;
 int pocessingOrderLength = 1;
 
 class TabsHeading extends StatefulWidget {
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   TabsHeading({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _TabsHeadingState createState() => new _TabsHeadingState();
 }
@@ -29,10 +31,6 @@ class _TabsHeadingState extends State<TabsHeading>
 
   @override
   initState() {
-    _controller = TabController(
-      length: 3,
-      vsync: this,
-    );
     super.initState();
     getAcceptedOrders();
   }
@@ -61,14 +59,10 @@ class _TabsHeadingState extends State<TabsHeading>
   Widget build(BuildContext context) {
     _tabs = [
       new Tab(
-        text: MyLocalizations.of(context).getLocalizations("NEW"),
+        text: MyLocalizations.of(context).nEW,
       ),
-      new Tab(
-        text: MyLocalizations.of(context).getLocalizations("PROCESSING"),
-      ),
-      new Tab(
-        text: MyLocalizations.of(context).getLocalizations("HISTORY"),
-      ),
+      new Tab(text: MyLocalizations.of(context).processing),
+      new Tab(text: MyLocalizations.of(context).history),
     ];
     _pages = [
       new New(
@@ -84,7 +78,11 @@ class _TabsHeadingState extends State<TabsHeading>
         localizedValues: widget.localizedValues,
       )
     ];
-
+    _controller = new TabController(
+      initialIndex: 1,
+      length: _tabs.length,
+      vsync: this,
+    );
     return new Container(
       child: new Column(
         children: [
@@ -100,7 +98,7 @@ class _TabsHeadingState extends State<TabsHeading>
             unselectedLabelStyle: textmediumsmall(),
           ),
           new SizedBox.fromSize(
-            size: const Size.fromHeight(500.0),
+            size: const Size.fromHeight(600.0),
             child: new TabBarView(
               physics: NeverScrollableScrollPhysics(),
               controller: _controller,
