@@ -1,22 +1,25 @@
-import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
-import 'package:delivery_app/styles/styles.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
+import 'package:delivery_app/services/localizations.dart';
+import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class BillUpload extends StatefulWidget {
   final orderDetail;
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   BillUpload({Key key, this.orderDetail, this.locale, this.localizedValues})
       : super(key: key);
+
   @override
   _BillUploadState createState() => _BillUploadState();
 }
 
 class _BillUploadState extends State<BillUpload> {
   static File _imageFile, myfile;
+
   void _getImage(BuildContext context, ImageSource source) {
     if (mounted) {
       setState(() {
@@ -39,8 +42,7 @@ class _BillUploadState extends State<BillUpload> {
       appBar: AppBar(
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
-        title: new Text(
-            MyLocalizations.of(context).getLocalizations("UPLOAD_BILL"),
+        title: new Text(MyLocalizations.of(context).uploadBill,
             style: textwhitesmall()),
       ),
       body: new Container(
@@ -54,7 +56,7 @@ class _BillUploadState extends State<BillUpload> {
               children: <Widget>[
                 Expanded(
                   child: new Text(
-                    MyLocalizations.of(context).getLocalizations("SUBMIT_BILL"),
+                    MyLocalizations.of(context).submitBill,
                     style: textmediumb(),
                   ),
                 ),
@@ -64,7 +66,7 @@ class _BillUploadState extends State<BillUpload> {
               child: new Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
                 child: new Text(
-                  MyLocalizations.of(context).getLocalizations("CAMERA"),
+                  MyLocalizations.of(context).camera,
                   style: textmediumblue(),
                 ),
               ),
@@ -99,7 +101,7 @@ class _BillUploadState extends State<BillUpload> {
                         ),
                         border: Border.all(color: Color(0xFF38707070))),
                     child: new Text(
-                      MyLocalizations.of(context).getLocalizations("UPLOAD"),
+                      MyLocalizations.of(context).upload,
                       style: textlightblack(),
                     ),
                   ),

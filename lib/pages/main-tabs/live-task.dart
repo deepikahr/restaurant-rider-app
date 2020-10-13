@@ -1,21 +1,25 @@
 import 'dart:async';
 
-import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
-import 'package:delivery_app/styles/styles.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../services/orders-service.dart';
-import 'package:async_loader/async_loader.dart';
-import 'package:location/location.dart';
-import 'package:intl/intl.dart';
+import 'package:delivery_app/pages/live-tasks/custom_dialog.dart';
 import 'package:delivery_app/pages/live-tasks/location.dart';
+import 'package:delivery_app/services/background_location_service.dart';
+import 'package:delivery_app/services/localizations.dart';
+import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../services/orders-service.dart';
 
 class LiveTasks extends StatefulWidget {
   static String tag = "livetasks-page";
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   LiveTasks({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _LiveTasksState createState() => _LiveTasksState();
 }
@@ -32,11 +36,17 @@ class _LiveTasksState extends State<LiveTasks> {
   dynamic orderList;
   LocationData currentLocation;
   var addressData, currentLocationLatLong;
+  BackgroundLocationService backgroundLocationService =
+      BackgroundLocationService();
 
   bool isGetOrderLoading = false;
   String currency;
+
+  String storeAddress;
+
   @override
   void initState() {
+    backgroundLocationService.initialize();
     initPlatformState();
     getNewOrderToDeliveryBoy();
     new Timer.periodic(Duration(seconds: 60), (_) {
@@ -62,15 +72,17 @@ class _LiveTasksState extends State<LiveTasks> {
       });
     }
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    currency = prefs.getString('currency');
     String orderStatus = 'Accepted';
     await OrdersService.getAssignedOrdersListToDeliveryBoy(orderStatus)
         .then((value) {
-      print(value);
+      setState(() {
+        currency = prefs.getString('currency');
+        isGetOrderLoading = false;
+      });
       if (mounted) {
         setState(() {
-          orderList = value;
           isGetOrderLoading = false;
+          orderList = value['response_data']['data'];
         });
       }
     });
@@ -86,7 +98,7 @@ class _LiveTasksState extends State<LiveTasks> {
                   backgroundColor: primary,
                 ),
               )
-            : orderList.length > 0
+            : ((orderList?.length ?? 0) > 0)
                 ? ListView(
                     children: <Widget>[
                       ListView.builder(
@@ -113,8 +125,7 @@ class _LiveTasksState extends State<LiveTasks> {
                                   child: new Row(
                                     children: <Widget>[
                                       new Text(
-                                        MyLocalizations.of(context)
-                                                .getLocalizations("ORDER_ID") +
+                                        MyLocalizations.of(context).orderID +
                                             ' #${orderList[index]['orderID']}',
                                         style: textmediumsmall(),
                                       ),
@@ -141,8 +152,7 @@ class _LiveTasksState extends State<LiveTasks> {
                                       orderList[index]['productDetails'][0]
                                                   ['imageUrl'] ==
                                               null
-                                          ? MyLocalizations.of(context)
-                                              .getLocalizations("NO_IMAGE")
+                                          ? MyLocalizations.of(context).noImage
                                           : orderList[index]['productDetails']
                                               [0]['imageUrl'],
                                       height: 45.0,
@@ -153,11 +163,9 @@ class _LiveTasksState extends State<LiveTasks> {
                                       style: textmediumb(),
                                     ),
                                     subtitle: new Text(
-                                      orderList[index]['locationName'],
-                                      style: textdblack(),
+                                      '${MyLocalizations.of(context).grandTotal}  : ${currency ?? ''} ${double.parse(orderList[index]['grandTotal'].toString()).toStringAsFixed(2)}',
+                                      style: textmediumb(),
                                     ),
-                                    trailing: new Image.asset(
-                                        'assets/icons/right-arrow.png'),
                                   ),
                                 ),
                               ],
@@ -172,8 +180,7 @@ class _LiveTasksState extends State<LiveTasks> {
                     padding: EdgeInsets.only(top: 100.0),
                     child: Center(
                       child: Text(
-                        MyLocalizations.of(context)
-                            .getLocalizations("NO_ORDERS"),
+                        MyLocalizations.of(context).noOrders,
                         style: TextStyle(fontSize: 20.0),
                       ),
                     ),
@@ -208,8 +215,7 @@ class _LiveTasksState extends State<LiveTasks> {
                     child: new Row(
                       children: <Widget>[
                         new Text(
-                          MyLocalizations.of(context)
-                                  .getLocalizations("ORDER_ID") +
+                          MyLocalizations.of(context).orderID +
                               ' #${orders[index]['orderID']}',
                           style: textmediumsmall(),
                         ),
@@ -232,18 +238,13 @@ class _LiveTasksState extends State<LiveTasks> {
                     child: new ListTile(
                       leading: new Image.network(
                         orders[index]['productDetails'][0]['imageUrl'] == null
-                            ? MyLocalizations.of(context)
-                                .getLocalizations("NO_IMAGE")
+                            ? MyLocalizations.of(context).noImage
                             : orders[index]['productDetails'][0]['imageUrl'],
                         height: 45.0,
                       ),
                       title: new Text(
                         orders[index]['productDetails'][0]['restaurant'],
                         style: textmediumb(),
-                      ),
-                      subtitle: new Text(
-                        orders[index]['locationName'],
-                        style: textdblack(),
                       ),
                       trailing: new Image.asset('assets/icons/right-arrow.png'),
                     ),
@@ -259,6 +260,16 @@ class _LiveTasksState extends State<LiveTasks> {
   }
 
   Widget buildDeliveryOption(order) {
+    final coordinates = new Coordinates(
+        order['location']['latitude'], order['location']['longitude']);
+    Geocoder.local.findAddressesFromCoordinates(coordinates).then((value) {
+      if (mounted) {
+        setState(() {
+          storeAddress = value.first.addressLine;
+        });
+      }
+    });
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -281,8 +292,7 @@ class _LiveTasksState extends State<LiveTasks> {
                       top: 10.0,
                       left: 10.0,
                       child: new Text(
-                        MyLocalizations.of(context)
-                                .getLocalizations("ORDER_ID") +
+                        MyLocalizations.of(context).orderID +
                             ' # ${order['orderID']}',
                         style: textmediumwhite(),
                       ))
@@ -304,7 +314,7 @@ class _LiveTasksState extends State<LiveTasks> {
                         deliveryBoyLatLong: currentLocation,
                         locale: widget.locale,
                         localizedValues: widget.localizedValues,
-                        currency: currency),
+                        currency: currency ?? ''),
                   ),
                 );
               },
@@ -329,7 +339,7 @@ class _LiveTasksState extends State<LiveTasks> {
                             new Padding(
                               padding: EdgeInsets.only(left: 4.0),
                               child: new Text(
-                                '${order['shippingAddress'] == null ? "" : order['shippingAddress']['addressType']}',
+                                order['locationName'],
                                 style: textmediumb(),
                               ),
                             ),
@@ -357,8 +367,7 @@ class _LiveTasksState extends State<LiveTasks> {
                         child: new Padding(
                           padding: EdgeInsets.only(left: 55.0, right: 30.0),
                           child: new Text(
-                            '${order['shippingAddress'] == null ? "" : order['shippingAddress']['flatNo']},${order['shippingAddress'] == null ? "" : order['shippingAddress']['address']},' +
-                                '${order['shippingAddress'] == null ? "" : order['shippingAddress']['contactNumber']}',
+                            storeAddress ?? '',
                             style: textblack(),
                           ),
                         ),
@@ -370,5 +379,18 @@ class _LiveTasksState extends State<LiveTasks> {
             )),
       ],
     );
+  }
+
+  void _showDialog() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return CustomDialogForConfirmation(
+            context: context,
+            orderId: '#100012',
+            restaurantName: 'Dominos',
+            id: '5f2af2bffd4d57001167dcc8',
+          );
+        });
   }
 }
