@@ -1,14 +1,16 @@
-import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
-import 'package:delivery_app/styles/styles.dart';
 import 'package:delivery_app/pages/home/home.dart';
+import 'package:delivery_app/services/localizations.dart';
+import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../services/auth-service.dart';
 import '../../services/common.dart';
 
 class Login extends StatefulWidget {
   static String tag = 'login-page';
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   Login({Key key, this.locale, this.localizedValues}) : super(key: key);
@@ -51,20 +53,22 @@ class _LoginState extends State<Login> {
         }
 
         if (onValue['token'] != null) {
-          showSnackbar(
-              MyLocalizations.of(context).getLocalizations("LOGIN_SUCCESSFUL"));
-          Common.setToken(onValue['token']).then((saved) {
+          showSnackbar(MyLocalizations.of(context).loginSuccessful);
+          Common.setToken(onValue['token']).then((saved) async{
             if (saved) {
-              Future.delayed(Duration(milliseconds: 1500), () {
+              Location().requestPermission().then((value) {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
                       builder: (BuildContext context) => HomePage(
+                        isAfterLogin: true,
                         locale: widget.locale,
                         localizedValues: widget.localizedValues,
                       ),
                     ),
                     (Route<dynamic> route) => false);
+              }).catchError((error) {
+                print('location permission error $error');
               });
             }
           });
@@ -154,8 +158,8 @@ class _LoginState extends State<Login> {
                               style: TextStyle(color: Colors.black),
                               decoration: new InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: MyLocalizations.of(context)
-                                      .getLocalizations("EMAIL_ID"),
+                                  hintText:
+                                      MyLocalizations.of(context).yourEmail,
                                   hintStyle: TextStyle(
                                     fontSize: 16.0,
                                     color: Colors.black,
@@ -172,8 +176,7 @@ class _LoginState extends State<Login> {
                                     !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                                         .hasMatch(value)) {
                                   return MyLocalizations.of(context)
-                                      .getLocalizations(
-                                          "PLEASE_ENTER_VALID_EMAIL");
+                                      .pleaseEnterValidEmail;
                                 } else
                                   return null;
                               },
@@ -198,8 +201,7 @@ class _LoginState extends State<Login> {
                               style: TextStyle(color: Colors.black),
                               decoration: new InputDecoration(
                                 border: InputBorder.none,
-                                hintText: MyLocalizations.of(context)
-                                    .getLocalizations("PASSWORD"),
+                                hintText: MyLocalizations.of(context).password,
                                 hintStyle: TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.black,
@@ -212,8 +214,7 @@ class _LoginState extends State<Login> {
                               validator: (String value) {
                                 if (value.isEmpty || value.length < 6) {
                                   return MyLocalizations.of(context)
-                                      .getLocalizations(
-                                          "PLEASE_ENTER_VALID_PASSWORD");
+                                      .passwordShouldBeAtleast6CharLong;
                                 } else
                                   return null;
                               },
@@ -238,7 +239,7 @@ class _LoginState extends State<Login> {
                                 children: <Widget>[
                                   Text(
                                     MyLocalizations.of(context)
-                                        .getLocalizations("LOGIN"),
+                                        .loginToYourAccount,
                                   ),
                                   Padding(
                                       padding: EdgeInsets.only(

@@ -1,15 +1,16 @@
 import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:async_loader/async_loader.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../../services/orders-service.dart';
 
 class History extends StatefulWidget {
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   History({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _HistoryState createState() => new _HistoryState();
 }
@@ -44,7 +45,13 @@ class _HistoryState extends State<History> {
         .then((value) {
       if (mounted) {
         setState(() {
-          deliveredOrderList = value;
+          isGetHidtoryLoading = false;
+          deliveredOrderList = value['response_data']['data'];
+        });
+      }
+    }).catchError((onError) {
+      if (mounted) {
+        setState(() {
           isGetHidtoryLoading = false;
         });
       }
@@ -61,11 +68,10 @@ class _HistoryState extends State<History> {
                 backgroundColor: primary,
               ),
             )
-          : deliveredOrderList.length > 0
+          : ((deliveredOrderList?.length ?? 0) > 0)
               ? Container(child: buildDeliveredList(deliveredOrderList))
               : Center(
-                  child: Text(MyLocalizations.of(context)
-                      .getLocalizations("NO_HISTORY")),
+                  child: Text(MyLocalizations.of(context).noHistory),
                 ),
     );
   }
@@ -95,7 +101,7 @@ class _HistoryState extends State<History> {
                   Expanded(
                       child: new Text(
                     ' ${deliveredOrderList[index]['productDetails'].length} ' +
-                        MyLocalizations.of(context).getLocalizations("ITEMS"),
+                        MyLocalizations.of(context).items,
                     textAlign: TextAlign.center,
                     style: textmediumsm(),
                   )),

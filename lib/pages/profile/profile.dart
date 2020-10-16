@@ -1,19 +1,22 @@
+import 'dart:io';
+
+import 'package:async/async.dart';
 import 'package:delivery_app/services/localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../../styles/styles.dart';
-import '../../services/profile-service.dart';
-import 'package:toast/toast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:async/async.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:toast/toast.dart';
+
+import '../../services/profile-service.dart';
+import '../../styles/styles.dart';
 
 class Profile extends StatefulWidget {
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   Profile({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -24,7 +27,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool isLoading = false, isPicUploading = false, isProfileLoading = false;
-  Map userDetails;
+  Map profileData;
+
+  bool isImageUploading = false;
 
   getProfileInfo() async {
     if (mounted) {
@@ -36,7 +41,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     await ProfileService.getUserInfo().then((value) {
       if (mounted) {
         setState(() {
-          userDetails = value;
+          profileData = value;
           isProfileLoading = false;
         });
       }
@@ -58,21 +63,18 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       }
       _formKey.currentState.save();
       var body = {
-        "name": userDetails['name'],
-        "contactNumber": userDetails['contactNumber'],
-        "country": userDetails['country'],
-        "locationName": userDetails['locationName'],
-        "zip": userDetails['zip'],
-        "state": userDetails['state'],
-        "address": userDetails['address'],
+        "name": profileData['name'],
+        "contactNumber": profileData['contactNumber'],
+        "country": profileData['country'],
+        "locationName": profileData['locationName'],
+        "zip": profileData['zip'],
+        "state": profileData['state'],
+        "address": profileData['address'],
       };
-      ProfileService.setUserInfo(userDetails['_id'], body).then((onValue) {
+      ProfileService.setUserInfo(profileData['_id'], body).then((onValue) {
         Toast.show(
-            MyLocalizations.of(context)
-                .getLocalizations("YOUR_PROFILE_PICTURE_UPDATED"),
-            context,
-            duration: Toast.LENGTH_LONG,
-            gravity: Toast.BOTTOM);
+            MyLocalizations.of(context).yourprofileSuccessfullyUPDATED, context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
         if (mounted) {
           setState(() {
             isLoading = false;
@@ -97,20 +99,19 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         if (_imageFile != null) {
           var stream = new http.ByteStream(
               DelegatingStream.typed(_imageFile.openRead()));
-
           ProfileService.uploadProfileImage(
             _imageFile,
             stream,
-            userDetails['_id'],
+            profileData['_id'],
           );
           if (mounted) {
             setState(() {
+              profileData['logo'] = file;
               isPicUploading = false;
             });
           }
           Toast.show(
-              MyLocalizations.of(context)
-                  .getLocalizations("YOUR_PROFILE_PICTURE_UPDATED"),
+              MyLocalizations.of(context).yourprofilePictureSuccessfullyUPDATED,
               context,
               duration: Toast.LENGTH_LONG,
               gravity: Toast.BOTTOM);
@@ -132,11 +133,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         if (_imageFile != null) {
           var stream = new http.ByteStream(
               DelegatingStream.typed(_imageFile.openRead()));
-
           ProfileService.uploadProfileImage(
             _imageFile,
             stream,
-            userDetails['_id'],
+            profileData['_id'],
           );
 
           if (mounted) {
@@ -145,8 +145,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             });
           }
           Toast.show(
-              MyLocalizations.of(context)
-                  .getLocalizations("YOUR_PROFILE_PICTURE_UPDATED"),
+              MyLocalizations.of(context).yourprofilePictureSuccessfullyUPDATED,
               context,
               duration: Toast.LENGTH_LONG,
               gravity: Toast.BOTTOM);
@@ -162,15 +161,20 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       });
     }
     await ProfileService.deleteUserProfilePic().then((onValue) {
-      Toast.show(onValue['message'], context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
-      userDetails['logo'] = null;
-      _imageFile = null;
-      if (mounted) {
-        setState(() {
-          isPicUploading = false;
-        });
+      try {
+        Toast.show(onValue['response_data']['message'], context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+
+        if (mounted) {
+          setState(() {
+            profileData['logo'] = null;
+            _imageFile = null;
+            isImageUploading = false;
+          });
+        }
+      } catch (error, stackTrace) {
       }
+    }).catchError((onError) {
     });
   }
 
@@ -181,8 +185,8 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         backgroundColor: primary,
         iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
-        title: Text(MyLocalizations.of(context).getLocalizations("PROFILE"),
-            style: textwhitesmall()),
+        title:
+            Text(MyLocalizations.of(context).profile, style: textwhitesmall()),
       ),
       body: isProfileLoading
           ? Center(
@@ -212,10 +216,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 borderRadius: BorderRadius.circular(80.0),
                               ),
                               child: _imageFile == null
-                                  ? userDetails['logo'] != null
+                                  ? profileData['logo'] != null
                                       ? new CircleAvatar(
                                           backgroundImage: new NetworkImage(
-                                              "${userDetails['logo']}"),
+                                              "${profileData['logo']}"),
                                         )
                                       : new CircleAvatar(
                                           backgroundImage: new AssetImage(
@@ -244,10 +248,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                       barrierDismissible: false,
                                       builder: (BuildContext context) {
                                         return new AlertDialog(
-                                          title: new Text(MyLocalizations.of(
-                                                  context)
-                                              .getLocalizations(
-                                                  "CHANGE_PROFILE_PICTURE")),
+                                          title: new Text(
+                                              MyLocalizations.of(context)
+                                                  .changeprofilepicture),
                                           content: new SingleChildScrollView(
                                             child: new ListBody(
                                               children: <Widget>[
@@ -270,8 +273,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                         child: new Text(
                                                             MyLocalizations.of(
                                                                     context)
-                                                                .getLocalizations(
-                                                                    "CHOOSE_FROM_PHOTOS")),
+                                                                .choosefromphotos),
                                                       ),
                                                     ),
                                                     Padding(
@@ -287,8 +289,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                         child: new Text(
                                                             MyLocalizations.of(
                                                                     context)
-                                                                .getLocalizations(
-                                                                    "TAKE_PHOTO")),
+                                                                .takephoto),
                                                       ),
                                                     ),
                                                     Padding(
@@ -296,7 +297,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                           const EdgeInsets.all(
                                                               8.0),
                                                       child:
-                                                          userDetails['logo'] !=
+                                                          profileData['logo'] !=
                                                                   null
                                                               ? InkWell(
                                                                   onTap: () {
@@ -304,10 +305,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                                                         context);
                                                                     removeProfilePic();
                                                                   },
-                                                                  child: new Text(MyLocalizations.of(
-                                                                          context)
-                                                                      .getLocalizations(
-                                                                          "REMOVE_PHOTO")),
+                                                                  child: new Text(
+                                                                      MyLocalizations.of(
+                                                                              context)
+                                                                          .removephoto),
                                                                 )
                                                               : Container(),
                                                     ),
@@ -320,8 +321,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             new FlatButton(
                                               child: new Text(
                                                   MyLocalizations.of(context)
-                                                      .getLocalizations(
-                                                          "CANCEL")),
+                                                      .cancel),
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
@@ -343,12 +343,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                           child: TextFormField(
                             onSaved: (value) {
-                              userDetails['name'] = value;
+                              profileData['name'] = value;
                             },
-                            initialValue: userDetails['name'],
+                            initialValue: profileData['name'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context)
-                                  .getLocalizations("FULL_NAME"),
+                              labelText: MyLocalizations.of(context).fullName,
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -363,13 +362,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                           child: TextFormField(
                             onSaved: (value) {
-                              userDetails['contactNumber'] = value;
+                              profileData['contactNumber'] = value;
                             },
                             initialValue:
-                                userDetails['contactNumber'].toString(),
+                                profileData['contactNumber'].toString(),
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context)
-                                  .getLocalizations("MOBILE_NUMBER"),
+                              labelText:
+                                  MyLocalizations.of(context).mobileNumber,
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -384,12 +383,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                           child: TextFormField(
                             onSaved: (value) {
-                              userDetails['locationName'] = value;
+                              profileData['locationName'] = value;
                             },
-                            initialValue: userDetails['locationName'],
+                            initialValue: profileData['locationName'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context)
-                                  .getLocalizations("LOCATION_NAME"),
+                              labelText:
+                                  MyLocalizations.of(context).locationName,
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -404,12 +403,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                           child: TextFormField(
                             onSaved: (value) {
-                              userDetails['state'] = value;
+                              profileData['state'] = value;
                             },
-                            initialValue: userDetails['state'],
+                            initialValue: profileData['state'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context)
-                                  .getLocalizations("STATE"),
+                              labelText: MyLocalizations.of(context).state,
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -424,12 +422,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                           child: TextFormField(
                             onSaved: (value) {
-                              userDetails['country'] = value;
+                              profileData['country'] = value;
                             },
-                            initialValue: userDetails['country'],
+                            initialValue: profileData['country'],
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context)
-                                  .getLocalizations("COUNTRY"),
+                              labelText: MyLocalizations.of(context).country,
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -444,14 +441,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           ),
                           child: TextFormField(
                             onSaved: (value) {
-                              userDetails['zip'] = value;
+                              profileData['zip'] = value;
                             },
-                            initialValue: userDetails['zip'] != null
-                                ? userDetails['zip'].toString()
+                            initialValue: profileData['zip'] != null
+                                ? profileData['zip'].toString()
                                 : '',
                             decoration: new InputDecoration(
-                              labelText: MyLocalizations.of(context)
-                                  .getLocalizations("POSTAL_CODE"),
+                              labelText: MyLocalizations.of(context).postalCode,
                               hintStyle: textOS(),
                               contentPadding: EdgeInsets.all(10.0),
                               border: InputBorder.none,
@@ -468,12 +464,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             padding: EdgeInsets.only(left: 10.0),
                             child: new TextFormField(
                               onSaved: (value) {
-                                userDetails['address'] = value;
+                                profileData['address'] = value;
                               },
-                              initialValue: userDetails['address'],
+                              initialValue: profileData['address'],
                               decoration: new InputDecoration(
-                                  labelText: MyLocalizations.of(context)
-                                      .getLocalizations("ADDRESS"),
+                                  labelText:
+                                      MyLocalizations.of(context).address,
                                   hintStyle: textOS(),
                                   fillColor: Colors.black,
                                   border: InputBorder.none),
@@ -505,7 +501,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
               height: 40.0,
               child: FlatButton(
                 child: Text(
-                  MyLocalizations.of(context).getLocalizations("CANCEL"),
+                  MyLocalizations.of(context).cancel,
                 ),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -526,7 +522,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     )
                   : FlatButton(
                       child: Text(
-                        MyLocalizations.of(context).getLocalizations("SAVE"),
+                        MyLocalizations.of(context).save,
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed: () {

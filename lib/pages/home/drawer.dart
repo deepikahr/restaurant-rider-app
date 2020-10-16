@@ -4,16 +4,18 @@ import 'package:delivery_app/pages/home/home.dart';
 import 'package:delivery_app/pages/profile/profile.dart';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/constant.dart';
+import 'package:delivery_app/services/initialize_i18n.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerPage extends StatefulWidget {
-  final Map localizedValues;
+  final Map<String, Map<String, String>> localizedValues;
   final String locale;
 
   DrawerPage({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _DrawerPageState createState() => _DrawerPageState();
 }
@@ -26,8 +28,14 @@ class _DrawerPageState extends State<DrawerPage> {
       picture,
       selectedLanguages,
       selectedLang;
-  List<String> languages = ['English', 'French', 'Arabic', 'Chinese'];
+  List<String> languages = [
+    'English',
+    'Spanish',
+  ];
   var userData, selectedLanguage, selectedLocale;
+
+  Map<String, Map<String, String>> localizedValues;
+
   @override
   void initState() {
     super.initState();
@@ -43,12 +51,8 @@ class _DrawerPageState extends State<DrawerPage> {
       });
       if (selectedLanguage == 'en') {
         selectedLocale = 'English';
-      } else if (selectedLanguage == 'fr') {
-        selectedLocale = 'French';
-      } else if (selectedLanguage == 'ar') {
-        selectedLocale = 'Arabic';
-      } else if (selectedLanguage == 'zh') {
-        selectedLocale = 'Chinese';
+      } else if (selectedLanguage == 'es') {
+        selectedLocale = 'Spanish';
       }
     }
   }
@@ -115,7 +119,10 @@ class _DrawerPageState extends State<DrawerPage> {
                                   width: 150.0,
                                   height: 100.0,
                                 ),
-                                Text(Constants.APP_NAME)
+                                Text(
+                                  APP_NAME,
+                                  style: textboldlargeBlack(),
+                                )
                               ],
                             )),
                         GestureDetector(
@@ -149,6 +156,7 @@ class _DrawerPageState extends State<DrawerPage> {
                                 name != null
                                     ? Text(
                                         name.toUpperCase(),
+                                        style: textmediumblack(),
                                       )
                                     : Container(height: 0, width: 0),
                               ],
@@ -171,17 +179,16 @@ class _DrawerPageState extends State<DrawerPage> {
                           child: new ListTile(
                             contentPadding:
                                 EdgeInsets.only(left: 36.0, right: 20.0),
-                            leading: Image.asset(
-                              'assets/icons/home.png',
+                            leading: Icon(
+                              Icons.home,
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context)
-                                  .getLocalizations("HOME"),
+                              MyLocalizations.of(context).home,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
-                              color: Colors.white70,
+                              color: primary,
                             ),
                           ),
                         ),
@@ -207,12 +214,11 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context)
-                                  .getLocalizations("EARNINGS"),
+                              MyLocalizations.of(context).earnings,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
-                              color: Colors.white70,
+                              color: primary,
                             ),
                           ),
                         ),
@@ -238,12 +244,11 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context)
-                                  .getLocalizations("ORDERS"),
+                              MyLocalizations.of(context).orders,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
-                              color: Colors.white70,
+                              color: primary,
                             ),
                           ),
                         ),
@@ -270,12 +275,11 @@ class _DrawerPageState extends State<DrawerPage> {
                               color: primary,
                             ),
                             title: new Text(
-                              MyLocalizations.of(context)
-                                  .getLocalizations("LOGOUT"),
+                              MyLocalizations.of(context).logout,
                             ),
                             trailing: new Icon(
                               Icons.chevron_right,
-                              color: Colors.white70,
+                              color: primary,
                             ),
                           ),
                         ),
@@ -284,73 +288,27 @@ class _DrawerPageState extends State<DrawerPage> {
                             border: Border.all(color: Colors.grey, width: 1.0),
                           ),
                           child: ListTile(
-                            title: Text(MyLocalizations.of(context)
-                                .getLocalizations("SELECT_LANGUAGES")),
+                            title: Text(
+                                MyLocalizations.of(context).selectLanguages),
                             trailing: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 hint: Text(selectedLocale == null
-                                    ? 'English'
+                                    ? 'Spanish'
                                     : selectedLocale),
                                 value: selectedLanguages,
                                 onChanged: (newValue) async {
-                                  if (newValue == 'English') {
+                                  await initializeI18n().then((value) async {
+                                    localizedValues = value;
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
-                                    prefs.setString('selectedLanguage', 'en');
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              MyApp(
-                                            "en",
-                                            widget.localizedValues,
-                                          ),
-                                        ),
-                                        (Route<dynamic> route) => false);
-                                  } else if (newValue == 'Arabic') {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    prefs.setString('selectedLanguage', 'ar');
-
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              MyApp(
-                                            "ar",
-                                            widget.localizedValues,
-                                          ),
-                                        ),
-                                        (Route<dynamic> route) => false);
-                                  } else if (newValue == 'Chinese') {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    prefs.setString('selectedLanguage', 'zh');
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              MyApp(
-                                            "zh",
-                                            widget.localizedValues,
-                                          ),
-                                        ),
-                                        (Route<dynamic> route) => false);
-                                  } else {
-                                    SharedPreferences prefs =
-                                        await SharedPreferences.getInstance();
-                                    prefs.setString('selectedLanguage', 'fr');
-                                    Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              MyApp(
-                                            "fr",
-                                            widget.localizedValues,
-                                          ),
-                                        ),
-                                        (Route<dynamic> route) => false);
-                                  }
+                                    if (newValue == 'English') {
+                                      prefs.setString('selectedLanguage', 'en');
+                                    } else {
+                                      prefs.setString('selectedLanguage', 'es');
+                                    }
+                                    main();
+                                    Navigator.pop(context);
+                                  });
                                 },
                                 items: languages.map((lang) {
                                   return DropdownMenuItem(

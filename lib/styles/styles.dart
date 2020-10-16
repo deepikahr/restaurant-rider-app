@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 final primary = const Color(0xFFB6236C);
-final blackb = const Color(0xFF565656);
+final blackb = Colors.black;
 final dullblack = const Color(0xFF565656).withOpacity(0.36);
 final dblack = const Color(0xFF565656).withOpacity(0.44);
 final blackc = const Color(0xFF565656).withOpacity(0.59);
@@ -16,7 +16,7 @@ final darkgreen = const Color(0xFF1c5b10).withOpacity(0.40);
 final lightwhite = const Color(0xFFffffff).withOpacity(0.76);
 final redbtn = const Color(0xFFfe2424);
 final blue = const Color(0xFF038be6);
-final secondary = const Color(0xFFBE9063);
+final secondary = const Color(0xFF2AA1BF);
 
 //-----------------------------------------51---
 
@@ -120,10 +120,47 @@ TextStyle textsmallbold() {
 TextStyle textmediumblack() {
   return new TextStyle(
     fontWeight: FontWeight.w600,
-    fontSize: 19.0,
+    fontSize: 16.0,
     letterSpacing: 0.5,
-    color: blackb,
+    color: Colors.black,
     fontFamily: 'RobotoMedium',
+  );
+}
+
+TextStyle textmediumboldblack() {
+  return new TextStyle(
+    fontWeight: FontWeight.bold,
+    fontSize: 16.0,
+    letterSpacing: 0.5,
+    color: Colors.black,
+    fontFamily: 'RobotoMedium',
+  );
+}
+
+TextStyle textlargeboldblack() {
+  return new TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 20.0,
+    color: Colors.black,
+    fontFamily: 'RobotoMedium',
+  );
+}
+
+TextStyle textboldlargewhite() {
+  return new TextStyle(
+    fontWeight: FontWeight.w800,
+    fontSize: 18.0,
+    color: whited,
+    fontFamily: 'RobotoBold',
+  );
+}
+
+TextStyle textboldlargeBlack() {
+  return new TextStyle(
+    fontWeight: FontWeight.w800,
+    fontSize: 18.0,
+    color: Colors.black,
+    fontFamily: 'RobotoBold',
   );
 }
 
@@ -162,7 +199,7 @@ TextStyle textlightblackh() {
     fontWeight: FontWeight.w600,
     fontSize: 13.0,
     letterSpacing: 0.3,
-    color: lightblack,
+    color: Colors.black,
     height: 1.3,
     fontFamily: 'RobotoMedium',
   );
@@ -212,7 +249,25 @@ TextStyle textdblack() {
     fontWeight: FontWeight.w600,
     fontSize: 13.0,
     letterSpacing: 0.3,
-    color: dblack,
+    color: Colors.black,
+    fontFamily: 'RobotoMedium',
+  );
+}
+TextStyle textDRed() {
+  return new TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 13.0,
+    letterSpacing: 0.3,
+    color: Colors.red,
+    fontFamily: 'RobotoMedium',
+  );
+}
+TextStyle textdblackMedium() {
+  return new TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 14.0,
+    letterSpacing: 0.3,
+    color: Colors.black,
     fontFamily: 'RobotoMedium',
   );
 }
@@ -233,7 +288,7 @@ TextStyle textblack() {
     fontSize: 11.0,
     letterSpacing: 0.3,
     height: 1.3,
-    color: dblack,
+    color: Colors.black,
     fontFamily: 'RobotoMedium',
   );
 }
@@ -300,7 +355,15 @@ TextStyle textboldblack() {
   return new TextStyle(
     fontWeight: FontWeight.w800,
     fontSize: 13.0,
-    color: boldblack,
+    color: Colors.black,
+    fontFamily: 'RobotoBold',
+  );
+}
+TextStyle textboldblackMedium() {
+  return new TextStyle(
+    fontWeight: FontWeight.w800,
+    fontSize: 14.0,
+    color: Colors.black,
     fontFamily: 'RobotoBold',
   );
 }
