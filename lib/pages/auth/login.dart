@@ -154,7 +154,7 @@ class _LoginState extends State<Login> {
                             ),
                             alignment: FractionalOffset.center,
                             child: new TextFormField(
-                              initialValue: "",
+                              initialValue: "staff2@ionicfirebaseapp.com",
                               style: TextStyle(color: Colors.black),
                               decoration: new InputDecoration(
                                   border: InputBorder.none,
@@ -197,7 +197,7 @@ class _LoginState extends State<Login> {
                             ),
                             alignment: FractionalOffset.center,
                             child: new TextFormField(
-                              initialValue: "",
+                              initialValue: "123456",
                               style: TextStyle(color: Colors.black),
                               decoration: new InputDecoration(
                                 border: InputBorder.none,
