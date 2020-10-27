@@ -1,21 +1,31 @@
 import 'dart:convert';
+
+import 'package:delivery_app/pages/home/drawer.dart';
+import 'package:delivery_app/pages/main-tabs/earnings.dart';
+import 'package:delivery_app/pages/main-tabs/live-task.dart';
+import 'package:delivery_app/pages/main-tabs/order.dart';
 import 'package:delivery_app/services/auth-service.dart';
 import 'package:delivery_app/services/localizations.dart' show MyLocalizations;
 import 'package:delivery_app/services/orders-service.dart';
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:delivery_app/pages/main-tabs/live-task.dart';
-import 'package:delivery_app/pages/main-tabs/earnings.dart';
-import 'package:delivery_app/pages/main-tabs/order.dart';
-import 'package:delivery_app/pages/home/drawer.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   static String tag = 'home-page';
   final Map<String, Map<String, String>> localizedValues;
   final String locale;
+  final bool isNotificationArrives;
+  final bool isAfterLogin;
   final int currentIndex;
-  HomePage({Key key, this.locale, this.localizedValues, this.currentIndex})
+
+  HomePage(
+      {Key key,
+      this.locale,
+      this.localizedValues,
+      this.currentIndex,
+      this.isAfterLogin = false,
+      this.isNotificationArrives = false})
       : super(key: key);
 
   @override
@@ -26,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   final List<Widget> _children = [LiveTasks(), Earnings(), Order()];
   var userData;
+
   @override
   void initState() {
     getGlobalSettingsData();
@@ -55,9 +66,8 @@ class _HomePageState extends State<HomePage> {
 
   fetchUserInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     await OrdersService.getUserInfo().then((response) {
-      userData = response;
+      userData = json.decode(response.body);
       prefs.setString('userId', userData['_id']);
       prefs.setString('userName', userData['name']);
       prefs.setString('userEmail', userData['email']);
@@ -73,19 +83,19 @@ class _HomePageState extends State<HomePage> {
     if (_currentIndex == 0) {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).getLocalizations("LIVE_TASKS");
+          title = MyLocalizations.of(context).liveTasks;
         });
       }
     } else if (_currentIndex == 1) {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).getLocalizations("EARNINGS");
+          title = MyLocalizations.of(context).earnings;
         });
       }
     } else {
       if (mounted) {
         setState(() {
-          title = MyLocalizations.of(context).getLocalizations("ORDERS");
+          title = MyLocalizations.of(context).orders;
         });
       }
     }
@@ -100,7 +110,8 @@ class _HomePageState extends State<HomePage> {
         title: Text(title, style: textwhitesmall()),
       ),
       backgroundColor: Colors.white,
-      body: _children[_currentIndex], // new
+      body: _children[_currentIndex],
+      // new
       bottomNavigationBar: Container(
         decoration: BoxDecoration(color: Colors.white, boxShadow: [
           new BoxShadow(
@@ -108,7 +119,7 @@ class _HomePageState extends State<HomePage> {
             blurRadius: 6.0,
           ),
         ]),
-        height: 75,
+        height: 70,
         child: Row(
           children: [
             Expanded(
@@ -122,12 +133,12 @@ class _HomePageState extends State<HomePage> {
                   color: _currentIndex == 0 ? primary : Colors.white12,
                   child: new Column(
                     children: <Widget>[
-                      new Image.asset(
-                        'assets/icons/home.png',
+                      Icon(
+                        Icons.home,
                         color: _currentIndex == 0 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).getLocalizations("HOME"),
+                        MyLocalizations.of(context).home,
                         style: TextStyle(
                           color: _currentIndex == 0 ? Colors.white : blackb,
                         ),
@@ -153,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 1 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).getLocalizations("EARNINGS"),
+                        MyLocalizations.of(context).earnings,
                         style: TextStyle(
                           color: _currentIndex == 1 ? Colors.white : blackb,
                         ),
@@ -179,7 +190,7 @@ class _HomePageState extends State<HomePage> {
                         color: _currentIndex == 2 ? Colors.white : blackb,
                       ),
                       Text(
-                        MyLocalizations.of(context).getLocalizations("ORDERS"),
+                        MyLocalizations.of(context).orders,
                         style: TextStyle(
                           color: _currentIndex == 2 ? Colors.white : blackb,
                         ),

@@ -1,10 +1,11 @@
+import 'package:delivery_app/pages/live-tasks/order-delivered.dart';
 import 'package:delivery_app/services/localizations.dart';
-import 'package:flutter/material.dart';
 import 'package:delivery_app/styles/styles.dart';
-import 'package:async_loader/async_loader.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './tabs-heading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import './tabs-heading.dart';
 import '../../services/orders-service.dart';
 
 class Processing extends StatefulWidget {
@@ -12,6 +13,7 @@ class Processing extends StatefulWidget {
   final String locale;
 
   Processing({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _ProcessingState createState() => new _ProcessingState();
 }
@@ -21,9 +23,12 @@ class _ProcessingState extends State<Processing> {
   dynamic onTheWayordersList;
   bool isProcessingLoading = false;
 
+  String currency;
+
   @override
   void initState() {
     getOnTheWayOrdersList();
+    getCurrency();
     super.initState();
   }
 
@@ -34,11 +39,14 @@ class _ProcessingState extends State<Processing> {
       });
     }
 
-    await OrdersService.getAssignedOrdersListToDeliveryBoy('Accepted')
+    await OrdersService.getAssignedOrdersListToDeliveryBoy('On the Way')
         .then((value) {
       if (mounted) {
         setState(() {
-          onTheWayordersList = value;
+          isProcessingLoading = false;
+        });
+        setState(() {
+          onTheWayordersList = value['response_data']['data'];
 
           pocessingOrderLength = onTheWayordersList.length;
           isProcessingLoading = false;
@@ -59,11 +67,11 @@ class _ProcessingState extends State<Processing> {
                     backgroundColor: primary,
                   ),
                 )
-              : onTheWayordersList.length > 0
+              : ((onTheWayordersList?.length ?? 0) > 0)
                   ? buidNewOnTheWayList(onTheWayordersList)
                   : Center(
                       child:
-                          Text(MyLocalizations.of(context).getLocalizations("NO_PROCESSING_ORDER")),
+                          Text(MyLocalizations.of(context).noProcessingOrder),
                     ),
         ],
       ),
@@ -78,48 +86,67 @@ class _ProcessingState extends State<Processing> {
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
-            return Column(
-              children: <Widget>[
-                new Container(
-                  padding: EdgeInsets.all(25.0),
-                  margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
-                  color: Colors.white,
-                  child: new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                          child: new Text(
-                        '#${orders[index]['orderID']}',
-                        textAlign: TextAlign.center,
-                        style: textmediumsm(),
-                      )),
-                      Expanded(
-                          child: new Text(
-                        ' ${orders[index]['productDetails'].length} ' +
-                            MyLocalizations.of(context).getLocalizations("ITEMS"),
-                        textAlign: TextAlign.center,
-                        style: textmediumsm(),
-                      )),
-                      Expanded(
-                        child: new Text(
-                          orders[index]['createdAtTime'] == null
-                              ? ""
-                              : DateFormat('dd-MMM-yy hh:mm a').format(
-                                  new DateTime.fromMillisecondsSinceEpoch(
-                                      orders[index]['createdAtTime'])),
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => OrderDelivered(
+                        orderDetail: onTheWayordersList[index],
+                        locale: widget.locale,
+                        localizedValues: widget.localizedValues,
+                        currency: currency),
+                  ),
+                );
+              },
+              child: Column(
+                children: <Widget>[
+                  new Container(
+                    padding: EdgeInsets.all(25.0),
+                    margin: EdgeInsets.only(top: 5.0, bottom: 5.0),
+                    color: Colors.white,
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                            child: new Text(
+                          '#${orders[index]['orderID']}',
                           textAlign: TextAlign.center,
                           style: textmediumsm(),
-                        ),
-                      )
-                    ],
+                        )),
+                        Expanded(
+                            child: new Text(
+                          ' ${orders[index]['productDetails'].length} ' +
+                              MyLocalizations.of(context).items,
+                          textAlign: TextAlign.center,
+                          style: textmediumsm(),
+                        )),
+                        Expanded(
+                          child: new Text(
+                            orders[index]['createdAtTime'] == null
+                                ? ""
+                                : DateFormat('dd-MMM-yy hh:mm a').format(
+                                    new DateTime.fromMillisecondsSinceEpoch(
+                                        orders[index]['createdAtTime'])),
+                            textAlign: TextAlign.center,
+                            style: textmediumsm(),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         )
       ],
     );
+  }
+
+  void getCurrency() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    currency = prefs.getString('currency');
   }
 }

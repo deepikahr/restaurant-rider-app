@@ -71,7 +71,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
- 
+
 }
 
 buildscript {
@@ -80,7 +80,7 @@ buildscript {
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.10.2, 0.99.99]'
-        
+
     }
 }
 

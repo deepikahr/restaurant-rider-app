@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:delivery_app/pages/tabs/tabs-heading.dart';
+import 'package:flutter/material.dart';
 
 class Order extends StatefulWidget {
   static String tag = "order-page";
@@ -7,6 +7,7 @@ class Order extends StatefulWidget {
   final String locale;
 
   Order({Key key, this.locale, this.localizedValues}) : super(key: key);
+
   @override
   _OrderState createState() => _OrderState();
 }
