@@ -1,7 +1,7 @@
 name: delivery_app
 description: A new Flutter application.
 
-version: 1.0.17+18
+version: 1.0.18+19
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
